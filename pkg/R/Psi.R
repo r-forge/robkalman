@@ -127,3 +127,43 @@ psiHampel <- function (t, a=2, b=4, c=8, flag="psi")
         Tukey = get("psiTukey", mode="function"),
         Hampel = get("psiHampel", mode="function")) 
 }
+
+mvpsiHampel <- function (x, a=2, b=4, c=8) 
+{
+###########################################
+##
+##  R-function: mvpsiHampel - multivariate analogue of 
+##                            Hampel's psi-function
+##  author: Bernhard Spangl
+##  version: 0.1 (2008-02-23)
+##
+###########################################
+
+##  Paramters:
+##  x ... vector 
+##  a, b, c ... tuning constants
+    x.norm <- EuclidianNorm(x)
+    small <- (x.norm <= a)
+    dummy <- pmin(a, a/(c-b)*(c-x.norm))
+    dummy <- pmax(dummy, 0)/(x.norm+small)*(!small) + small
+    return(x*dummy)
+}
+
+jacobian.Hampel <- function (x, ...) 
+{
+###########################################
+##
+##  R-function: jacobian.Hampel - Jacobian matrix of multivariate 
+##                                analogue of Hampel's psi-function
+##              using R-function 'jacobian' of package 'numDeriv'
+##  author: Bernhard Spangl, based on work of Paul Gilbert
+##  version: 0.1 (2008-02-23)
+##
+###########################################
+
+##  Paramters:
+##  x ... vector 
+
+    jacobian(mvpsiHampel, x, ...)
+}
+

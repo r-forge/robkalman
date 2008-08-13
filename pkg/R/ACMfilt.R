@@ -6,7 +6,7 @@ ACMfilt <- function (x, gm, s0=0,
 ##
 ##  R-function: ACMfilt - approximate conditional-mean filtering (wrapper)
 ##  author: Bernhard Spangl
-##  version: 1.0 (2006-05-21)
+##  version: 1.1 (2007-08-13 and 2006-08-31)
 ##  References: 
 ##  [Mart79c] R.D. Martin, Approximate Conditional-mean Type Smoothers 
 ##                and Interpolators (1979)
@@ -41,7 +41,8 @@ ACMfilt <- function (x, gm, s0=0,
     si <- gm$sinnov[p]
     Cx <- gm$Cx
     Phi <- cbind(rbind(phi[-p], diag(rep(1, (p-1)))), c(phi[p], rep(0, (p-1))))
-    Q <- diag(rep(0, p))
+    Q <- matrix(0, p, p)
+##  Q <- diag(rep(0, p))
     Q[1, 1] <- si^2
     
     m0 <- rep(0, p)
@@ -66,12 +67,12 @@ ACMfilt <- function (x, gm, s0=0,
         x <- c(X[p, p:N], X[(p-1):1, N])
     }
 
-    ARmodel <- .ARmodel(x, p)
-    y <- ARmodel$y
-    Z <- ARmodel$Z
-    r <- resid(lm.fit(Z, y))
+##  ARmodel <- .ARmodel(x, p)
+##  y <- ARmodel$y
+##  Z <- ARmodel$Z
+##  r <- resid(lm.fit(Z, y))
     
-    return(list(filt.ck=x.ck +gm$mu, filt=x + gm$mu, st=st, 
-                r=c(rep(NA, p), r)))
+    return(list(filt.ck=x.ck +gm$mu, filt=x + gm$mu, st=st)) #, 
+##              r=c(rep(NA, p), r)))
 
 }

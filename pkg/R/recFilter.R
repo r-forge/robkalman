@@ -211,3 +211,40 @@ ACMfilter <- function(Y, a, S, F, Q, Z, V, s0, psi, apsi, bpsi, cpsi, flag)#
 ##              (defaul: a=b=2.5, c=5.0)
 ##  flag ... character, if "weights" (default), use psi(t)/t to calculate 
 ##           the weights; if "deriv", use psi'(t)
+
+mACMfilter <- function(Y, a, S, F, Q, Z, V, 
+                       psi=mvpsiHampel, apsi=2.5, bpsi=2.5, cpsi=5.0, 
+                       flag="deriv") 
+{
+###########################################
+##
+##  R-function: mACMfilter - approximate conditional-mean filtering
+##  author: Bernhard Spangl
+##  version: 0.2 (2008-03-31)
+##
+###########################################
+
+##  Paramters:
+##  Y ... observed vector-valued time series 
+##        (column-wise, matrix: q rows, number of columns equal to time points) 
+##  a ... unconditional mean vector (formerly: m0)
+##  S ... covariance matrix (formerly: Cx)
+##  F ... design matrix of state equation (formerly: Phi)
+##  Q ... covariance matrix of state innovation process 
+##  Z ... observation matrix (formerly: H)
+##  V ... covariance matrix of observation noise (formerly: R)
+##  psi ... influence function to be used (default: Hampel's psi function, 
+##          only that is available at the moment)
+##  apsi, bpsi, cpsi ... tuning constants for Hampel's psi-function
+##                       (default: a=b=2.5, c=5.0)
+##  flag ... character, weight matrix to be used in correction step, 
+##           if "deriv" (default), Jacobian matrix of multivariate analogue 
+##           of Hampel's psi-function is used (only default is available 
+##           at the moment)
+
+    recursiveFilter(Y, a, S, F, Q, Z, V, 
+                initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep, 
+                initSr=.cKinitstep, predSr=.cKpredstep, corrSr=.mACMcorrstep, 
+                psi, apsi, bpsi, cpsi, flag)
+}
+
