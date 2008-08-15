@@ -41,7 +41,7 @@ approximation with \code{repl} replicates;
 
 \value{a clipping height \code{b} for the rLS filter}
 \author{
-  Peter Ruckdeschel \email{Peter.Ruckdeschel@uni-bayreuth.de},\cr 
+  Peter Ruckdeschel \email{Peter.Ruckdeschel@itwm.fraunhofer.de},\cr 
   }
 
 

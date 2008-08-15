@@ -39,9 +39,16 @@
 ##steps for rLS filter (rLS) (xr0, xr1)
 ## (simultaneously for cK (x0, x1) )
 
-.rLScorrstep <- function(y, x1, S1, Z, V, rob1=NULL, b, norm=Euclidnorm, ...) 
-  {K   <- .getKG(S1, Z, V) 
+.rLScorrstep <- function(y, x1, S1, Z, V, i, rob1 = NULL, b, 
+                         norm = EuclideanNorm, ...) 
+  {K  <- .getKG(S1, Z, V) 
    dx <- K %*% (y - Z %*% x1)
-   x0 <- x1 + Huberize(dx, b, norm=norm)
+   if(length(b)>1) 
+      b <- b[min(i,length(b))]
+   x0 <- x1 + Huberize(dx, b, norm = norm)
    S0  <- .getcorrCov(S1, K, Z)
-   list(x0  = x0, K = K, S0 = S0, Ind = norm(dx)>1)}
+   if  (ncol(x1)==1) 
+      Ind <- (norm(dx)>1)
+   else 
+      Ind <- apply(dx, 2, function(xx) norm(xx)>1)
+   list(x0  = x0, K = K, S0 = S0, Ind = Ind)}

@@ -19,16 +19,16 @@
 }
 
 ##steps for classical Kalman filter (cK)
-.ACMinitstep <- function(a, S, ...) 
+.ACMinitstep <- function(a, S,  i, ...) 
               {dots <- list(...)
                if(hasArg("s0")) 
-                    s0<-dots$"s0"
+                    s0 <- dots$"s0"
                else
-                    s0<-NULL       
+                    s0 <- NULL       
                list( x0 = a,  S0 = S, s0 = s0)}
 
 
-.ACMpredstep <- function (x0, S0, F, Q, rob0, s0, ...)  ### S=P F= Phi
+.ACMpredstep <- function (x0, S0, F, Q,  i, rob0, s0, ...)  ### S=P F= Phi
 {
 ###########################################
 ##
@@ -45,10 +45,11 @@
 ##  Q ... covariance matrix of state innovation process
 ##  rob0 ... general robust parameter --- here: scale s0 of nominal Gaussain component of additive noise
     S1 <- .getpredCov(S0, F, Q)
-    return(list(x1 = F %*% x0, S1 = S1, rob1 = sqrt(S1[1, 1] + s0), Ind=1))
+    return(list(x1 = F %*% x0, S1 = S1, rob1 = sqrt(S1[1, 1] + s0), Ind = FALSE))
 }
 
-.ACMcorrstep <- function (y, x1, S1, Z, V, rob1, dum=NULL, psi, apsi, bpsi, cpsi, flag, ...)
+.ACMcorrstep <- function (y, x1, S1, Z, V,  i, rob1, dum = NULL, 
+                          psi, apsi, bpsi, cpsi, flag, ...)
 {
 ###########################################
 ##
@@ -67,11 +68,15 @@
 ##  dum ... dummy variable for compatibility with ... argument of calling function
 ##  V ... covariance matrix of observation noise
 ##  psi ... influence function to be used 
-##  a, b, c ... tuning constants for Hampel's psi-function
-##              (defaul: a=b=2.5, c=5.0)
+##  apsi, bpsi, cpsi ... tuning constants for Hampel's psi-function
+##              (default: apsi=bpsi=2.5, cpsi=5.0)
 ##  flag ... character, if "weights" (default), use psi(t)/t to calculate 
 ##           the weights; if "deriv", use psi'(t)
-   
+    
+    # to be compatible with parallel computing of a bunch of time series
+    y <- y[,1]
+    x1 <- x1[,1]
+    
     st <- rob1
 
     K <- .getKG(S1, Z, V)
@@ -88,5 +93,5 @@
     
     S0 <- .getcorrCovACM(S1, K,  Z, W = w*diag(rep(1, nrow(Z))))
 
-    return(list(x0 = x0, K = K,  S0 = S0, Ind=ind, rob0=rob1))
+    return(list(x0 = x0, K = K,  S0 = S0, Ind = ind, rob0 = rob1))
 }
