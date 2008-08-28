@@ -1,13 +1,16 @@
 ### the Euclidean norm
 
-Euclidnorm <- function(x) {sqrt(sum(x^2))}
+EuclideanNorm <- function(x) {sqrt(colSums(x^2))}
 
 
 ### huberizing a vector to length b
 
-Huberize <- function(x, b, norm=Euclidnorm, ...)
-   x*ifelse(norm(x) < b, 1, b/norm(x, ...))
-    
+Huberize <- function(x, b, norm = EuclideanNorm, ...)
+{  nx <- norm(x, ...)
+   Ind0 <- (nx < b  )
+   Ind1 <- (nx < b/2)
+   x*(Ind0 + (1-Ind0)* b / (nx + Ind1) )
+}    
 
 limitS <- function(S, F, Z, Q, V, tol = 10^-4, itmax = 1000)#
 ## determines lim_{t->infty} S_{t|t-1}

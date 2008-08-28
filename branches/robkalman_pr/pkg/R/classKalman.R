@@ -51,10 +51,10 @@
               {list( x0 = a,  S0 = S )}
               
 .cKpredstep <- function(x0, S0, F, Q, ...) 
-              {list( x1  = F %*% x0, S1 = .getpredCov(S0, F, Q), Ind=1)}
+              {list( x1  = F %*% x0, S1 = .getpredCov(S0, F, Q), Ind =  FALSE)}
 
 .cKcorrstep <- function(y, x1, S1, Z, V, ...) 
   {K  <- .getKG(S1, Z, V) 
    x0 <- x1 + K %*% (y - Z %*% x1)
    S0 <- .getcorrCov(S1, K, Z)
-   list(x0  = x0, K = K, S0 = S0, Ind=1)}
+   list(x0  = x0, K = K, S0 = S0, Ind = FALSE)}
