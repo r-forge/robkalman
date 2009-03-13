@@ -45,7 +45,9 @@ echo $contents; } ?>
 
 <p> 
 <hr>
-<h1> <span style="color: rgb(0, 0, 0);"> <a name="top"> </a><big style="color: rgb(0, 0, 153);"><span style="color: rgb(51, 102, 255);"><span><a href="http://www.r-project.org/"><img style="border: 0px solid ; width: 152px; height: 101px;" alt="R-Logo" src="RLOGO.jpg"></a></span></span></big>
+<h1> <span style="color: rgb(0, 0, 0);"> <a name="top"> </a><big style="color: rgb(0, 0, 153);">
+<span style="color: rgb(51, 102, 255);"><span><a href="http://www.r-project.org/">
+<img style="border: 0px solid ; width: 152px; height: 101px;" alt="R-Logo" src="Rlogo.jpg"></a></span></span></big>
 
 R-Package
 <span style="color: rgb(51, 102, 255);">"robKalman"&nbsp;&nbsp; <span></span>
