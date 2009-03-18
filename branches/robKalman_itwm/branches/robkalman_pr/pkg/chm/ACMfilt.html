@@ -1,0 +1,137 @@
+<html><head><title>ACM filter - S-Plus type arguments</title>
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>ACMfilt(robKalman)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   ACMfilt">
+<param name="keyword" value=" ACM filter - S-Plus type arguments">
+</object>
+
+
+<h2>ACM filter - S-Plus type arguments</h2>
+
+
+<h3>Description</h3>
+
+<p>
+This function realizes the ACM filter with a S-Plus type signature.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+ACMfilt(x, gm, s0=0, psi="Hampel", a=2.5, b=a, c=5.0, flag="weights", lagsmo=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+univarite time series (vector)</td></tr>
+<tr valign="top"><td><code>gm</code></td>
+<td>
+list as produced by function <code>arGM</code>, with elements
+<code>ar</code> containing the AR(p) coefficient estimates, <code>sinnov</code> containing 
+innovation scale estiamtes from AR(p) fits of orders 1 through p;
+<code>Cx</code> containing an estimate of the p by p autocovariance matrix, and       
+<code>mu</code>, the estimated mean of <code>x</code></td></tr>
+<tr valign="top"><td><code>s0</code></td>
+<td>
+scale of nominal Gaussian component of additive noise</td></tr>
+<tr valign="top"><td><code>psi</code></td>
+<td>
+influence function to be used (default: Hampel's <i>psi</i> function, which is the only one available at the moment)</td></tr>
+<tr valign="top"><td><code>a,b,c</code></td>
+<td>
+tuning constants for Hampel's <i>psi</i>-function</td></tr>
+<tr valign="top"><td><code>flag</code></td>
+<td>
+character, if "weights", use <i>psi(t)/t</i> to calculate the weights; if "deriv", use <i>psi'(t)</i></td></tr>
+<tr valign="top"><td><code>lagsmo</code></td>
+<td>
+logical, if <code>TRUE</code>, lag p-1 smoothing is performed; else filtering from the top of <i>hat X_t</i> is performed</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+to be filled
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+a list with elements 
+</p>
+<table summary="R argblock">
+<tr valign="top"><td><code>filt.ck</code></td>
+<td>
+the classical Kalman filter</td></tr>
+<tr valign="top"><td><code>filt</code></td>
+<td>
+the ACM filter</td></tr>
+<tr valign="top"><td><code>st</code></td>
+<td>
+time-dependent scale parameter estimate</td></tr>
+<tr valign="top"><td><code>r</code></td>
+<td>
+AR-residuals</td></tr>
+</table>
+
+<h3>Author(s)</h3>
+
+<p>
+Bernhard Spangl <a href="mailto:bernhard.spangl@boku.ac.at">bernhard.spangl@boku.ac.at</a>,<br>
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Martin, R.D. and Zeh, J.E. (1978): Generalized M-estimates for  Autoregression Including Small-sample Efficiency Robustness <br> 
+Martin, R.D. (1980): Robust Estimation of Autoregressive Models.<br> 
+Martin, R.D. and Thomson, D.J. (1982): Robust-resistent Spectrum Estimation. <br> 
+Stockinger, N. and Dutter, R. (1987): Robust Time Series Analysis: A Survey.<br>
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="internalarGM.html">internalarGM</a></code>, <code><a href="internalpsi.html">internalpsi</a></code>, <code><a href="internalACM.html">internalACM</a></code>,
+<code><a href="arGM.html">arGM</a></code>, <code><a href="recFilter.html">recFilter</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+require(robKalman)
+
+##  AO model:
+set.seed(361)
+Eps &lt;- as.ts(rnorm(100))
+ar2 &lt;- arima.sim(list(ar = c(1, -0.9)), 100, innov = Eps)
+Binom &lt;- rbinom(100, 1, 0.1)
+Noise &lt;- rnorm(100,sd = 10)
+y &lt;- ar2 + as.ts(Binom*Noise)
+
+y.arGM &lt;- arGM(y, 3)
+y.ACMfilt &lt;- ACMfilt(y, y.arGM)
+
+plot(y)
+lines(y.ACMfilt$filt, col=2)
+lines(ar2,col="green")
+
+</pre>
+
+
+
+<hr><div align="center">[Package <em>robKalman</em> version 0.1 <a href="00Index.html">Index]</a></div>
+
+</body></html>

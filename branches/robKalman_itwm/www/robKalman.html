@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-15">
+  <meta name="GENERATOR" content="Mozilla/1.5 [de]">
+  <title>Package "robKalman"</title>
+</head>
+<body
+ style="background-image: url(http://www.uni-bayreuth.de/departments/math/org/mathe7/papier.gif);">
+<div style="text-align: left;"> <span style="color: rgb(0, 0, 0);">Previous
+page: <a href="../mathe7.html">Mathematical Statistics (MATHE
+VII) - Organization</a> </span>
+<hr>
+<h1> <span style="color: rgb(0, 0, 0);"> <a name="top"> </a><a
+ href="http://www.uni-bayreuth.de/departments/math/org/mathe7/mathe7.html"><img
+ style="border: 0px solid ; width: 198px; height: 127px;"
+ src="http://www.uni-bayreuth.de/departments/math/org/mathe7/logo.gif"
+ alt="[Picture: logo]"></a>&nbsp; <big><big
+ style="color: rgb(0, 0, 153);"><span style="color: rgb(51, 102, 255);"><span><a
+ href="http://www.r-project.org/"><img
+ style="border: 0px solid ; width: 152px; height: 101px;" alt="R-Logo"
+ src="RLOGO.jpg"></a></span></span></big>
+R-Package
+<span style="color: rgb(51, 102, 255);">"robKalman"&nbsp;&nbsp; <span></span></span><big
+ style="color: rgb(0, 0, 153);"><span style="color: rgb(51, 102, 255);"><span><a
+ href="http://www.r-project.org/"><img alt="BoKu-Logo"
+ src="BOKU_Logo.gif"
+ style="border: 0px solid ; width: 152px; height: 101px;"> </a></span></span></big></big></span></h1>
+<h1> </h1>
+</div>
+<hr style="width: 100%; height: 2px;">
+<div style="text-align: justify;"> Version: 0.2<br>
+Release Date: 2008-01-17 <br>
+Authors: <a
+ href="mailto:peter.ruckdeschel@uni-bayreuth.de?subject=%5Bdistr%5D">Peter
+Ruckdeschel</a>, <a href="bernhard.spangl@boku.ac.at">Bernhard Spangl</a><br>
+Required R-Version:
+<ul style="color: rgb(0, 0, 0);">
+  <li>&gt;=2.3.0 for version 0.2,</li>
+  <li>&gt;=2.3.0 for version 0.1,</li>
+</ul>
+<span style="color: rgb(0, 0, 0);">Dependencies: requires packages </span><br>
+<ul>
+  <li>"<span style="color: rgb(51, 102, 255);">startupmsg"&nbsp;</span></li>
+  <li>"<span style="color: rgb(51, 102, 255);">MASS</span>"</li>
+  <li>"<span style="color: rgb(51, 102, 255);">limma</span>"</li>
+  <li>"<span style="color: rgb(51, 102, 255);">dse1</span>"</li>
+  <li>"<span style="color: rgb(51, 102, 255);">dse2</span>"</li>
+  <li>"<span style="color: rgb(51, 102, 255);">robustbase</span>"</li>
+</ul>
+<span style="color: rgb(0, 0, 0);">all available from</span> <a
+ href="http://cran.r-project.org/mirrors.html">CRAN</a>;
+</div>
+<hr style="width: 100%; height: 2px;">
+<h2>What is "robKalman" meant for?</h2>
+<div style="text-align: justify; color: rgb(0, 0, 0);"> The aim of
+package "<span style="color: rgb(51, 102, 255);">robKalman</span>" is
+to
+provide routines for robust Kalman Filtering.<br>
+In particular the rLS- and ACM-filter are available.<br>
+</div>
+<br>
+<hr style="width: 100%; height: 2px;"><br>
+<h2>Manual/Documentation</h2>
+<div style="text-align: justify; color: rgb(0, 0, 0);">
+Here will be a vignette soon...<br>
+For the moment here are some slides presented at <a
+ href="http://www.r-project.org/useR-2006/">UseR 2006</a>, Vienna and a
+poster.<br>
+</div>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h2>License</h2>
+<div style="text-align: justify;"><span style="color: rgb(0, 0, 0);">
+This software is distributed under the terms of the GNU GENERAL</span>
+<br style="color: rgb(0, 0, 0);">
+<span style="color: rgb(0, 0, 0);">PUBLIC LICENSE Version 2, June 1991,
+confer</span> <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/gpl.html</a><br>
+</div>
+<br>
+<hr style="width: 100%; height: 2px;">
+<h2>Download</h2>
+<h3 style="text-align: justify; color: rgb(0, 0, 0);">Windows</h3>
+<ul style="text-align: justify; color: rgb(0, 0, 0);">
+  <li>as&nbsp;<a href="robKalman_0.2.zip">Win-Zip-File for R &gt;=2.3.0</a>
+(Version 0.2)</li>
+  <li>as <a href="robKalman_0.1.zip">Win-Zip-File for R &gt;=2.3.0</a>
+(Version 0.1)</li>
+</ul>
+<ul style="text-align: justify; color: rgb(0, 0, 0);">
+  <li>to be installed by
+    <ul>
+      <li>the R-gui File picker [Packages -&gt;Install package(s) from
+local zip-files...] or <br>
+      </li>
+      <li style="color: rgb(51, 102, 255);">
+        <pre>install.packages("robKalman", &lt;path to the file distr.zip in your File system&gt;, NULL)</pre>
+      </li>
+    </ul>
+  </li>
+  <li>to be removed by <br>
+    <pre style="color: rgb(51, 102, 255);" wrap="">remove.packages("robKalman")</pre>
+  </li>
+  <li>to be used by <br>
+    <pre><span style="color: rgb(51, 102, 255);">library("robKalman")</span> <br></pre>
+or
+    <pre><span style="color: rgb(51, 102, 255);">require("robKalman")</span> <br></pre>
+  </li>
+</ul>
+<h3 style="text-align: justify; color: rgb(0, 0, 0);">Linux</h3>
+<ul style="text-align: justify; color: rgb(0, 0, 0);">
+  <li>as <a href="robKalman_0.2.tar.gz">Linux-tar-gz-File for R
+&gt;=2.3.0</a> (Version 0.2)</li>
+  <li>as <a href="robKalman_0.1.tar.gz">Linux-tar-gz-File for R
+&gt;=2.3.0</a> (Version 0.1)</li>
+</ul>
+<ul style="text-align: justify; color: rgb(0, 0, 0);">
+  <li>to be installed by<br>
+    <pre><span style="color: rgb(51, 102, 255);">R CMD INSTALL robKalman_0.x.tar.gz</span><br></pre>
+  </li>
+  <li>to be removed by<br>
+    <pre style="color: rgb(51, 102, 255);" wrap="">R CMD REMOVE robKalman</pre>
+  </li>
+  <li>to be used as under Windows </li>
+</ul>
+<br>
+<hr
+ style="width: 100%; height: 2px; margin-left: 0px; margin-right: 0px; color: rgb(0, 0, 0);">
+<h2 style="text-align: center; color: rgb(0, 0, 153);">Demos</h2>
+<span style="color: rgb(0, 0, 0);">also see</span> <span
+ style="color: rgb(51, 102, 255);">demo(package="robKalman")</span> <span
+ style="color: rgb(0, 0, 0);"></span><br>
+<br style="color: rgb(0, 0, 0);">
+<hr style="width: 100%; height: 2px; color: rgb(0, 0, 0);">
+<h2 style="text-align: center; color: rgb(0, 0, 153);">Version history:</h2>
+<h3 style="text-align: left; color: rgb(0, 0, 0);">First version
+(0.1)&nbsp; (2006-06-12)</h3>
+<ul>
+  <li>first developper version; also see <span
+ style="color: rgb(51, 102, 255);">NEWS("robKalman")</span></li>
+</ul>
+<div style="text-align: left; color: rgb(0, 0, 0);">
+<h3 style="text-align: left;">Changes from 0.1 to
+0.2<br>
+</h3>
+<ul>
+  <li> TEMPLATE </li>
+</ul>
+<hr style="width: 100%; height: 2px; color: rgb(0, 0, 0);">
+<h2 style="text-align: center; color: rgb(0, 0, 153);">Our plans for
+the next version:</h2>
+<ul>
+  <li><span style="color: rgb(51, 102, 255);"><br>
+    </span></li>
+</ul>
+<br style="color: rgb(0, 0, 0);">
+<hr style="width: 100%; height: 2px; color: rgb(0, 0, 0);">
+<h2 style="text-align: center; color: rgb(0, 0, 153);">Things we invite
+other people to do</h2>
+<ul>
+  <li><br>
+  </li>
+</ul>
+<ul>
+  <span style="color: rgb(51, 102, 255);"></span>
+</ul>
+</div>
+<hr style="width: 100%; height: 2px; color: rgb(0, 0, 0);">
+<div style="text-align: justify; color: rgb(0, 0, 0);">This page is
+maintained by <a
+ href="mailto:peter.ruckdeschel@uni-bayreuth.de?subject=distr-package">Peter
+Ruckdeschel</a>
+and last updated on 2008-01-17.<br>
+</div>
+</body>
+</html>
