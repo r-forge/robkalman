@@ -24,7 +24,7 @@
 %%%%%%%%%%%%%
       
        ---
-      under Windows: install TurtoiseSVN
+      under Windows: install TortoiseSVN
        ---see 3.1.1 1.) RFM
        see also
       http://svnbook.red-bean.com/
