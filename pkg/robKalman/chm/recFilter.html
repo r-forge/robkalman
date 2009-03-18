@@ -1,4 +1,5 @@
 <html><head><title>Several recursive filters: the classical Kalman filter, the rLS filter, and the ACM filter</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="Rchm.css">
 </head>
 <body>
@@ -31,7 +32,7 @@ recursiveFilter(Y, a, S, F, Q, Z, V,
                 initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep, 
                 initSr=NULL, predSr=NULL, corrSr=NULL, ...)
 KalmanFilter(Y, a, S, F, Q, Z, V)
-rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclidnorm)
+rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm)
 ACMfilter(Y, a, S, F, Q, Z, V, s0, psi,  apsi, bpsi, cpsi, flag)
 </pre>
 
@@ -219,7 +220,7 @@ else <code>NULL</code></td></tr>
 <p>
       
 <code>KalmanFilter(Y, a, S, F, Q, Z, V)</code> is a wrapper to <code>recursiveFilter(Y, a, S, F, Q, Z, V)</code>.<br> 
-<code>rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclidnorm)</code> is a wrapper to<br>  
+<code>rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm)</code> is a wrapper to<br>  
 <code>recursiveFilter(Y, a, S, F, Q, Z, V,  
            initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep,
            initSr=.cKinitstep, predSr=.cKpredstep, corrSr=rLScorrstep, 
@@ -298,6 +299,6 @@ mean((X - rerg2$Xrf)^2)
 
 
 
-<hr><div align="center">[Package <em>robKalman</em> version 0.1 <a href="00Index.html">Index]</a></div>
+<hr><div align="center">[Package <em>robKalman</em> version 0.2.1 <a href="00Index.html">Index</a>]</div>
 
 </body></html>

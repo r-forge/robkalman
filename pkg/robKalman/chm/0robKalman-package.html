@@ -1,4 +1,5 @@
 <html><head><title>robKalman &ndash; routines for robust Kalman filtering</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="Rchm.css">
 </head>
 <body>
@@ -16,7 +17,7 @@
 <h3>Description</h3>
 
 <p>
-<STRONG>robKalman </STRONG> provides routines for robust Kalman filtering. 
+<span class="pkg">robKalman </span> provides routines for robust Kalman filtering. 
 Currently, the ACM-filter and the rLS-Filter are provided.
 </p>
 
@@ -29,10 +30,10 @@ Currently, the ACM-filter and the rLS-Filter are provided.
   <td align="left">Package: </td>  <td align="left"> robKalman</td>
 </tr>
 <tr>
-  <td align="left"> Version: </td>  <td align="left"> 0.1</td>
+  <td align="left"> Version: </td>  <td align="left"> 0.2.1 </td>
 </tr>
 <tr>
-  <td align="left"> Date: </td>  <td align="left"> 2006-06-10</td>
+  <td align="left"> Date: </td>  <td align="left"> 2009-03-18 </td>
 </tr>
 <tr>
   <td align="left"> Depends: </td>  <td align="left"> R(&gt;= 2.3.0), methods, graphics, startupmsg, dse1, dse2, MASS</td>
@@ -41,22 +42,13 @@ Currently, the ACM-filter and the rLS-Filter are provided.
   <td align="left">  Imports: </td>  <td align="left"> stats</td>
 </tr>
 <tr>
-  <td align="left"> SaveImage: </td>  <td align="left"> no</td>
-</tr>
-<tr>
   <td align="left"> LazyLoad: </td>  <td align="left"> yes</td>
 </tr>
 <tr>
-  <td align="left"> License: </td>  <td align="left"> GPL (version 2 or later)</td>
+  <td align="left"> License: </td>  <td align="left"> LGPL-3</td>
 </tr>
 <tr>
-  <td align="left"> URL: </td>  <td align="left"> http://www.uni-bayreuth.de/departments/math/org/mathe7/robKalman/</td>
-</tr>
-<tr>
-  <td align="left"> Packaged: </td>  <td align="left"> Sun June 11 10:16:03 2006; Peter</td>
-</tr>
-<tr>
-  <td align="left"> Built: </td>  <td align="left"> R 2.4.0dev; i386-pc-mingw32; 2006-06-11 10:20:11; windows</td>
+  <td align="left"> URL: </td>  <td align="left"> http://distr.r-forge.r-project.org/</td>
 </tr>
 </table>
 
@@ -147,7 +139,13 @@ only the version information is displayed.
 </p>
 <p>
 The same can be achieved by wrapping the <code>library</code> or <code>require</code>  call into
-either <code>suppressStartupMessages()</code> or <code>onlytypeStartupMessages(.,atypes="version")</code>.
+either <code>suppressStartupMessages()</code> or <code>onlytypeStartupMessages(.,atypes="version")</code>. 
+</p>
+<p>
+As for general <code>packageStartupMessage</code>'s, you may also suppress all
+the start-up banner by wrapping the <code>library</code> or <code>require</code> 
+call into <code>suppressPackageStartupMessages()</code> from 
+<span class="pkg">startupmsg</span>-version 0.5 on.
 </p>
 
 
@@ -176,11 +174,13 @@ Martin, R.D. (1981): Robust Methods for Time Series<br>
 Martin, R.D. and Thomson, D.J. (1982): Robust-resistent Spectrum Estimation. <br>
 Ruckdeschel, P. (2001) <EM>Ans"atze zur Robustifizierung des
 Kalman Filters.</EM> Bayreuther Mathematische Schriften, Vol. 64. <br>
+Spangl, B. (2008): On Robust Spectral Density
+Estimation. PhD Thesis at Technical University, Vienna. <br>
 Stockinger, N. and Dutter, R. (1987): Robust Time Series Analysis: A Survey.  <br>
 </p>
 
 
 
-<hr><div align="center">[Package <em>robKalman</em> version 0.1 <a href="00Index.html">Index]</a></div>
+<hr><div align="center">[Package <em>robKalman</em> version 0.2.1 <a href="00Index.html">Index</a>]</div>
 
 </body></html>

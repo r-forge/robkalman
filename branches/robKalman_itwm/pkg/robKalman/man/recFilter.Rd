@@ -15,9 +15,9 @@ time-invariant, linear, Gaussian state space model (ti-l-G-SSM)
 \usage{
 recursiveFilter(Y, a, S, F, Q, Z, V, 
                 initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep, 
-                initSr=NULL, predSr=NULL, corrSr=NULL, ..., dropRuns = TRUE)
+                initSr=NULL, predSr=NULL, corrSr=NULL, ...)
 KalmanFilter(Y, a, S, F, Q, Z, V)
-rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclidnorm)
+rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm)
 ACMfilter(Y, a, S, F, Q, Z, V, s0, psi,  apsi, bpsi, cpsi, flag)
 }
 
@@ -33,9 +33,7 @@ ACMfilter(Y, a, S, F, Q, Z, V, s0, psi,  apsi, bpsi, cpsi, flag)
               returning a norm of \code{x} - not necessarily, but defaulting to, Euclidean norm; 
               used by rLS filter to determine "too" large corrections}
   \item{Y}{observations \eqn{y_t}, in matrix form \eqn{q \times t}{q x t} for \code{t} 
-           the length of the observation series and \code{q} the observation dimension
-           or in array form \eqn{q \times r \times t}{q x r x t} for \code{r} the number of runs
-           to be filtered in parallel}
+           the length of the observation series and \code{q} the observation dimension}
   \item{s0}{scale of nominal Gaussian component of additive noise}
   \item{psi}{influence function to be used (default: Hampel's \eqn{\psi} function, which is the only one available at the moment)}
   \item{apsi,bpsi,cpsi}{tuning constants for Hampel's \eqn{\psi}-function, (default: \code{a=b=2.5}, \code{c=5.0})}
@@ -53,8 +51,6 @@ ACMfilter(Y, a, S, F, Q, Z, V, s0, psi,  apsi, bpsi, cpsi, flag)
   \item{corrSr}{either \code{NULL}  or a function with first arguments \code{y}\eqn{=y_t}, \code{x1}\eqn{=x_{t|t-1}} and \code{S1}\eqn{=S_{t|t-1}}, \code{Z}, 
                 and \code{V} to produce a robust correction value \eqn{x_{t|t}}}  
   \item{...}{further arguments to the "step"-functions}
-  \item{dropRuns}{shall run-dimension be collapsed in return value if it is one? Defaults to yes.}
-  
 }
 
 \details{
@@ -91,12 +87,8 @@ For notation, let us formulate the classical Kalman filter in this context:
 
 \value{
 \code{recursiveFilter} returns a list with the following elements
-\item{Xf:}{ the series \eqn{x_{t|t}} filtered by the classical filter --- 
-     a matrix with dimensions \eqn{p \times (t+1)}{p x (t+1)}
-     resp. an array with dimensions \eqn{p \times r \times (t+1)}{p x r x (t+1)}}
-\item{Xp:}{ the series \eqn{x_{t|t-1}}  predicted by the classical filter --- 
-     a matrix with dimensions \eqn{p \times t}{p x t}
-     resp. an array with dimensions \eqn{p \times r \times t}{p x r x t}}
+\item{Xf:}{ the series \eqn{x_{t|t}} filtered by the classical filter --- a matrix with dimensions \eqn{p \times t+1}{p x (t+1)}}
+\item{Xp:}{ the series \eqn{x_{t|t-1}}  predicted by the classical filter --- a matrix with dimensions \eqn{p \times t}{p x t}}
 \item{S0:}{ the series \eqn{S_{t|t}} of filter error covariances produced by the classical filter --- 
           an array with dimensions \eqn{p \times p \times t+1}{p x (t+1)}}
 \item{S1:}{ the series \eqn{S_{t|t-1}}  of prediction error covariances produced by the classical filter --- 
@@ -104,14 +96,10 @@ For notation, let us formulate the classical Kalman filter in this context:
 \item{KG:}{ the series \eqn{K_{t}}  of Kalman gains produced by the classical filter --- 
           an array with dimensions \eqn{q \times p \times t}{p x t}}
 \item{Xrf:}{if any of the arguments \code{initSr}, \code{predSr}, \code{corrSr} is not \code{NULL}:
-          the series \eqn{x_{t|t}} filtered by the robust filter --- 
-          a matrix with dimensions \eqn{p \times (t+1)}{p x (t+1)} 
-          resp. an array with dimensions \eqn{p \times r \times (t+1)}{p x r x (t+1)}
+          the series \eqn{x_{t|t}} filtered by the robust filter --- a matrix with dimensions \eqn{p \times t+1}{p x (t+1)} 
           else \code{NULL}}      
 \item{Xrp:}{if any of the arguments \code{initSr}, \code{predSr}, \code{corrSr} is not \code{NULL}:
-          the series \eqn{x_{t|t-1}} predicted by the robust filter --- 
-          a matrix with dimensions \eqn{p \times t}{p x t} 
-          resp. an array with dimensions \eqn{p \times r \times t}{p x r x t}
+          the series \eqn{x_{t|t-1}} predicted by the robust filter --- a matrix with dimensions \eqn{p \times t}{p x t} 
           else \code{NULL}}      
 \item{Sr0:}{if any of the arguments \code{initSr}, \code{predSr}, \code{corrSr} is not \code{NULL}:
           the series \eqn{S_{t|t}} of filter error covariances produced by the robust filter --- 
@@ -129,15 +117,13 @@ For notation, let us formulate the classical Kalman filter in this context:
           a list of length \code{t+1} with the recursively produced values of \code{rob1} --- 
           e.g.  in case of the ACM filter each element contains a corresponding value of \code{st}}
 \item{IndIO:}{ if  \code{predSr} is not \code{NULL}:
-          the indicator showing when the robust predictor uses clipping --- a vector with dimensions \eqn{t}
-          resp. a matrix with dimensions \eqn{r \times t}{r x t} 
+          the indicator showing when the robust predictor uses clipping --- a vector with dimensions \eqn{t} 
           else \code{NULL}}      
 \item{IndAO:}{ if  \code{corrSr} is not \code{NULL}:
                  the indicator showing when the robust filter uses clipping --- a vector with dimensions \eqn{t} 
-                   resp. a matrix with dimensions \eqn{r \times t}{r x t} 
                  else \code{NULL}}      
 \code{KalmanFilter(Y, a, S, F, Q, Z, V)} is a wrapper to \code{recursiveFilter(Y, a, S, F, Q, Z, V)}.\cr 
-\code{rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclidnorm)} is a wrapper to\cr  
+\code{rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm)} is a wrapper to\cr  
 \code{recursiveFilter(Y, a, S, F, Q, Z, V,  
            initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep,
            initSr=.cKinitstep, predSr=.cKpredstep, corrSr=rLScorrstep, 
@@ -157,7 +143,7 @@ For notation, let us formulate the classical Kalman filter in this context:
 
 \seealso{
 \code{\link{internalrLS}}, \code{\link{internalKalman}}, \code{\link{calibrateRLS}}
-\code{\link{utilitiesrobKalman}}, \code{\link{internalACM}}, \code{\link{internalpsi}} }
+\code{\link{utilitiesrobKalman}}, \code{\link{internalACM}}, \code{\link{internalpsi}} 
 }
 
 \examples{

@@ -12,16 +12,13 @@ Currently, the ACM-filter and the rLS-Filter are provided.
 \details{
 \tabular{ll}{
 Package: \tab robKalman\cr
-Version: \tab 0.2 \cr
-Date: \tab 2008-01-17 \cr
+Version: \tab 0.3 \cr
+Date: \tab 2009-03-18 \cr
 Depends: \tab R(>= 2.3.0), methods, graphics, startupmsg, dse1, dse2, MASS\cr 
 Imports: \tab stats\cr
-SaveImage: \tab no\cr
 LazyLoad: \tab yes\cr
-License: \tab GPL (version 2 or later)\cr
-URL: \tab http://www.uni-bayreuth.de/departments/math/org/mathe7/robKalman/\cr
-Packaged: \tab Sun June 11 10:16:03 2006; Peter\cr
-Built: \tab R 2.4.0dev; i386-pc-mingw32; 2006-06-11 10:20:11; windows\cr
+License: \tab LGPL-3\cr
+URL: \tab http://distr.r-forge.r-project.org/\cr
 }}
 
 \section{Setup}{
@@ -39,153 +36,7 @@ and where all random variable \eqn{x_0}, \eqn{v_t}, \eqn{\varepsilon_t}{e_t} are
 }
 
 \section{Classes}{
-We have introduced 6 larger groups of classes: 
-\itemize{
-\item{}{ State Space Model classes: These realize state space models}
-\item{}{ Filter classes: These are the classes of the return values of our filters}
-\item{}{ Control classes: They gather control information for our filters }
-\item{}{ SSM distributions: They gather distributional assumptions of our filters }
-\item{}{ SSM + Distribution classes: They group SSM and distributional assumptions} 
-\item{}{ SSM - Simulation classes: These are the return values of our simulation routines}
-}
-Additionally we have borrowed some code of our package \pkg{distrMod} implementing
-positive (semi-)definite matrix classes. Finally there are some Class unions.
-
-\preformatted{
-
-%----------------------------
-State Space Model classes
-%----------------------------
-slots: [<name>(<class>)]
-
-%------ "SSM"
-name ("character"),  
-F("Hyperparamtype"), Z("Hyperparamtype"),
-Q("Hyperparamtype"), V("Hyperparamtype"), 
-p("numeric"), q("numeric"),  a("numeric"), 
-S("Hyperparamtype"), time("zoo")
-
-Hierarchie:
-"SSM"
-|>"TimeInvariantSSM"
-
-%----------------------------
-Filter classes
-%----------------------------
-slots: [<name>(<class>)] (skipping inherited ones)
-
-%---"recFilter"
-name ("character"),  
-SSM("SSM"), Y("matrix"), time("zoo"),
-X.filtered("matrix"), X.predicted("matrix"),
-Cov.filtered("array"), Cov.predicted("array"), Kalman.Gain("array"),
-X.filtered("matrix"), X.predicted("matrix"),
-
-%---"robrecFilter"
-name.rob ("character"),  
-X.rob.filtered("matrix"), X.rob.predicted("matrix"),
-Cov.rob.filtered("array"), Cov.rob.predicted("array"),
-rob.correction.ctrl("list"), rob.prediction.ctrl("list"),
-Cov.rob.filtered.sim("array"), Cov.rob.predicted.sim("array")
-Kalman.rob.Gain("array"), IndIO("logical"), IndAO("logical"),
-nsim("numeric"), RNGstate("integer"),
-
-Hierarchie:
-"recFilter"
-|>"robrecFilter"
-
-%----------------------------
-Control classes
-%----------------------------
-slots: [<name>(<class>)] (skipping inherited ones)
-
-
-%---"RecFiltControl"
-name("character"), init("function"),
-predict("function"), correct("function"),                                 
-
-%---"KalmanControl"
-
-%---"robrecControl"
-name.rob("character"), init.rob("function"),
-predict.rob("function"), correct.rob("function"), 
-controls("list")
-
-Hierarchie:
-"RecFiltControl"
-|>"KalmanControl"
-|>"robrecControl"
-
-%----------------------------
-SSM distributions
-%----------------------------
-slots: [<name>(<class>)] (skipping inherited ones)
-
-%---"SSMDistribution.f"
-r.init("function"), r.innov("function"), r.obs("function"),
-
-%---"SSMellDistribution.f"
-m.init("sHyperparamtype"), S.init("Hyperparamtype"),
-m.innov("sHyperparamtype"), S.innov("Hyperparamtype"),
-m.obs("sHyperparamtype"), S.obs("Hyperparamtype")
-
-%---"SSMConvDistribution.f"
-ideal("SSMDistribution.f"), cont("SSMellDistribution.f"),
-r.IO("numeric"), r.AO("numeric"),
-
-Hierarchie:
-"SSMDistribution.f"
-|>"SSMellDistribution.f"
-
-
-%----------------------------
-SSM + Distribution classes 
-%----------------------------
-slots: [<name>(<class>)] 
-
-%---"SSMwithDistribution"
-SSM("SSM"), Distribution("SSMDistribution.f")
-
-%---"SSMwithConvDistribution"
-SSM("SSM"), Distribution("SSMConvDistribution.f")
-
-%----------------------------
-SSM - Simulation classes 
-%----------------------------
-slots: [<name>(<class>)] (skipping inherited ones)
-
-%---"SSMsimulation" 
-SSM("SSM"), Distr("SSMDistr"), RNGstate("numeric"), 
-states("ArrayOrMatrix"), obs("ArrayOrMatrix"),
-
-%---"SSMcontSimulation"
-states.id("ArrayOrMatrix"), obs.id("ArrayOrMatrix"),                              
-Ind.IO("logical"), Ind.AO("logical")
-
-Hierarchie:
-"SSMsimulation"
-|>"SSMcontSimulation"
-
-
-%----------------------------
-Matrix classes
-%----------------------------
-slots: none
-
-Hierarchie:
-"PosSemDefSymmMatrix"
-|>"PosDefSymmMatrix"
-
-%----------------------------
-Class unions
-%----------------------------
-"ArrayOrMatrix"   = union("array", "matrix")
-"Hyperparamtype"  = union("NULL","ArrayOrMatrix", "OptionalFunction")
-"sHyperparamtype" = union("Hyperparamtype", "numeric")
-"SSMDistr" = union("SSMDistribution.f", "SSMConvDistribution.f")
-
-}
-}
+yet to be filled}
 
 \section{Methods}{
 yet to be filled}
@@ -232,6 +83,8 @@ Martin, R.D. (1981): Robust Methods for Time Series\cr
 Martin, R.D. and Thomson, D.J. (1982): Robust-resistent Spectrum Estimation. \cr
 Ruckdeschel, P. (2001) \emph{Ans\"atze zur Robustifizierung des
 Kalman Filters.} Bayreuther Mathematische Schriften, Vol. 64. \cr
+Spangl, B. (2008): On Robust Spectral Density
+Estimation. PhD Thesis at Technical University, Vienna. \cr
 Stockinger, N. and Dutter, R. (1987): Robust Time Series Analysis: A Survey.  \cr
 }
 

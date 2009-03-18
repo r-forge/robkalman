@@ -1,13 +1,12 @@
 Package: robKalman
-Version: 0.2
-Date: 2008-07-28
+Version: 0.3
+Date: 2009-03-18
 Title: Robust Kalman Filtering
 Description: Routines for Robust Kalman Filtering --- the ACM- and rLS-filter
-Author: Peter Ruckdeschel, Bernhard Spangl
+Author: Peter Ruckdeschel, Bernhard Spangl, Irina Ursachi, Cezar Chirila
 Maintainer: Peter Ruckdeschel <Peter.Ruckdeschel@itwm.fraunhofer.de>
 Depends: R(>= 2.3.0), methods, graphics, startupmsg, dse1, dse2, MASS, limma, robustbase, numDeriv 
 Imports: stats, MASS
-SaveImage: no
 LazyLoad: yes
-License: GPL (version 2 or later)
-URL: https://r-forge.r-project.org/projects/robkalman
+License: LGPL-3
+URL: http://robkalman.r-forge.r-project.org/

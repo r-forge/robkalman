@@ -52,17 +52,10 @@ ACMfilt <- function (x, gm, s0=0,
     
     ##  Centering: 
     x <- x - gm$mu
-    ACMres <- ACMfilter(Y = matrix(x,1,N), a = m0, S = Cx, F = Phi, 
-                        Q = Q, Z = H, V = V, 
-                        s0 = s0, psi = psi, apsi = a, bpsi = b, cpsi = c, 
-                        flag = flag)
+    ACMres <- ACMfilter(Y=matrix(x,1,N), a=m0, S=Cx, F=Phi, Q=Q, Z=H, V=V, s0=s0, psi=psi, apsi=a, bpsi=b, cpsi=c, flag=flag)
 
-    ### from version ... the return value $X[r]f is of 
-    #         dimension p x runs x (N+1)
-    # =>  have to cast it back to dimension p x (N+1)
-
-    X.ck <- matrix(ACMres$Xf[,1,],  p, N+1);  X.ck <- X.ck[,2:(N+1)]
-    X   <-  matrix(ACMres$Xrf[,1,], p, N+1);  X <- X[,2:(N+1)]
+    X.ck <- ACMres$Xf;  X.ck <- X.ck[,2:(N+1)]
+    X   <- ACMres$Xrf; X <- X[,2:(N+1)]
     st <- as.numeric(unlist(ACMres$rob1L))
 
 

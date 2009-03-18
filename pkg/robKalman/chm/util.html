@@ -1,4 +1,5 @@
 <html><head><title>Utility functions of package robKalman</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="Rchm.css">
 </head>
 <body>
@@ -6,7 +7,7 @@
 <table width="100%"><tr><td>utilitiesrobKalman(robKalman)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
 <param name="keyword" value="R:   utilitiesrobKalman">
 <param name="keyword" value="R:   Huberize">
-<param name="keyword" value="R:   Euclidnorm">
+<param name="keyword" value="R:   Euclideannorm">
 <param name="keyword" value="R:   limitS">
 <param name="keyword" value=" Utility functions of package robKalman">
 </object>
@@ -25,8 +26,8 @@ These functions are used internally by package robKalman
 <h3>Usage</h3>
 
 <pre>
-Euclidnorm(x)
-Huberize(x, b, norm=Euclidnorm, ...)    
+Euclideannorm(x)
+Huberize(x, b, norm=Euclideannorm, ...)    
 limitS(S, F, Z, Q, V, tol = 10^-4, itmax = 1000)#
 </pre>
 
@@ -94,7 +95,7 @@ of the classical Kalman filter converge.
 <h3>Value</h3>
 
 <p>
-<code>Euclidnorm(x)</code> returns the Euclidean norm of <code>x</code>, 
+<code>Euclideannorm(x)</code> returns the Euclidean norm of <code>x</code>, 
 <code>Huberize(x,b,norm)</code> huberizes <code>x</code> to length <code>b</code> measured in norm <code>norm</code>, 
 <code>limitS(S, F, Z, Q, V)</code> returns the limiting prediction error covariance
 of the classical Kalman Filter, in the time-invariant
@@ -130,7 +131,7 @@ Kalman Filters.</EM> Bayreuther Mathematische Schriften, Vol. 64.
 require(robKalman)
 x &lt;- 1:4
 
-Euclidnorm(x)
+Euclideannorm(x)
 
 Huberize(x,b=5) ## does clipping
 Huberize(x,b=11) ## does no clipping
@@ -147,6 +148,6 @@ SS &lt;- limitS(S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i)
 
 
 
-<hr><div align="center">[Package <em>robKalman</em> version 0.1 <a href="00Index.html">Index]</a></div>
+<hr><div align="center">[Package <em>robKalman</em> version 0.2.1 <a href="00Index.html">Index</a>]</div>
 
 </body></html>
