@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------
-"HOWTO": What you have to do to collaborate in 10 steps:
+"HOWTO": What you have to do to collaborate in 12 steps:
 ------------------------------------------------------------------------
 
 
@@ -94,7 +94,31 @@
                     http://svnbook.red-bean.com/
 
 %%%%%%%%%%%%%
-(7) read the package guidelines
+(7) subscribe to the "commit list"
+%%%%%%%%%%%%%
+
+     in order to keep track with development done by others in the package
+     subscribe to the corresponding "commit" mailing list; don't be afraid
+     it is not a "high frequency" list...
+     
+     to do so follow the following steps:
+         ->  go to the robkalman page 
+             https://r-forge.r-project.org/mail/?group_id=88
+         ->  on the right bottom side go to item "mailing lists"
+             and follow the link
+         ->  click the corresponding subscribe/unsubscribe link
+             https://lists.r-forge.r-project.org/cgi-bin/mailman/listinfo/robkalman-commits
+         ->  subscribe
+         ->  you will get an automatic mail asking you to confirm the subscription
+         ->  follow the link given in this mail to confirm the subscription 
+
+     After subscription you will get a mail after each commit to the
+     svn archive giving you the comment tag of the committer and a
+     (possibly truncated) diff file.
+
+
+%%%%%%%%%%%%%
+(8) read the package guidelines
 %%%%%%%%%%%%%
 
      in Dortmund UseR!2008,  we have worked out some
@@ -105,7 +129,7 @@
      http://robkalman.r-forge.r-project.org/
 
 %%%%%%%%%%%%%
-(8) inscribe/ get inscribed into the target list
+(9) inscribe/ get inscribed into the target list
 %%%%%%%%%%%%%
 
     To avoid double work, you should signal other collaborators that you are about to
@@ -115,7 +139,7 @@
   
 
 %%%%%%%%%%%%%
-(9) Collaborate
+(10) Collaborate
 %%%%%%%%%%%%%
 
      under <your checkout-folder>/pkg    and
@@ -126,13 +150,13 @@
       any contributions are welcome
 
 %%%%%%%%%%%%%
-(10) HAPPY r-forging...
+(11) HAPPY r-forging...
 %%%%%%%%%%%%%
 ------------------------------------------------------------------------
    
 
 %%%%%%%%%%%%%
-(11) not so important to begin with: branches
+(12) not so important to begin with: branches
 %%%%%%%%%%%%%
 
      as the R-forge repository also is used to provide a source for installation
