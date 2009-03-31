@@ -10,3 +10,5 @@ Imports: stats, MASS
 LazyLoad: yes
 License: LGPL-3
 URL: http://robkalman.r-forge.r-project.org/
+LastChangedDate: {$LastChangedDate$}
+LastChangedRevision: {$LastChangedRevision$}
