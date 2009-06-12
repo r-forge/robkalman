@@ -41,16 +41,16 @@ setMethod("kalman", signature(smooth = "missing"),
 
 
 
-recursiveFilter <- function(Y, a, S, F, Q, Z, V, 
-                   initSc = .cKinitstep, predSc = .cKpredstep, 
-                   corrSc = .cKcorrstep, 
-                   initSr = NULL, predSr = NULL, corrSr = NULL,                    
+recursiveFilter <- function(Y, a, S, F, Q, Z, V,
+                   initSc = .cKinitstep, predSc = .cKpredstep,
+                   corrSc = .cKcorrstep,
+                   initSr = NULL, predSr = NULL, corrSr = NULL,
                    nsim = 0, seed = NULL, ..., dropRuns = TRUE)
                    # a generalization of the Kalmanfilter
-#arguments: 
+#arguments:
 # +  Y               :observations in an array with dimensions qd x runs x tt
-#                    :for backward compatibility: or a vector /a matrix in 
-#                     dimensions qd x tt 
+#                    :for backward compatibility: or a vector /a matrix in
+#                     dimensions qd x tt
 # +  a, S, F, Q, Z, V: Hyper-parameters of the ssm
 # +  initSc, predSc, corrSc:  (classical) initialization-, prediction-, and correction-step function
 # +  initSr, predSr, corrSr:  (robust) initialization-, prediction-, and correction-step function
@@ -73,12 +73,12 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
  ########################
 
  tt <- (dim(Y))[3]
- runs <- (dim(Y))[2] 
+ runs <- (dim(Y))[2]
 
  pd <- length(a)
  IndIO <- NULL
  IndAO <- NULL
- St0s <- St1s <- NULL 
+ St0s <- St1s <- NULL
 
  if(is.matrix(F)) F <- array(F, dim = c(pd,pd,tt))
  if(is.matrix(Z)) Z <- array(Z, dim = c(pd,qd,tt))
@@ -86,17 +86,19 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
  if(is.matrix(V)) V <- array(V, dim = c(qd,qd,tt))
 
  robust <- !(is.null(initSr)&&is.null(predSr)&&is.null(corrSr))
- 
+
  Xf  <- array(0, dim = c(pd, runs, tt + 1))
  Xp  <- array(0, dim = c(pd, runs, tt))
+ DeltaY  <- array(0, dim = c(qd, runs, tt))
  St0 <- array(0, dim = c(pd, pd, tt + 1))
  St1 <- array(0, dim = c(pd, pd, tt))
  KG  <- array(0, dim = c(pd, qd, tt))
- 
+ Delta  <- array(0, dim = c(qd, qd, tt))
+
  if (nsim)
-   {if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) 
+   {if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
         runif(1)
-    if (is.null(seed)) 
+    if (is.null(seed))
         RNGstate <- get(".Random.seed", envir = .GlobalEnv)
     else {
         R.seed <- get(".Random.seed", envir = .GlobalEnv)
@@ -114,6 +116,8 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
      Str0 <- array(0, dim = c(pd, pd, tt + 1))
      Str1 <- array(0, dim = c(pd, pd, tt))
      KGr  <- array(0, dim = c(pd, qd, tt))
+     Deltar  <- array(0, dim = c(qd, qd, tt))
+     DeltaYr  <- array(0, dim = c(qd, runs, tt))
     }
 
  if(!is.null(predSr))
@@ -121,43 +125,44 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
 
  if(!is.null(corrSr))
      IndAO <- matrix(FALSE,runs,tt)
- 
+
  ini <- initSc(a, S, i = 0, ...)
  x0  <- ini$x0
  S0  <- ini$S0
 
  Xf[, , 1] <- ini$x0
  St0[, , 1] <- ini$S0
- 
+
  if(robust)
       {
        if(nsim){
            Xs <- t(rmvnorm(nsim, a, S))
            St0s <- array(0, c(pd, pd, tt))
-           St1s <- array(0, c(pd, pd, tt))  
+           St1s <- array(0, c(pd, pd, tt))
        }
        if(!is.null(initSr))
            {inir <- initSr(a, S, i = 0, ...)
             xr0  <- inir$x0
             Sr0  <- inir$S0
             rob0  <- inir$rob
-           }          
+           }
        else
            {
             xr0  <- x0
             Sr0  <- S0
             rob0  <- NULL
-           }          
+           }
        Xrf[,, 1] <- xr0
        Str0[,, 1] <- xr0
-       rob0L <- list(rob0)  
-       
+       rob0L <- list(rob0)
+
       }
  else{Xrf <- NULL
       Xrp <- NULL
       Str0 <- NULL
       Str1 <- NULL
       KGr <- NULL
+      Deltar <- NULL
       rob0L <- NULL
       rob1L <- NULL
      }
@@ -167,15 +172,15 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
       Q0 <- matrix(Q[,,i], nrow = pd, ncol = pd)
 
       ps  <- predSc(x0 = x0, S0 = S0, F = F0, Q = Q0, i = i, ...)
-      x1  <- ps$x1
+      x1  <- matrix(ps$x1, nrow = pd, ncol = runs)
       S1  <- ps$S1
-      
+
       Xp[,, i]   <- x1
       St1[,, i] <- S1
 
       if(robust)
           {if(!is.null(predSr))
-               {psr <- predSr(x0 = xr0, S0 = Sr0, F = F0, Q = Q0, i = i, 
+               {psr <- predSr(x0 = xr0, S0 = Sr0, F = F0, Q = Q0, i = i,
                               ..., rob0 = rob0)
                 IndIO[,i]  <- as.logical(psr$Ind)
                 if(nsim){
@@ -183,22 +188,22 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
                      Xs <- F0 %*% Xs + vs
                      xr1s <- predSr(x0 = xr0s, S0 = Sr0, F = F0, Q = Q0, i = i,
                                     ..., rob0 = rob0)$x1
-                     St1s[,,i] <- cov(t(xr1s))          
+                     St1s[,,i] <- cov(t(xr1s))
                     }
-           }else{ 
+           }else{
                 psr <- predSc(x0 = xr0, S0 = Sr0, F = F0, Q = Q0, i = i, ...)
                 if(nsim){
                      vs <- t(rmvnorm(nsim, a*0, Q0))
                      Xs <- F %*% Xs + vs
                      xr1s <- predSc(x0 = xr0s, S0 = Sr0, F = F0, Q = Q0, i = i,
                                     ...)$x1
-                     St1s[,,i] <- cov(t(xr1s))          
+                     St1s[,,i] <- cov(t(xr1s))
                     }
            }
            xr1       <- psr$x1
            Sr1       <- psr$S1
-           rob1      <- psr$rob1     
-           
+           rob1      <- psr$rob1
+
            Xrp[,, i]  <- xr1
            Str1[,, i]<- S1
            if(i==1)  rob1L <- list(rob1)
@@ -214,42 +219,46 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
       cs <- corrSc(y = Y0, x1 = x1, S1 = S1, Z = Z0, V = V0, i = i,...)
       x0 <- cs$x0
       S0 <- cs$S0
-      
+      DeltaY[,,i] <- cs$DeltaY
+
       Xf[,,  i + 1]  <- x0
       St0[,, i + 1] <- S0
       KG[,,  i]     <- cs$K
-      
+      Delta[,,  i]     <- cs$Delta
+
       if(robust)
           {if (!is.null(corrSr))
-               {csr <- corrSr(y = Y0, x1 = xr1, S1 = Sr1, 
+               {csr <- corrSr(y = Y0, x1 = xr1, S1 = Sr1,
                               Z = Z0, V = V0, i = i, ..., rob1 = rob1)
-               IndAO[,i]  <- as.logical(csr$Ind) 
+               IndAO[,i]  <- as.logical(csr$Ind)
                if(nsim){
                     es <- t(rmvnorm(nsim, Y[,1]*0, V0))
                     Ys <- Z0 %*% Xs + es
-                    xr0s <- corrSr(y = Ys, x1 = xr1s, S1 = Sr1, 
+                    xr0s <- corrSr(y = Ys, x1 = xr1s, S1 = Sr1,
                                    Z = Z0, V = V0, i = i, ..., rob1 = rob1)$x0
-                    St0s[,,i] <- cov(t(xr0s))          
+                    St0s[,,i] <- cov(t(xr0s))
                    }
           }else{
-                csr <- corrSc(y = Y0, x1 = xr1, S1 = Sr1, Z = Z0, V = V0, 
+                csr <- corrSc(y = Y0, x1 = xr1, S1 = Sr1, Z = Z0, V = V0,
                               i = i, ...)
                if(nsim){
                     es <- t(rmvnorm(nsim, Y[,1]*0, V0))
                     Ys <- Z0 %*% Xs + es
-                    xr0s <- corrSc(y = Ys, x1 = xr1s, S1 = Sr1, 
+                    xr0s <- corrSc(y = Ys, x1 = xr1s, S1 = Sr1,
                                    Z = Z0, V = V0, i = i, ...)$x0
-                    St0s[,,i] <- cov(t(xr0s))          
+                    St0s[,,i] <- cov(t(xr0s))
                    }
-          }      
+          }
            xr0       <- csr$x0
            Sr0       <- csr$S0
-           rob0      <- csr$rob0     
+           rob0      <- csr$rob0
+           DeltaYr[,,i] <- cs$DeltaY
 
-           Xrf[,, i + 1]   <- xr0
+           Xrf[,, i + 1]  <- xr0
            Str0[,, i + 1] <- S0
-           rob0L[[i + 1]] <- rob0     
+           rob0L[[i + 1]] <- rob0
            KGr[,, i]      <- csr$K
+           Deltar[,,  i]  <- cs$Deltar
           }
  }
 
@@ -258,14 +267,16 @@ if((runs==1)&&(dropRuns))
     Xp <- matrix(Xp,pd,tt)
     if(!is.null(Xrp)) {
        Xrf <- matrix(Xrf,pd,tt+1)
-       Xrp <- matrix(Xrp,pd,tt)    
+       Xrp <- matrix(Xrp,pd,tt)
        IndIO <- as.logical(IndIO)
-       IndAO <- as.logical(IndAO)    
+       IndAO <- as.logical(IndAO)
     }}
-list(Xf = Xf, Xp = Xp, Xrf = Xrf, Xrp = Xrp, 
-     S0 = St0, S1 = St1, KG = KG,
-     Sr0 = Str0, Sr1 = Str1, 
-     KGr = KGr, IndIO = IndIO, IndAO = IndAO,
+list(Xf = Xf, Xp = Xp, Xrf = Xrf, Xrp = Xrp,
+     S0 = St0, S1 = St1, KG = KG, Delta = Delta,
+     DeltaY = DeltaY,
+     Sr0 = Str0, Sr1 = Str1,
+     KGr = KGr, Deltar = Deltar, DeltaYr = DeltaYr,
+     IndIO = IndIO, IndAO = IndAO,
      rob0L = rob0L, rob1L = rob1L,
      nsim = nsim, RNGstate = RNGstate,
      St0s = St0s, St1s = St1s)

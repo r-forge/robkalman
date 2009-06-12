@@ -93,5 +93,5 @@
     
     S0 <- .getcorrCovACM(S1, K,  Z, W = w*diag(rep(1, nrow(Z))))
 
-    return(list(x0 = x0, K = K,  S0 = S0, Ind = ind, rob0 = rob1))
+    return(list(x0 = x0, K = K,  S0 = S0, Delta=NULL, Ind=ind, rob0=rob1, DeltaY = rst))
 }

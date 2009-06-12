@@ -62,9 +62,9 @@ simKalmanIdRe <-function(tt = TT, a = a0, Ss = SS0, F = F0, Q = Q0,  Z = Z0, Vi 
                          mc = m0c, Vc = V0c, r = ract, rcalib=r1, effcalib=eff1) 
 {
 #Simulation::
-X  <- simulateState(a = a0, S = Ss, F = F, Q = Q, tt = tt)
-Yid  <- simulateObs(X = X, Z = Z, Vi = Vi, mc = mc, Vc = Vc, r = 0)
-Yre  <- simulateObs(X = X, Z = Z, Vi = Vi, mc = mc, Vc = Vc, r = ract)
+X  <- simulateState(a = a0, S = Ss, F = F, Q = Q, tt = tt, runs = 1)
+Yid  <- simulateObs(X = X, Z = Z, Vi = Vi, mc = mc, Vc = Vc, r = 0, runs = 1)
+Yre  <- simulateObs(X = X, Z = Z, Vi = Vi, mc = mc, Vc = Vc, r = ract, runs = 1)
 
 pd <- dim(X)[1]
 qd <- dim(Yid)[1]

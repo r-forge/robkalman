@@ -62,6 +62,6 @@
     
     S0 <- .getcorrCovmACM(S1, K, W = W)
 
-    return(list(x0 = x0, K = K, S0 = S0, Ind=ind, rob0=st))
+    return(list(x0 = x0, K = K, S0 = S0, Ind=ind, rob0=st, Delta =NULL, DeltaY = yDelta))
 }
 
