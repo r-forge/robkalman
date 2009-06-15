@@ -10,10 +10,11 @@ makeDF<-function(X,erg1,erg2, nam1="rLS(eff)", nam2="rLS(r)", withY=FALSE, withI
 {
 DDa<-list(NULL)
 if(ncoord==1)
-  {DD <- as.data.frame(cbind("act. state"=t(X), "classK."=t(erg1$Xf), 
+  {pd<- if(!is.null(dim(X))) dim(X)[1] else 1
+   DD <- as.data.frame(cbind("act. state"=t(matrix(X[,1,],nrow=pd)), "classK."=t(erg1$Xf),
                         t(erg1$Xrf), t(erg2$Xrf)))
      names(DD)[3:4] <- c(nam1,nam2)                        
-     if (withY) {yy<-c(NA,t(Y[1,])); DD <- as.data.frame(cbind(DD,"y"=yy))}
+     if (withY) {yy<-c(NA,t(Y[1,1,])); DD <- as.data.frame(cbind(DD,"y"=yy))}
      if (withInd) 
          {
           xclip<-c(FALSE,as.logical(erg1$IndAO))
@@ -23,7 +24,7 @@ if(ncoord==1)
   }
 else
 for(coord in 1:ncoord)
-   { DD <- as.data.frame(cbind("act. state"=X[coord,], "classK."=erg1$Xf[coord,], 
+   { DD <- as.data.frame(cbind("act. state"=X[coord,1,], "classK."=erg1$Xf[coord,],
                         erg1$Xrf[coord,], erg2$Xrf[coord,]))
      names(DD)[3:4] <- c(nam1,nam2)                        
      if (withInd) 
@@ -62,9 +63,9 @@ simKalmanIdRe <-function(tt = TT, a = a0, Ss = SS0, F = F0, Q = Q0,  Z = Z0, Vi 
                          mc = m0c, Vc = V0c, r = ract, rcalib=r1, effcalib=eff1) 
 {
 #Simulation::
-X  <- simulateState(a = a0, S = Ss, F = F, Q = Q, tt = tt, runs = 1)
-Yid  <- simulateObs(X = X, Z = Z, Vi = Vi, mc = mc, Vc = Vc, r = 0, runs = 1)
-Yre  <- simulateObs(X = X, Z = Z, Vi = Vi, mc = mc, Vc = Vc, r = ract, runs = 1)
+X  <- simulateState(a = a0, S = Ss, F = F, Qi = Q, tt = tt)
+Yid  <- simulateObs(X = X, Z = Z, Vi = Vi, mc = mc, Vc = Vc, r = 0)
+Yre  <- simulateObs(X = X, Z = Z, Vi = Vi, mc = mc, Vc = Vc, r = ract)
 
 pd <- dim(X)[1]
 qd <- dim(Yid)[1]
@@ -93,20 +94,19 @@ plot44(DF.id, DF.re, pd, tt)
 ###evaluation of MSE
 
 ###ideal situation
-MSEid <- c("class.Kalman"=mean((X - rerg1.id$Xf)^2), ### MSE averaged over time
-           "rLS.eff"=mean((X - rerg1.id$Xrf)^2),
-           "rLS.r"=mean((X - rerg2.id$Xrf)^2))
+MSEid <- c("class.Kalman"=mean((X[,1,] - rerg1.id$Xf)^2), ### MSE averaged over time
+           "rLS.eff"=mean((X[,1,] - rerg1.id$Xrf)^2),
+           "rLS.r"=mean((X[,1,] - rerg2.id$Xrf)^2))
          
 ###real situation
-MSEre <- c("class.Kalman"=mean((X - rerg1.re$Xf)^2), ### MSE averaged over time
-           "rLS.eff"=mean((X - rerg1.re$Xrf)^2),
-           "rLS.r"=mean((X - rerg2.re$Xrf)^2))
+MSEre <- c("class.Kalman"=mean((X[,1,] - rerg1.re$Xf)^2), ### MSE averaged over time
+           "rLS.eff"=mean((X[,1,] - rerg1.re$Xrf)^2),
+           "rLS.r"=mean((X[,1,] - rerg2.re$Xrf)^2))
 
 print(list("Ideal situation"=MSEid,"Real situation"=MSEre))
 
 op <- par(ask = interactive())
 }
-
 
 ##############################################################
 ###Example1

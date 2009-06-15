@@ -14,8 +14,8 @@ These functions are used internally by package robKalman for the ACM filter
 \usage{
 .getcorrCovACM(S1, K,  Z, W=diag(nrow(Z)))
 .ACMinitstep(a, S, ...) 
-.ACMpredstep(x0, S0, F, Q, rob0, s0, ...) 
-.ACMcorrstep(y, x1, S1, Z, V, rob1, dum, psi, apsi, bpsi, cpsi, flag, ...) 
+.ACMpredstep(x0, S0, F, Q, i, rob0, s0, ...)
+.ACMcorrstep(y, x1, S1, Z, V, i, rob1, dum, psi, apsi, bpsi, cpsi, flag, ...)
 }
 
 
@@ -26,6 +26,7 @@ These functions are used internally by package robKalman for the ACM filter
   \item{V}{observation error covariance (see below)}
   \item{F}{innovation transition matrix (see below)}
   \item{Q}{innovation covariance (see below)}
+  \item{i}{the time instance}
   \item{K}{Kalman gain \eqn{K_t}}
   \item{W}{weight matrix}
   \item{dum}{dummy variable for compatibility with \dots argument of calling function}

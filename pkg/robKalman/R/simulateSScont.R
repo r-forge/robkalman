@@ -7,7 +7,7 @@ rcvmvnorm <-  function(runs, mi, Si, mc, Sc, r)
         {U<-rbinom(runs, size = 1, prob = r);
         (1-U) * mvrnorm(runs, mi, Si) + U * mvrnorm(runs, mc, Sc)}
 
-simulateState <- function(a, S, F, Qi, mc, Qc, runs = 1, tt, r=0){
+simulateState <- function(a, S, F, Qi, mc=0, Qc=Qi, runs = 1, tt, r=0){
   pd <- length(a)
   if(length(dim(F))<3) F <- array(F, dim=c(pd,pd,tt))
   if(!is.matrix(mc)) mc <- matrix(mc, pd,tt)
@@ -22,7 +22,7 @@ simulateState <- function(a, S, F, Qi, mc, Qc, runs = 1, tt, r=0){
   states
 }
 
-simulateObs <- function(X, Z, Vi, mc, Vc, runs = 1, r){
+simulateObs <- function(X, Z, Vi, mc=0, Vc=Vi, runs = 1, r=0){
   tt <- (dim(X))[3]-1
   qd <- if(!is.null(dim(Vi))) (dim(Vi))[1] else 1
   pd <- (dim(X))[1]

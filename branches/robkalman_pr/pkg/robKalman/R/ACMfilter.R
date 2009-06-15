@@ -28,7 +28,7 @@
                list( x0 = a,  S0 = S, s0 = s0)}
 
 
-.ACMpredstep <- function (x0, S0, F, Q,  i, rob0, s0, ...)  ### S=P F= Phi
+.ACMpredstep <- function (x0, S0, F, Q, i, rob0, s0, ...)  ### S=P F= Phi
 {
 ###########################################
 ##
@@ -83,7 +83,7 @@
 
     rst <- (y - x1[1])/st
 
-    ps <- psi(rst, apsi, bpsi, cpsi)
+    ps <- psi(rst, apsi, bpsi, cpsi)[1,1]
     dx <- K * st * ps
     x0 <- x1 + dx
 
@@ -93,5 +93,7 @@
     
     S0 <- .getcorrCovACM(S1, K,  Z, W = w*diag(rep(1, nrow(Z))))
 
-    return(list(x0 = x0, K = K,  S0 = S0, Delta=NULL, Ind=ind, rob0=rob1, DeltaY = rst))
+    Delta <- Z %*% S0 %*% t(Z) + V
+        
+    return(list(x0 = x0, K = K,  S0 = S0, Delta=Delta, Ind=ind, rob0=rob1, DeltaY = rst))
 }

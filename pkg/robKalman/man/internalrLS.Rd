@@ -11,13 +11,14 @@ This function is used internally by package robKalman for the rLS filter
 }
 
 \usage{
-.rLScorrstep(y, x1, S1, Z, V,  rob1=NULL, b, norm=Euclideannorm, ...) 
+.rLScorrstep(y, x1, S1, Z, V, i,  rob1=NULL, b, norm=Euclideannorm, ...)
 }
 
 \arguments{
   \item{Z}{observation matrix (see below)}
   \item{V}{observation error covariance (see below)}
   \item{b}{clipping height \code{b} for the rLS filter}
+  \item{i}{the time instance}
   \item{norm}{a function with a numeric vector \code{x} as first argument, 
               returning a norm of \code{x} - not necessarily, but defaulting to, Euclidean norm; 
               used by rLS filter to determine "too" large corrections}

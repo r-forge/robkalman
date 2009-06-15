@@ -27,15 +27,18 @@ multivariate time-invariant, linear, Gaussian state space model may be generated
 <h3>Usage</h3>
 
 <pre>
-rcvmvnorm(mi, Si, mc, Sc, r) 
-simulateState(a, S, F, Q, tt)
-simulateObs(X, Z, Vi, mc, Vc, r)
+rcvmvnorm(runs, mi, Si, mc, Sc, r)
+simulateState(a, S, F, Qi, mc=0, Qc=Qi, runs = 1, tt, r=0)
+simulateObs(X, Z, Vi, mc=0, Vc=Vi, runs = 1, r=0)
 </pre>
 
 
 <h3>Arguments</h3>
 
 <table summary="R argblock">
+<tr valign="top"><td><code>runs</code></td>
+<td>
+number of runs to be generated</td></tr>
 <tr valign="top"><td><code>mi</code></td>
 <td>
 mean of the ideal multivariate normal distribution</td></tr>
@@ -60,9 +63,12 @@ initial state covariance (see below)</td></tr>
 <tr valign="top"><td><code>F</code></td>
 <td>
 innovation transition matrix (see below)</td></tr>
-<tr valign="top"><td><code>Q</code></td>
+<tr valign="top"><td><code>Qi</code></td>
 <td>
-innovation covariance (see below)</td></tr>
+ideal innovation covariance (see below)</td></tr>
+<tr valign="top"><td><code>Qc</code></td>
+<td>
+contaminating innovation covariance (see below)</td></tr>
 <tr valign="top"><td><code>tt</code></td>
 <td>
 length of the simulated series of states/observations</td></tr>
@@ -165,13 +171,13 @@ m0c  &lt;- -30
 V0c  &lt;- 0.1
 ract &lt;- 0.1
 
-X  &lt;- simulateState( a = a0, S = SS0, F = F0, Q = Q0, tt = TT)
+X  &lt;- simulateState( a = a0, S = SS0, F = F0, Qi = Q0, tt = TT)
 Y  &lt;- simulateObs(X = X, Z = Z0, Vi = V0i, mc = m0c, Vc = V0c, r = ract)
 
 </pre>
 
 
 
-<hr><div align="center">[Package <em>robKalman</em> version 0.2.1 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>robKalman</em> version 0.3 <a href="00Index.html">Index</a>]</div>
 
 </body></html>

@@ -1,6 +1,6 @@
 Package: robKalman
-Version: 0.3
-Date: 2009-03-18
+Version: 0.4
+Date: 2009-06-15
 Title: Robust Kalman Filtering
 Description: Routines for Robust Kalman Filtering --- the ACM- and rLS-filter
 Author: Peter Ruckdeschel, Bernhard Spangl, Irina Ursachi, Cezar Chirila

@@ -19,7 +19,7 @@ rLScalibrateB <- function(Z, S, V, repl = 100000, eff, r, upto=20)#
 
  dx <- t(mvrnorm(repl, numeric(pd), S))
  dy <- Z %*% dx + t(mvrnorm(repl, numeric(qd), V))
- K  <- .getKG(S, Z, V)
+ K  <- .getKG(S, Z, .getDelta(S, Z, V))
 
  trS <- sum(diag(.getcorrCov(S, K, Z)))
 

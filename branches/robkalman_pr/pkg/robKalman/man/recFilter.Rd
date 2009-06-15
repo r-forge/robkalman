@@ -13,13 +13,13 @@ time-invariant, linear, Gaussian state space model (ti-l-G-SSM)
 }
 
 \usage{
-recursiveFilter(initSc = .cKinitstep, predSc = .cKpredstep,
+recursiveFilter(Y, a, S, F, Q, Z, V, initSc = .cKinitstep, predSc = .cKpredstep,
                    corrSc = .cKcorrstep,
                    initSr = NULL, predSr = NULL, corrSr = NULL,
                    nsim = 0, seed = NULL, ..., dropRuns = TRUE)
-KalmanFilter(Y, a, S, F, Q, Z, V)
-rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm)
-ACMfilter(Y, a, S, F, Q, Z, V, s0, psi,  apsi, bpsi, cpsi, flag)
+KalmanFilter(Y, a, S, F, Q, Z, V, dropRuns = TRUE)
+rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm, dropRuns = TRUE)
+ACMfilter(Y, a, S, F, Q, Z, V, s0, psi,  apsi, bpsi, cpsi, flag, dropRuns = TRUE)
 }
 
 \arguments{
@@ -65,7 +65,7 @@ ACMfilter(Y, a, S, F, Q, Z, V, s0, psi,  apsi, bpsi, cpsi, flag)
                 and \code{V} to produce a robust correction value \eqn{x_{t|t}}}  
   \item{nsim}{integer; if positive, we simulate a bunch of nsim paths (acc. to ideal model) to get emp. covariances}
   \item{seed}{seed for the simulations}
-  \item{dropruns}{logical; shall run-dimension be collapsed if it is one?}
+  \item{dropRuns}{logical; shall run-dimension be collapsed if it is one?}
   \item{...}{further arguments to the "step"-functions}
 }
 
@@ -198,7 +198,7 @@ m0c  <- -30
 V0c  <- 0.1
 ract <- 0.1
 
-X  <- simulateState( a = a0, S = SS0, F = F0, Q = Q0, tt = TT)
+X  <- simulateState( a = a0, S = SS0, F = F0, Qi = Q0, tt = TT)
 Y  <- simulateObs(X = X, Z = Z0, Vi = V0i, mc = m0c, Vc = V0c, r = ract)
 SS <- limitS(S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i)
 
@@ -216,9 +216,9 @@ erg <- KalmanFilter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i)
 
 rerg1 <- rLSFilter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i, b = B1$b)
 rerg2 <- rLSFilter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i, b = B2$b)
-mean((X - rerg1$Xf)^2) ### empirical MSE of the filters considered
-mean((X - rerg1$Xrf)^2)
-mean((X - rerg2$Xrf)^2)
+mean((X[,1,] - rerg1$Xf)^2) ### empirical MSE of the filters considered
+mean((X[,1,] - rerg1$Xrf)^2)
+mean((X[,1,] - rerg2$Xrf)^2)
 
 }
 

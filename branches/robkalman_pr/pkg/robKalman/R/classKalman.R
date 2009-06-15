@@ -63,4 +63,4 @@
    DeltaY <-  y - Z %*% x1
    x0 <- x1 + K %*% DeltaY
    S0 <- .getcorrCov(S1, K, Z)
-   list(x0  = x0, K = K, S0 = S0, Delta = Delta,  Ind=1, DeltaY = yDelta)}
+   list(x0  = x0, K = K, S0 = S0, Delta = Delta,  Ind=1, DeltaY = DeltaY)}

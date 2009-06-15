@@ -27,8 +27,7 @@
                     s0<-NULL       
                list( x0 = a,  S0 = S, s0 = s0)}
 
-
-.ACMpredstep <- function (x0, S0, F, Q, rob0, s0, ...)  ### S=P F= Phi
+.ACMpredstep <- function (x0, S0, F, Q, i, rob0, s0, ...)  ### S=P F= Phi
 {
 ###########################################
 ##
@@ -48,7 +47,7 @@
     return(list(x1 = F %*% x0, S1 = S1, rob1 = sqrt(S1[1, 1] + s0), Ind=1))
 }
 
-.ACMcorrstep <- function (y, x1, S1, Z, V, rob1, dum=NULL, psi, apsi, bpsi, cpsi, flag, ...)
+.ACMcorrstep <- function (y, x1, S1, Z, V, i, rob1, dum=NULL, psi, apsi, bpsi, cpsi, flag, ...)
 {
 ###########################################
 ##
@@ -71,14 +70,13 @@
 ##              (defaul: a=b=2.5, c=5.0)
 ##  flag ... character, if "weights" (default), use psi(t)/t to calculate 
 ##           the weights; if "deriv", use psi'(t)
-   
     st <- rob1
 
     K <- .getKG(S1, Z, V)
 
     rst <- (y - x1[1])/st
 
-    ps <- psi(rst, apsi, bpsi, cpsi)
+    ps <- psi(rst, apsi, bpsi, cpsi)[1,1]
     dx <- K * st * ps
     x0 <- x1 + dx
 
@@ -87,6 +85,7 @@
     w <- psi(rst,  apsi, bpsi, cpsi, flag)
     
     S0 <- .getcorrCovACM(S1, K,  Z, W = w*diag(rep(1, nrow(Z))))
+    Delta <- Z %*% S0 %*% t(Z) + V
 
-    return(list(x0 = x0, K = K,  S0 = S0, Delta=NULL, Ind=ind, rob0=rob1, DeltaY = rst))
+    return(list(x0 = x0, K = K,  S0 = S0, Delta=Delta, Ind=ind, rob0=rob1, DeltaY = rst))
 }

@@ -62,7 +62,6 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
 # +  dropRuns: shall run-dimension be collapsed if it is one?
 {
  qd <- ifelse(length(Z)==1, 1, (dim(Y))[1])
-
  ########################
  # for backward compatibility
  if (!is.array(Y)){
@@ -79,7 +78,13 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
  IndIO <- NULL
  IndAO <- NULL
  St0s <- St1s <- NULL
+ DeltaYr <- NULL
+ Deltar <- NULL
 
+ if(pd==1) F <- array(F, dim = c(pd,pd,tt))
+ if(pd==1 && qd==1) Z <- array(Z, dim = c(pd,qd,tt))
+ if(pd==1) Q <- array(Q, dim = c(pd,pd,tt))
+ if(qd==1) V <- array(V, dim = c(qd,qd,tt))
  if(is.matrix(F)) F <- array(F, dim = c(pd,pd,tt))
  if(is.matrix(Z)) Z <- array(Z, dim = c(pd,qd,tt))
  if(is.matrix(Q)) Q <- array(Q, dim = c(pd,pd,tt))
@@ -136,7 +141,7 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
  if(robust)
       {
        if(nsim){
-           Xs <- t(rmvnorm(nsim, a, S))
+           Xs <- t(mvrnorm(nsim, a, S))
            St0s <- array(0, c(pd, pd, tt))
            St1s <- array(0, c(pd, pd, tt))
        }
@@ -184,7 +189,7 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
                               ..., rob0 = rob0)
                 IndIO[,i]  <- as.logical(psr$Ind)
                 if(nsim){
-                     vs <- t(rmvnorm(nsim, a*0, Q0))
+                     vs <- t(mvrnorm(nsim, a*0, Q0))
                      Xs <- F0 %*% Xs + vs
                      xr1s <- predSr(x0 = xr0s, S0 = Sr0, F = F0, Q = Q0, i = i,
                                     ..., rob0 = rob0)$x1
@@ -193,7 +198,7 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
            }else{
                 psr <- predSc(x0 = xr0, S0 = Sr0, F = F0, Q = Q0, i = i, ...)
                 if(nsim){
-                     vs <- t(rmvnorm(nsim, a*0, Q0))
+                     vs <- t(mvrnorm(nsim, a*0, Q0))
                      Xs <- F %*% Xs + vs
                      xr1s <- predSc(x0 = xr0s, S0 = Sr0, F = F0, Q = Q0, i = i,
                                     ...)$x1
@@ -232,7 +237,7 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
                               Z = Z0, V = V0, i = i, ..., rob1 = rob1)
                IndAO[,i]  <- as.logical(csr$Ind)
                if(nsim){
-                    es <- t(rmvnorm(nsim, Y[,1]*0, V0))
+                    es <- t(mvrnorm(nsim, Y[,1]*0, V0))
                     Ys <- Z0 %*% Xs + es
                     xr0s <- corrSr(y = Ys, x1 = xr1s, S1 = Sr1,
                                    Z = Z0, V = V0, i = i, ..., rob1 = rob1)$x0
@@ -242,7 +247,7 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
                 csr <- corrSc(y = Y0, x1 = xr1, S1 = Sr1, Z = Z0, V = V0,
                               i = i, ...)
                if(nsim){
-                    es <- t(rmvnorm(nsim, Y[,1]*0, V0))
+                    es <- t(mvrnorm(nsim, Y[,1]*0, V0))
                     Ys <- Z0 %*% Xs + es
                     xr0s <- corrSc(y = Ys, x1 = xr1s, S1 = Sr1,
                                    Z = Z0, V = V0, i = i, ...)$x0
@@ -252,13 +257,13 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
            xr0       <- csr$x0
            Sr0       <- csr$S0
            rob0      <- csr$rob0
-           DeltaYr[,,i] <- cs$DeltaY
+           DeltaYr[,,i] <- csr$DeltaY
 
            Xrf[,, i + 1]  <- xr0
            Str0[,, i + 1] <- S0
            rob0L[[i + 1]] <- rob0
            KGr[,, i]      <- csr$K
-           Deltar[,,  i]  <- cs$Deltar
+           Deltar[,,  i]  <- csr$Delta
           }
  }
 
@@ -287,50 +292,50 @@ list(Xf = Xf, Xp = Xp, Xrf = Xrf, Xrp = Xrp,
 # simple wrappers:
 ######################################################
 
-KalmanFilter <- function(Y, a, S, F, Q, Z, V)#
-#arguments: 
+KalmanFilter <- function(Y, a, S, F, Q, Z, V, dropRuns = TRUE)#
+#arguments:
 # +  Y               :observations
 # +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
-{recursiveFilter(Y, a, S, F, Q, Z, V)}
+{recursiveFilter(Y, a, S, F, Q, Z, V, dropRuns = dropRuns)}
 
-rLSFilter <- function(Y, a, S, F, Q, Z, V, b, norm = EuclideanNorm)#
-#arguments: 
+rLSFilter <- function(Y, a, S, F, Q, Z, V, b, norm = Euclideannorm, dropRuns = TRUE)#
+#arguments:
 # +  Y               :observations
 # +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
 # +  b               :clipping height
-{recursiveFilter(Y, a, S, F, Q, Z, V, 
-                 initSc = .cKinitstep, predSc = .cKpredstep, 
-                 corrSc = .cKcorrstep, 
+{recursiveFilter(Y, a, S, F, Q, Z, V,
+                 initSc = .cKinitstep, predSc = .cKpredstep,
+                 corrSc = .cKcorrstep,
                  #initSr=NULL, predSr=NULL,
-                 initSr = .cKinitstep, predSr = .cKpredstep, 
-                 corrSr = .rLScorrstep, b = b, norm = norm)}
+                 initSr = .cKinitstep, predSr = .cKpredstep,
+                 corrSr = .rLScorrstep, b = b, norm = norm, dropRuns = dropRuns)}
 
 
-ACMfilter <- function(Y, a, S, F, Q, Z, V, s0, psi, apsi, bpsi, cpsi, flag)#
-#arguments: 
+ACMfilter <- function(Y, a, S, F, Q, Z, V, s0, psi, apsi, bpsi, cpsi, flag, dropRuns = TRUE)#
+#arguments:
 # +  Y               :observations
 # +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
-# +  b               :clippingheight 
-##  Y=x ... observed time series 
+# +  b               :clippingheight
+##  Y=x ... observed time series
 ##  a=m0 ... unconditional mean
 ##  S=Cx ... covariance matrix
-##  F=Phi ... design matrix of state equation 
+##  F=Phi ... design matrix of state equation
 ##  Q ... covariance matrix of state innovation process
 ##  Z=H ... observation matrix
 ##  V ... covariance matrix of observation noise
 ##  s0 ... scale of nominal Gaussian component of additive noise
-##  psi ... influence function to be used (default: Hampel's psi function, 
+##  psi ... influence function to be used (default: Hampel's psi function,
 ##          only that is available at the moment)
 ##  apsi, bpsi, cpsi ... tuning constants for Hampel's psi-function
 ##              (default: a=b=2.5, c=5.0)
-##  flag ... character, if "weights" (default), use psi(t)/t to calculate 
+##  flag ... character, if "weights" (default), use psi(t)/t to calculate
 ##           the weights; if "deriv", use psi'(t)
-{recursiveFilter(Y, a, S, F, Q, Z, V, 
-                 initSc = .cKinitstep, predSc = .cKpredstep, 
-                 corrSc = .cKcorrstep, 
-                 initSr = .cKinitstep, predSr = .ACMpredstep, 
-                 corrSr = .ACMcorrstep, s0, psi, 
-                 apsi=2.5, bpsi=2.5, cpsi=5.0, flag)}
+{ recursiveFilter(Y, a, S, F, Q, Z, V,
+                 initSc = .cKinitstep, predSc = .cKpredstep,
+                 corrSc = .cKcorrstep,
+                 initSr = .cKinitstep, predSr = .ACMpredstep,
+                 corrSr = .ACMcorrstep, s0=s0, psi=psi,
+                 apsi=2.5, bpsi=2.5, cpsi=5.0, flag=flag, dropRuns = dropRuns)}
 ###########################################
 ##
 ##  R-function: ACMfilter - approximate conditional-mean filtering
@@ -340,24 +345,24 @@ ACMfilter <- function(Y, a, S, F, Q, Z, V, s0, psi, apsi, bpsi, cpsi, flag)#
 ###########################################
 
 ##  Paramters:
-##  Y=x ... observed time series 
+##  Y=x ... observed time series
 ##  a=m0 ... unconditional mean
 ##  S=Cx ... covariance matrix
-##  F=Phi ... design matrix of state equation 
+##  F=Phi ... design matrix of state equation
 ##  Q ... covariance matrix of state innovation process
 ##  Z=H ... observation matrix
 ##  V ... covariance matrix of observation noise
 ##  s0 ... scale of nominal Gaussian component of additive noise
-##  psi ... influence function to be used (default: Hampel's psi function, 
+##  psi ... influence function to be used (default: Hampel's psi function,
 ##          only that is available at the moment)
 ##  a, b, c ... tuning constants for Hampel's psi-function
 ##              (defaul: a=b=2.5, c=5.0)
-##  flag ... character, if "weights" (default), use psi(t)/t to calculate 
+##  flag ... character, if "weights" (default), use psi(t)/t to calculate
 ##           the weights; if "deriv", use psi'(t)
 
-mACMfilter <- function(Y, a, S, F, Q, Z, V, 
-                       psi=mvpsiHampel, apsi=2.5, bpsi=2.5, cpsi=5.0, 
-                       flag="deriv") 
+mACMfilter <- function(Y, a, S, F, Q, Z, V,
+                       psi=mvpsiHampel, apsi=2.5, bpsi=2.5, cpsi=5.0,
+                       flag="deriv", dropRuns = TRUE)
 {
 ###########################################
 ##
@@ -368,26 +373,26 @@ mACMfilter <- function(Y, a, S, F, Q, Z, V,
 ###########################################
 
 ##  Paramters:
-##  Y ... observed vector-valued time series 
-##        (column-wise, matrix: q rows, number of columns equal to time points) 
+##  Y ... observed vector-valued time series
+##        (column-wise, matrix: q rows, number of columns equal to time points)
 ##  a ... unconditional mean vector (formerly: m0)
 ##  S ... covariance matrix (formerly: Cx)
 ##  F ... design matrix of state equation (formerly: Phi)
-##  Q ... covariance matrix of state innovation process 
+##  Q ... covariance matrix of state innovation process
 ##  Z ... observation matrix (formerly: H)
 ##  V ... covariance matrix of observation noise (formerly: R)
-##  psi ... influence function to be used (default: Hampel's psi function, 
+##  psi ... influence function to be used (default: Hampel's psi function,
 ##          only that is available at the moment)
 ##  apsi, bpsi, cpsi ... tuning constants for Hampel's psi-function
 ##                       (default: a=b=2.5, c=5.0)
-##  flag ... character, weight matrix to be used in correction step, 
-##           if "deriv" (default), Jacobian matrix of multivariate analogue 
-##           of Hampel's psi-function is used (only default is available 
+##  flag ... character, weight matrix to be used in correction step,
+##           if "deriv" (default), Jacobian matrix of multivariate analogue
+##           of Hampel's psi-function is used (only default is available
 ##           at the moment)
 
-    recursiveFilter(Y, a, S, F, Q, Z, V, 
-                initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep, 
-                initSr=.cKinitstep, predSr=.cKpredstep, corrSr=.mACMcorrstep, 
-                psi, apsi, bpsi, cpsi, flag)
+    recursiveFilter(Y, a, S, F, Q, Z, V,
+                initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep,
+                initSr=.cKinitstep, predSr=.cKpredstep, corrSr=.mACMcorrstep,
+                psi, apsi, bpsi, cpsi, flag, dropRuns = dropRuns)
 }
 

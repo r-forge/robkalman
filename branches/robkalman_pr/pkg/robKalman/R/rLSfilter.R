@@ -40,7 +40,7 @@
 ## (simultaneously for cK (x0, x1) )
 
 .rLScorrstep <- function(y, x1, S1, Z, V, i, rob1 = NULL, b,
-                         norm = EuclideanNorm, ...)
+                         norm = Euclideannorm, ...)
   {Delta <- .getDelta(S1, Z, V)
    K   <- .getKG(S1, Z, Delta)
    DeltaY <- y - Z %*% x1
