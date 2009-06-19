@@ -54,6 +54,14 @@
 <param name="Local" value="recFilter.html">
 </OBJECT>
 <LI> <OBJECT type="text/sitemap">
+<param name="Name" value="rLS.AO.Filter">
+<param name="Local" value="recFilter.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="rLS.IO.Filter">
+<param name="Local" value="recFilter.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
 <param name="Name" value="rLScalibrateB">
 <param name="Local" value="calibrateRLS.html">
 </OBJECT>

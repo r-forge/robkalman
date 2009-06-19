@@ -46,8 +46,11 @@ yet to be filled}
 general recursive filters
 +recursiveFilter
  -KalmanFilter 
- -rLSFilter
+ -rLSFilter:
+    *rLS.AO.Filter
+    *rLS.IO.Filter
  -ACMfilter
+ -mACMfilter
 
 ACMfilter:
 +ACMfilt

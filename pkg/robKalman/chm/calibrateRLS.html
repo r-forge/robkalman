@@ -24,7 +24,7 @@ calibrates the clipping height <code>b</code> of the rLS-filter in a time-invari
 <h3>Usage</h3>
 
 <pre>
-rLScalibrateB(Z, S, V, repl = 100000, eff, r, upto=20)
+rLScalibrateB(Z, S, V, repl = 100000, eff, r, upto=20, IO = FALSE)
 </pre>
 
 
@@ -52,6 +52,9 @@ number of replicates used for a LLN-approximation of the expectations needed in 
 <tr valign="top"><td><code>upto</code></td>
 <td>
 an upper bound to <code>b</code> used in the zero-search of <code>uniroot</code> within <code>rLScalibrateB</code></td></tr>
+<tr valign="top"><td><code>IO</code></td>
+<td>
+logical of length 1: Is it rLS.IO (<code>TRUE</code>) or rLS[.AO] which is to be calibrated?</td></tr>
 </table>
 
 <h3>Details</h3>
@@ -118,6 +121,6 @@ SS &lt;- limitS(S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i)
 
 
 
-<hr><div align="center">[Package <em>robKalman</em> version 0.2.1 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>robKalman</em> version 0.3 <a href="00Index.html">Index</a>]</div>
 
 </body></html>

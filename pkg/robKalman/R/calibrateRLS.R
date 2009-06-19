@@ -1,4 +1,4 @@
-rLScalibrateB <- function(Z, S, V, repl = 100000, eff, r, upto=20)#  
+rLScalibrateB <- function(Z, S, V, repl = 100000, eff, r, upto=20, IO = FALSE)#
 # calibrates clipping height b to given Z, V, and S_{t|t-1} 
 # --- 
 #      either to given efficiency in the ideal model
@@ -15,8 +15,6 @@ rLScalibrateB <- function(Z, S, V, repl = 100000, eff, r, upto=20)#
  qd <- ifelse(length(Z)==1, 1, (dim(Z))[1])
  pd <- ifelse(length(S)==1, 1, (dim(Z))[2])
  
- ep <- 1+numeric(pd)
-
  dx <- t(mvrnorm(repl, numeric(pd), S))
  dy <- Z %*% dx + t(mvrnorm(repl, numeric(qd), V))
  K  <- .getKG(S, Z, .getDelta(S, Z, V))
@@ -24,13 +22,19 @@ rLScalibrateB <- function(Z, S, V, repl = 100000, eff, r, upto=20)#
  trS <- sum(diag(.getcorrCov(S, K, Z)))
 
  dx0 <- K %*% dy
- no  <- sqrt(t(ep) %*% dx0^2)
+
+ if(IO){
+    dx0 <- dy - Z %*% dx0
+ }
+ no  <- sqrt(colSums(dx0^2))
+
 
  if (missing(r))  ## calibrated to given efficiency
     {f  <- function(b, dX = dx, dX0 = dx0, no0 = no, r0 = r,
-                    eff0 = eff, trS0 = trS, repl0 = repl)
+                    eff0 = eff, trS0 = trS, repl0 = repl, dY = dy)
         {w <- ifelse(no0 < b, 1, b/no0)
          dxw <- as.vector(w) * t(dX0)
+         if(IO) dxw <-  (t(dY) - dxw) %*% t(ginv(Z))
          trSb <- sum( (t(dX) - dxw)^2 )/repl0
          trS0 / trSb - eff0
         }    
@@ -38,8 +42,8 @@ rLScalibrateB <- function(Z, S, V, repl = 100000, eff, r, upto=20)#
     eff1 <- eff
     }
  else  ## calibrated to given radius
-   {f  <- function(b, dX = dx, dX0 = dx0, no0 = no, r0=r, 
-                   eff0 = eff,  trS0 = trS, repl0 = repl)
+   {f  <- function(b, dX = dx, dX0 = dx0, no0 = no, r0 = r,
+                   eff0 = eff,  trS0 = trS, repl0 = repl, dY = dy)
           {(1 - r0)/r0 * sum(pmax(no0 / b - 1, 0))/repl0 - 1}
     r1 <- r
     eff1 <- NULL
@@ -47,7 +51,8 @@ rLScalibrateB <- function(Z, S, V, repl = 100000, eff, r, upto=20)#
 
  erg <- uniroot(f, interval = c(10^-6, upto*sqrt(trS)), tol = 10^-7,
                 dX = dx, dX0 = dx0, no0 = no, 
-                eff0 = eff1, trS0 = trS, repl0 = repl, r0 = r1)
+                eff0 = eff1, trS0 = trS, repl0 = repl, r0 = r1,
+                dY = dy)
  b   <- erg$root
 
  if (missing(r)) ### corresponding radius is calculated
@@ -56,6 +61,7 @@ rLScalibrateB <- function(Z, S, V, repl = 100000, eff, r, upto=20)#
  else           ### corresponding effciency is calculated  
    { w <- ifelse(no < b, 1, b / no)
          dxw  <- as.vector(w) * t(dx0)
+         if(IO) dxw <-  (t(dy) - dxw) %*% t(ginv(Z))
          trSb <- sum( (t(dx) - dxw)^2 )/repl
          eff  <- trS / trSb
    }

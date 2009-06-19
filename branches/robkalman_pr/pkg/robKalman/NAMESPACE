@@ -3,7 +3,8 @@ import("stats")
 import("MASS")
 import("startupmsg")
 
-export("ACMfilt", "ACMfilter", "arGM", "Euclidnorm",  
+export("ACMfilt", "ACMfilter", "arGM", "Euclideannorm",  
        "simulateState", "simulateObs", "rcvmvnorm", "Huberize",
-       "rLScalibrateB", "limitS", "rLSFilter", "KalmanFilter", 
+       "rLScalibrateB", "limitS", "rLSFilter", "rLS.IO.Filter",
+       "rLS.AO.Filter", "KalmanFilter", 
        "recursiveFilter")

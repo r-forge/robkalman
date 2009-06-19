@@ -54,3 +54,21 @@
    else
       Ind <- apply(dx, 2, function(xx) norm(xx)>1)
    list(x0  = x0, K = K, S0 = S0, Delta = Delta, Ind = Ind, DeltaY = DeltaY)}
+
+
+.rLS.IO.corrstep <- function(y, x1, S1, Z, V, i, rob1 = NULL, b,
+                         norm = Euclideannorm, ...)
+  {Delta <- .getDelta(S1, Z, V)
+   K   <- .getKG(S1, Z, Delta)
+   DeltaY <- y - Z %*% x1
+   dx <- K %*% DeltaY
+   de <- DeltaY-Z%*%dx
+   if(length(b)>1)
+      b <- b[min(i,length(b))]
+   x0 <- x1 + ginv(Z)%*%(DeltaY-Huberize(de, b, norm = norm))
+   S0  <- .getcorrCov(S1, K, Z)
+   if  (ncol(x1)==1)
+      Ind <- (norm(de)>1)
+   else
+      Ind <- apply(de, 2, function(xx) norm(xx)>1)
+   list(x0  = x0, K = K, S0 = S0, Delta = Delta, Ind = Ind, DeltaY = DeltaY)}

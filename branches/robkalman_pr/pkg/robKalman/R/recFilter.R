@@ -310,6 +310,23 @@ rLSFilter <- function(Y, a, S, F, Q, Z, V, b, norm = Euclideannorm, dropRuns = T
                  initSr = .cKinitstep, predSr = .cKpredstep,
                  corrSr = .rLScorrstep, b = b, norm = norm, dropRuns = dropRuns)}
 
+##just a synonym for AO/SO robust filter
+rLS.AO.Filter <- rLSFilter
+
+## IO robust filter
+rLS.IO.Filter <- function(Y, a, S, F, Q, Z, V, b, norm = Euclideannorm,
+                          dropRuns = TRUE)#
+#arguments:
+# +  Y               :observations
+# +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
+# +  b               :clipping height
+{recursiveFilter(Y, a, S, F, Q, Z, V,
+                 initSc = .cKinitstep, predSc = .cKpredstep,
+                 corrSc = .cKcorrstep,
+                 #initSr=NULL, predSr=NULL,
+                 initSr = .cKinitstep, predSr = .cKpredstep,
+                 corrSr = .rLS.IO.corrstep, b = b, norm = norm, dropRuns = dropRuns)}
+
 
 ACMfilter <- function(Y, a, S, F, Q, Z, V, s0, psi, apsi, bpsi, cpsi, flag, dropRuns = TRUE)#
 #arguments:
