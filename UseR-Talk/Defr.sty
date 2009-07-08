@@ -1,0 +1,353 @@
+% -----------------------------------------------------------------------
+%                               defr.sty
+%             Befehle von H. Rieder
+%             erweitert von P.Ruckdeschel und M.Kohl
+%
+%
+% -----------------------------------------------------------------------
+%                                MACROS
+% -----------------------------------------------------------------------
+\newcommand{\Ds}{\displaystyle} \newcommand{\Ts}{\textstyle}
+\newcommand{\Ss}{\scriptstyle}  \newcommand{\SSs}{\scriptscriptstyle}
+% -----------------------------------------------------------------------
+\newcommand{\nz}{\normalsize}\newcommand{\sz}{\small}
+\newcommand{\fz}{\footnotesize}
+% -----------------------------------------------------------------------
+%      Laengen    und qed
+% -----------------------------------------------------------------------
+\newlength{\ei}\ei=0.0138888889em
+\newlength{\eN}\settowidth{\eN}{--}
+\newlength{\SyW}  \newlength{\SyyW}%
+\newlength{\weit}  \newlength{\lang}  \newlength{\hoch}
+\newlength{\msu}  \msu=\mathsurround % \AzP=\msu  gesetzt
+\newcommand{\weg}{\hspace{\msu}}\newcommand{\ran}{\hspace{-\mathsurround}}
+\ifx\qed\undefined
+\newcommand{\qed}{\nopagebreak\hspace*{\fill}\mbox{\scriptsize\rm
+  {/}\hspace{-13\ei}{/}\hspace{-13\ei}{/}\hspace{-13\ei}{/}}}   % .\qed !
+\else
+\renewcommand{\qed}{\nopagebreak\hspace*{\fill}\mbox{\scriptsize\rm
+  {/}\hspace{-13\ei}{/}\hspace{-13\ei}{/}\hspace{-13\ei}{/}}}   % .\qed !
+\fi
+% -----------------------------------------------------------------------
+\newcommand{\asy}{\mbox{as\hskip-4\ei y\hskip-16\ei.}\hskip12\ei}
+% \renewcommand{\asy}{\mbox{as\hskip-3\ei y\hskip-6\ei.}\hskip12\ei}
+\newcommand{\Asy}{\mbox{As\hskip-4\ei y\hskip-16\ei.}\hskip12\ei}
+% \renewcommand{\Asy}{\mbox{as\hskip-1\ei y\hskip-3\ei.}\hskip12\ei}
+% -----------------------------------------------------------------------
+\newcommand{\Nmax}{\max\nolimits}
+\newcommand{\Nmin}{\min\nolimits}
+\newcommand{\Nsup}{\sup\nolimits}
+\newcommand{\Ninf}{\inf\nolimits}
+\newcommand{\Nsum}{\sum\nolimits}
+\newcommand{\Nprod}{\prod\nolimits}
+% -----------------------------------------------------------------------
+\newcommand{\SMsup}{\mathop{\smash{\sup}\vphantom{m}}}
+% -----------------------------------------------------------------------
+\newcommand{\Tfrac}[2]{{\Ts\frac{#1}{#2}}}
+\newcommand{\Tsum}{\mathop{\Ts\sum}\nolimits}
+\newcommand{\Tint}{\mathop{\Ts\int}\nolimits}
+%                          P.R. zus"atzlich 30-10-00
+\newcommand{\Tprod}{\mathop{\Ts\prod}\nolimits}
+\newcommand{\Tmax}{\mathop{\Ts\max}\nolimits}
+\newcommand{\Tmin}{\mathop{\Ts\min}\nolimits}
+% -----------------------------------------------------------------------
+\newcommand{\Dsum}{\mathop{\Ds\sum}\nolimits}
+\newcommand{\Dint}{\mathop{\Ds\int}\nolimits}
+\newcommand{\Dmax}{\mathop{\Ds\max}\nolimits}
+\newcommand{\Dmin}{\mathop{\Ds\min}\nolimits}
+% -----------------------------------------------------------------------
+%                          Mathematical Symbols
+% -----------------------------------------------------------------------
+\newcommand{\gP}{{\mbox{\Large.}}}
+%\newcommand{\so}{\;\Longrightarrow\;}
+%%Konflikt mit Grafikpaket!!
+\newcommand{\also}{\mathrel{\Longrightarrow}}
+\newcommand{\wi}{\mathrel{\widehat{=}}} %  use: \simeq
+\newcommand{\tur}[3]{\mathrel{\mathop{#2}\limits^{#1}_{#3}}}
+%
+\newcommand{\ggrto}{\relbar\joinrel\longrightarrow}
+% -------  Schwache Konvergenz------------------------------------
+\newcommand{\wto}{\mathrel{\mathsurround0em \mbox{$\longrightarrow$}%
+  \llap{\settowidth{\SyW}{$\longrightarrow$}%             \protect in @{}
+  \raisebox{-.15ex}{\makebox[\SyW]{\scriptsize\rm w}}}}}
+\newcommand{\gwto}{\mathrel{\mathsurround0em \mbox{$\ggrto$}%
+  \llap{\settowidth{\SyW}{$\ggrto$}%                      \protect in @{}
+  \raisebox{-.15ex}{\makebox[\SyW]{\scriptsize\rm w}}}}}
+% -------Ruckdeschel: Vage Konvergenz------------------------------------
+\newcommand{\vto}{\mathrel{\mathsurround0em \mbox{$\longrightarrow$}%
+  \llap{\settowidth{\SyW}{$\longrightarrow$}%             \protect in @{}
+  \raisebox{-.15ex}{\makebox[\SyW]{\scriptsize\rm v}}}}}
+\newcommand{\gvto}{\mathrel{\mathsurround0em \mbox{$\ggrto$}%
+  \llap{\settowidth{\SyW}{$\ggrto$}%                      \protect in @{}
+  \raisebox{-.15ex}{\makebox[\SyW]{\scriptsize\rm v}}}}}
+% -----------------------------------------------------------------------
+\newcommand{\Not}[1]{\mathrel{\mathsurround0em \mbox{$#1$}%
+  \llap{\settowidth{\SyW}{$#1$}\makebox[\SyW]{\rm/}}}} %  \protect in @{}
+% -----------------------------------------------------------------------
+\newcommand{\wsup}{\mathop{\rm sup\vphantom{f}}\nolimits}
+\newcommand{\winf}{\mathop{\rm inf\vphantom{p}}\nolimits}
+%
+\newcommand{\argmin}{\mathop{\rm argmin}}
+\newcommand{\argmax}{\mathop{\rm argmax}}
+% -----------------------------------------------------------------------
+\newcommand{\maxev}{\mathop{\rm max\hspace*{6\ei}ev}\nolimits}
+\newcommand{\minev}{\mathop{\rm min\hspace*{6\ei}ev}\nolimits}
+% -----------------------------------------------------------------------
+% Landau O/o's
+% -----------------------------------------------------------------------
+\newcommand{\Lo}{\mathop{\rm {{}o{}}}\nolimits}
+\newcommand{\LO}{\mathop{\rm {{}O{}}}\nolimits}
+%neues Landau-o:
+\newcommand{\LB}{\mathop{\rm {{}\hat{O}{}}}\nolimits}
+% -----------------------------------------------------------------------
+% Identitaet id % Spur tr % Rang rk % Image im  % sign
+\newcommand{\Id}{\mathop{\rm id}\nolimits}
+\newcommand{\tr}{\mathop{\rm tr}\nolimits}
+\newcommand{\rk}{\mathop{\rm rk}\nolimits}
+\newcommand{\im}{\mathop{\rm im}\nolimits}
+\newcommand{\zi}{\mathop{\rm sign}\nolimits}
+% Jndicator J / Dirac  % J \magstephalf(11pt)   % J large(12pt)
+\newcommand{\Jc}{\mathop{\bf\rm{{}I{}}}\nolimits}
+\newcommand{\hJc}{\mathop{\mbox{\hMtenbf I}}\nolimits}
+\newcommand{\lJc}{\mathop{\mbox{\large\bf I}}\nolimits}
+% -----------------------------------------------------------------------
+%
+% offener Kern: ^{\rm o} % \max {!} \min {!}    % nicht nach Bin Rel
+
+% Probability Pr       % Pr \magstephalf(11pt)  % Pr large(12pt)
+% \renewcommand{\Pr}{\mathop{\rm Pr}\nolimits}
+%\newcommand{\hPr}{\mathop{\mbox{\hMtenrm Pr}}\nolimits}
+\newcommand{\lPr}{\mathop{\mbox{\large\rm Pr}}\nolimits}
+%
+%von P.R.
+\newcommand{\Pbb}{\mathop{\mbox{${\mathbb{P}}$}}}           %abstrakte W-keit
+\newcommand{\sPbb}{\mathop{\mbox{$\Ss{\mathbb{P}}$}}}
+%
+% Expectation E        % E \magstephalf(11pt)   % E large(12pt)
+\newcommand{\Ew}{\mathop{\rm {{}E{}}}\nolimits} % mathop erkennt nur (
+\newcommand{\hEw}{\mathop{\mbox{\hMtenrm E}}\nolimits}  % nicht |
+\newcommand{\lEw}{\mathop{\mbox{\large\rm E}}\nolimits} % als delim !
+%
+% P.R.:ge-hut-ete Erwartungswerte
+\newcommand{\huEw}{\mathop{\widehat{\rm {}E{}}}\nolimits} % mathop erkennt nur (
+\newcommand{\huhEw}{\mathop{\widehat{\mbox{\hMtenrm E}}}\nolimits}  % nicht |
+\newcommand{\hulEw}{\mathop{\widehat{\mbox{\large\rm E}}}\nolimits} % als delim !
+%
+%% Varianz Var, Kovarianz Cov % or single {\cal C} letter in mathmode
+\newcommand{\Var}{\mathop{\rm Var}\nolimits}    % extra \,space
+\newcommand{\Cov}{\mathop{\rm Cov}\nolimits}    % \! auch in \Ss
+% Law
+\newcommand{\Lw}{\mathop{\mathsurround0em\mbox{${\cal L}$}}\nolimits}
+\newcommand{\lLw}{\mathop{\mathsurround0em\mbox{\large${\cal L}$}}\nolimits}
+% -----------------------------------------------------------------------
+%                    Mathematical Symbols (msam)
+% -----------------------------------------------------------------------
+\newfont{\tenmsxm}{msam10}                                 % \mathchardef
+\newcommand{\Szu}{\mathrel{\mbox{\tenmsam\char32}}}        % \leadsto
+% \newcommand{\gSzu}{\sim\joinrel\Szu}           % \sim \relbar \mapsto ?
+% -----------------------------------------------------------------------
+\font\hMtenrm=cmr10 scaled \magstephalf %11pt roman %at 11pt % LaTeX \load
+\font\hMtenbf=cmbx10 scaled \magstephalf %11pt roman %at 11pt % LaTeX \load
+% -----------------------------------------------------------------------
+%                    Blackboard Bold Symbols (msbm)
+% -----------------------------------------------------------------------
+ \newfont{\sevmsbm}{msbm7}     \newfont{\eitmsbm}{msbm8}
+ \newfont{\tenmsbm}{msbm10}   % werden folgend eingefuehrt! %  \Bb
+\font\hMtenmsbm=msbm10  scaled \magstephalf % at 11pt % LaTeX \load
+\font\oMtenmsbm=msbm10  scaled \magstep1    % at 12pt % LaTeX \load
+% -----------------------------------------------------------------------
+\ifx\UseBeam\undefined
+\makeatletter                  % \Bb
+\def\magstepams#1{\ifcase#1 \magstep0\or\magstephalf\or\magstep1\fi\relax}
+\font\tenmsbm=msbm10 scaled \magstepams\@ptsize
+\font\sevmsbm=msbm7 scaled \magstepams\@ptsize
+\def\relaxnext@{\let\next\relax}   \def\noaccents@{\def\accentfam@{0}}
+\newfam\msbmfam \textfont\msbmfam=\tenmsbm \scriptfont\msbmfam=\sevmsbm
+\def\Bberr{Use Black board bold only in math mode}
+\def\Bb{\relaxnext@\ifmmode\let\next\Bb@\else
+        \def\next{\errmessage{\Bberr}}\fi\next}
+\def\Bb@#1{{\Bb@@{#1}}}\def\Bb@@#1{\noaccents@\fam\msbmfam#1}\makeatother
+\fi
+% -----------------------------------------------------------------------
+% alte BB-Buchstaben
+% -----------------------------------------------------------------------
+%\newcommand{\EM}{{\mbox{\tenmsbm I}}}       % Einheitsmatrix Emat
+%\newcommand{\sEM}{{\mbox{\sevmsbm I}}}      % Emat script
+%\newcommand{\hEM}{{\mbox{\hMtenmsbm I}}}  % Emat \magstephalf(11pt)
+%\newcommand{\oEM}{{\mbox{\oMtenmsbm I}}}  % Emat \magstepone(12pt)
+%\newcommand{\N}{{\mbox{\tenmsbm N}}}        % naturals
+%\newcommand{\sN}{{\mbox{\sevmsbm N}}}       % naturals script
+%\newcommand{\Z}{{\mbox{\tenmsbm Z}}}        % integers
+% \newcommand{\sZ}{{\mbox{\sevmsbm Z}}}       % integers script
+% \newcommand{\Q}{{\mbox{\tenmsbm Q}}}        % rationals
+% \newcommand{\sQ}{{\mbox{\sevmsbm Q}}}       % rationals script
+%\newcommand{\R}{{\mbox{\tenmsbm R}}}        % reals
+%\newcommand{\sR}{{\mbox{\sevmsbm R}}}       % reals script
+%\newcommand{\C}{{\mbox{\tenmsbm C}}}        % complexs
+% \newcommand{\sC}{{\mbox{\sevmsbm C}}}       % complexs script
+%\newcommand{\B}{{\mbox{\tenmsbm B}}}        % borels
+%\newcommand{\sB}{{\mbox{\sevmsbm B}}}       % borels script
+% -----------------------------------------------------------------------
+% neue BB-Buchstaben
+% -----------------------------------------------------------------------
+\newcommand{\B}{\mathbb B}
+\newcommand{\C}{\mathbb C}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\N}{\mathbb N}
+\newcommand{\EM} {{\mathbb I}}
+\newcommand{\sB}{{\Ss \mathbb B}}
+\newcommand{\sC}{{\Ss \mathbb C}}
+\newcommand{\sR}{{\Ss \mathbb R}}
+\newcommand{\sQ}{{\Ss \mathbb Q}}
+\newcommand{\sZ}{{\Ss \mathbb Z}}
+\newcommand{\sN}{{\Ss \mathbb N}}
+\newcommand{\sEM} {{\Ss \mathbb I}}
+\newcommand{\hEM}{{\mbox{\hMtenmsbm I}}}  % Emat \magstephalf(11pt)
+\newcommand{\oEM}{{\mbox{\oMtenmsbm I}}}  % Emat \magstepone(12pt)
+% -----------------------------------------------------------------------
+\newcommand{\Rq}{{\smash{\bar{\R}}\vphantom{\R}}}    % extended reals
+ \newcommand{\sRq}{{\smash{\bar{\sR}}\vphantom{\sR}}} % extended reals script
+\newcommand{\Bq}{{\smash{\bar{\B}}\vphantom{\B}}}    % extended borels
+ \newcommand{\sBq}{{\smash{\bar{\sB}}\vphantom{\sB}}} % extended borels script
+% -----------------------------------------------------------------------
+% von P.R. eingefuehrte Befehle
+% -----------------------------------------------------------------------
+\newcommand{\exor}{\mathrel{{\Ts\bigtriangleup}}}
+%
+\newcommand{\iid}{\mathrel{\stackrel{\rm\SSs i.i.d.}{\sim}}}
+% uiv von P.R.
+\newcommand{\uiv}{\mathrel{\rm u.i.v.}}
+\newcommand{\uivs}{\mathrel{\stackrel{\rm \SSs u.i.v.}{\sim}}}
+% %
+% Peter R. : abzaehlbar enthalten in
+\newcommand{\Zsubset}{\joinrel\subset_{\mbox{\sixmsym Z}}}
+
+%\newcommand{\csubset}{\mathsurround0em \mathrel{\mbox{$\subset$}%
+%\llap{\settowidth{\SyyW}{$\subset$}%             \protect in @{}
+%      \raisebox{.15ex}{\makebox[\SyyW]{\,\,\Ss \subset}}%
+%      }%
+%           }}%
+\newcommand{\csubset}{\mathrel{\Subset}} % kompakt enthalten in
+%
+\DeclareMathOperator*{\esssup}{ess\; sup}
+%
+% -----------------------------------------------------------------------%
+% Teilbarkeit P.R. 23-06-03
+\newcommand{\divid}{{}\mathop{\mid}{}}
+\newcommand{\dividn}{{}\mathop{\nmid}{}}
+% -----------------------------------------------------------------------%
+% Vektorbefehle
+\renewcommand{\vec}{\mathop{\rm vec}\nolimits}
+\newcommand{\vech}{\mathop{\rm vech}\nolimits}
+\newcommand{\osk}{\mathrel{\circledcirc}}
+% Matrizenbefehle
+\newcommand{\diag}{\mathop{\rm diag}\nolimits}             %Diagonale
+\newcommand{\ndiag}[1]{{\mathop{\rm ndiag}_{#1}}\nolimits} %Nebendiagonale Nummer #
+\newcommand{\cond}{\mathop{\rm cond}\nolimits}             %Condition einer Matrix
+\newcommand{\spec}{\mathop{\rm spec}\nolimits}             %Spektrum einer Matrix
+%
+\newcommand{\oP}{\mathop{\rm oP}\nolimits}          %orthogonale Projektion
+%
+\newcommand{\cl}{\mathop{\it c\ell}\nolimits}
+\newcommand{\clin}{\mathop{\cl\lin}\nolimits}
+\newcommand{\cqlin}{\mathop{{\cl\hskip6\ei}'\lin}\nolimits} % \cl_1 \cl^{1}
+%
+\newcommand{\lin}{\mathop{\rm lin}\nolimits}        %lineare Huelle
+\newcommand{\UVR}{\mathop{\rm span}\nolimits}       %abgeschl. lineare Huelle
+\newcommand{\Eig}{\mathop{\rm Eig}}                 %Eigenraum
+\newcommand{\dIm}{\mathop{\rm dim}\nolimits}        %Dimension (eines Vektors)
+%
+%Statistik
+\newcommand{\MSE}{\mathop{\rm MSE}}
+\newcommand{\med}{\mathop{\rm med}\nolimits}
+%
+\newcommand{\sign}{\mathop{\rm sign}\nolimits}   %alternativ zu \zi
+\newcommand{\logit}{\mathop{\rm logit}\nolimits} %logist-Funktion
+% Rundung, Algebra
+\newcommand{\mmod}{\mathop{\rm mod}}
+\newcommand{\ceil}{\mathop{\rm ceil}\nolimits}
+\newcommand{\floor}{\mathop{\rm floor}\nolimits}
+\newcommand{\ggT}{\mathop{\rm ggT}\nolimits}        % gr"o"ster gemeinsamer Teiler
+\newcommand{\kgV}{\mathop{\rm kgV}\nolimits}        % kleinstes gemeinsamer Vielfaches
+%
+% Abstand
+\newcommand{\dist}{\mathop{\rm dist}\nolimits}
+%%%%%%%%%%%%%%%%%%%
+\newcommand{\ve}{\varepsilon}
+\def\non{\nonumber}
+%\def\ol{\overline}
+%\def\ul{\underline}
+\def\overset{\stackrel{\rm \SSs def}{=}}
+\def\wh{\widehat}
+\def\wt{\widetilde}
+%
+\newcommand{\mybm}[1]{\mbox{\protect\boldmath ${#1}$\unboldmath}} %fette Zeichen im Mathemodus
+%
+% -----------------------------------------------------------------------
+%                               LISTEN
+% -----------------------------------------------------------------------
+% ABC abclist                      % Bspx0078 (\listparindent=\parindent)
+\newcommand{\rfi}[1]{\makebox[\parindent][l]{%
+                     \makebox[0em][r]{\rm(}\sf#1\rm)}}
+\newcounter{ABCc}\renewcommand{\theABCc}{\alph{ABCc}}
+\newenvironment{ABC}{\begin{list}{%    VE LABELWIDTH 1em + LABELSEP 0.5em
+  \rfi{\theABCc}}{\usecounter{ABCc} \topsep 0ex \partopsep 0ex \itemsep0ex
+  \parsep=\parskip \leftmargin 0em \rightmargin 0em \itemindent=\parindent
+  \listparindent=\parindent  \labelsep 0em \labelwidth 0em }}{\end{list}}
+% -----------------------------------------------------------------------
+% Lii Liste                                     % see PJH.TeX and VWT.TeX
+\newcounter{iic}\renewcommand{\theiic}{\roman{iic}}%
+\newenvironment{Lii}{\begin{list}{%   VE LABELWIDTH 1em + LABELSEP 0.5em
+  \makebox[2\parindent]{\makebox[0em]{{\rm(\theiic)}}}}{\usecounter{iic}
+  \topsep=.33\smallskipamount \partopsep0ex \itemsep0ex \parsep=\parskip
+  \leftmargin0em \rightmargin0em \itemindent0em
+  \listparindent=\parindent \labelsep0em \labelwidth0em    }}{\end{list}}
+% -----------------------------------------------------------------------
+% P.Ruckdeschel Lii als eingerueckte Liste
+\newcounter{iirc}\renewcommand{\theiirc}{\roman{iirc}}%
+\newenvironment{Liir}{\begin{list}{%   VE LABELWIDTH 1em + LABELSEP 0.5em
+  \makebox[2\parindent]{\makebox[2em]{{\rm(\theiirc)}}}}{\usecounter{iirc}
+  \topsep=.33\smallskipamount \partopsep0ex \itemsep0ex \parsep=\parskip
+  \leftmargin2em \rightmargin0em \itemindent1em
+  \listparindent=\parindent \labelsep2em \labelwidth0em    }}{\end{list}}
+% -----------------------------------------------------------------------
+% KGL bulletlist                   % Bspx0078 (\listparindent=\parindent)
+\newenvironment{KGL}{\begin{list}{%     wichtig vor \makebox[w][p]{} !!
+  \makebox[2\parindent][l]{\mathsurround0em\hskip\parindent$\bullet$}}{
+  \topsep=\smallskipamount \partopsep0ex \itemsep0ex \parsep=\parskip
+  \leftmargin=2\parindent \rightmargin=\parindent \listparindent=\parindent
+  \itemindent0em \labelsep0em \labelwidth=\leftmargin      }}{\end{list}}
+% -----------------------------------------------------------------------
+% EPL epische Liste mit Abstand          % in UFC.TeX % 5000 defaults 150
+\newenvironment{EPL}{\begin{list}{\empty}{\topsep=\parskip \partopsep0ex
+  \itemsep=\parskip \parsep=\parskip \leftmargin0em \rightmargin0em
+  \itemindent=\parindent \listparindent=\parindent \labelsep0em
+  \labelwidth0em \clubpenalty5000 \widowpenalty5000        }}{\end{list}}
+% -----------------------------------------------------------------------
+% FBXL  \fbox Liste mit Abstand                              % in RGE.TeX
+\newenvironment{FBXL}{\begin{list}{\empty}{\topsep=3\smallskipamount
+  \partopsep0ex \itemsep=1.5\smallskipamount \parsep=\parskip
+  \leftmargin0em \rightmargin0em \itemindent=\parindent
+  \listparindent=\parindent \labelsep0em \labelwidth0em
+  \clubpenalty8000\widowpenalty8000\displaywidowpenalty1000}}{\end{list}}
+% -----------------------------------------------------------------------
+% little helper
+\newcommand{\uu}[1]{\underline{#1}}
+% -----------------------------------------------------------------------
+% little href-stuff
+\newcommand{\hreff}[1]{\href{{#1}}{\footnotesize{\tt #1}}}
+\newcommand{\mref}[2][normal]{\href{{mailto:#2}}{\color{#1}%
+                              {\tt #2}\color{normal}}}
+\newcommand{\urlt}[1]{\tiny\url{#1}}
+\newcommand{\urlf}[1]{\footnotesize\url{#1}}
+% -----------------------------------------------------------------------
+% color-stuff
+\ifx\UseBeam\undefined\relax\else
+\makeatletter
+\newcommand{\greenRightarrow}{\color{beamer@pantonegreen}%
+                         \Rightarrow\color{black}}
+\makeatother
+\fi
+% -----------------------------------------------------------------------

@@ -1,0 +1,523 @@
+% ------------------------------------------------------------------------
+% Vortrag: Rennes 08.07.09
+% ------------------------------------------------------------------------
+% name: ruckd_spangl_rennes09.tex
+% ------------------------------------------------------------------------
+%
+%\def\PRFourSided{1} % angeschaltet: 4seitig / auskommentiert: 1seitig
+\def\PRStyles{1}
+\def\PRSweave{1}
+\def\PRBeamer{1}   % angeschaltet: Handout / auskommentiert: Vortrag
+\def\PRfrutiger{1} % angeschaltet: Frutiger Fonts / auskommentiert: Times
+%
+%---------------------------------------------------------------------------
+%
+\def\LRGRA{\mbox{\parbox[t]{0.51cm}{\includegraphics[%bb=0 20 100 50, scale=.4,
+width=.9cm]{Rlogo}}}}
+\def\RGRA{\mbox{\parbox[t]{0.51cm}{\includegraphics[%bb=0 20 100 50, scale=.4,
+width=.5cm]{Rlogo}}}}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifx\PRBeamer\undefined%
+%
+% we use handout
+%
+  \documentclass[handout]{beamer}%
+%
+\def\hup{0cm}
+%\def\RGRA{\sf R}
+%\def\LRGRA{\sf\LARGE R}
+\def\nL{\newline}
+%
+\else%
+%
+% we use beamer slides
+%
+   \documentclass[10pt]{beamer}
+\def\hup{-18cm}
+
+\def\nL{\relax }
+%
+\fi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%Preamble:
+%%
+\usepackage{beamer_pre_ITWM}
+\usepackage{RColorBrew}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% particular packages for this talk:
+%
+\RequirePackage{multirow}
+\newcommand{\Person}[1]{\protect{\color{Dark2.3}\bf #1}}
+\newcommand{\hreft}[1]{{\href{#1}{{\color{Dark2.4}\url{#1}}}}}
+\newcommand{\pkg}[1]{\protect{\color{Dark2.3}\tt #1}}
+\newcommand{\UrL}[1]{{\color{Dark2.4}\url{#1}}}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\title[Robustness for Kalman filtering revisited]%
+{{\LARGE\LRGRA $\;\;$--Package~\pkg{robKalman} --- \newline}\normalsize \RGRA . Kalman's revenge
+or \\ \RGRA obustness for Kalman Filtering \RGRA evisited}
+%
+\pdfinfo{ /title({R--Package 'robKalman' --- R. Kalman's revenge
+or Robustness for Kalman Filtering revisited})
+/author({Peter Ruckdeschel}) /keywords({Robustness, R, S4 classes, Kalman Filtering}) }
+%
+\author[Peter Ruckdeschel and Bernhard Spangl]{Peter Ruckdeschel\inst{1}
+\and Bernhard Spangl\inst{2}\\[2ex]
+%\protect{%
+%{\parbox[b]{12cm}\begin{group}
+\tiny $^1$ 
+{%{\includegraphics[bb=262 426 291 472,width=0.35cm]{ITWMLOGO}}\hspace{0.3cm}
+\tiny Fraunhofer ITWM, Kaiserslautern, Germany, \hspace{0.18cm}
+\href{mailto:Peter.Ruckdeschel@itwm.fraunhofer.de}{\tt\tiny Peter.Ruckdeschel@itwm.fraunhofer.de}}\\
+$^2$ %
+{%{\includegraphics[bb=262 426 291 472,width=0.35cm]{RLI_Logo_klein_CMYK}}\hspace{0.3cm}
+\tiny Universität für Bodenkultur, Vienna, Austria,\hspace{0.2cm}
+\href{mailto:Bernhard.Spangl@boku.ac.at}{\tt\tiny Bernhard.Spangl@boku.ac.at}}
+%\end{group}
+%}}
+}
+%
+%\institute%
+%\href{http://www.rali.boku.ac.at/statedv.html}{\tiny \tt www.rali.boku.ac.at/statedv.html}}}
+\lstset{language=R,basicstyle=\small\color{Rcolor}}
+\date{Rennes, July 9, 2009}
+%
+%\LogoOff
+%
+\begin{document}
+%\gdef\RGRA0{\RGRA}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie 0
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame[plain]{\titlepage}
+\ifx\PRBeamer\undefined%
+\relax%
+\else
+\begin{frame}
+\makeextratitle
+\end{frame}
+\fi
+
+%-------------------------------------------------------------------------------
+\section{General setup}
+%-------------------------------------------------------------------------------
+\subsection{Euclidean State Space Models}
+%-------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie I-1
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\frametitle{Euclidean State Space Models}
+\structure{Definitions and Assumptions:}\newline
+---
+Time--Discrete, Euclidean Setup
+%
+\color{black} ideal model:
+\begin{align}
+x_t&=F(  x_{t-1},t)+ v_t, &%\quad
+  v_t &\stackrel{\rm \SSs indep.}{\sim} (0,Q_t),&& [\mbox{$p$--dim}], \nonumber \\
+y_t&=Z(  x_t,t)+ \ve_t,& %\quad
+\ve_t&\stackrel{\rm \SSs indep.}{\sim} (0,V_t), &&[\mbox{$q$--dim}], \nonumber \\
+&&\qquad x_0 &\stackrel{\phantom{\rm \SSs indep.}}{\sim}  (a_0,Q_0),&&[\mbox{$p$--dim}],\nonumber \\
+\noalign{\qquad \mbox{$ \{v_t\}, \{\ve_t\},  x_0$ indep.\ as processes}}\nonumber
+\end{align}
+%
+\uncover<2->{functions $F,Z$ smooth with known derivatives;\\
+ hyper--parameters $Q_t,V_t,a_0$ known\\[2ex]}
+\uncover<3->{
+extensible to:
+\begin{itemize}
+  \item continuous time (SDE's)
+  \item incorporate user-specified controls
+\end{itemize}} 
+\end{frame}
+%
+
+%-------------------------------------------------------------------------------
+\subsection{Types of Outliers}
+%-------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie I-3
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\frametitle{Types of Outliers}\vspace{-4ex}
+%
+\protect{\color{black}{\color{Dark2.2}
+\begin{eqnarray}
+\noalign{\mbox{\color{black}exogenous outliers affecting only singular observations}}\nonumber\\[-1.5ex]
+%{\rm AO} &\color{black}::& \color{black}\ve^{\SSs\rm re}_t \sim (1-r_{\SSs\rm AO}){\cal N}_q(0,V_t)+\color{Dark2.2} r_{\SSs\rm AO} {\cal
+%L}(\ve^{\SSs\rm cont}_t) \\
+{\rm AO} &\color{black}::& \color{black}\ve^{\SSs\rm re}_t \sim
+(1-r_{\SSs\rm AO}){\cal L}(\ve^{\SSs\rm id}_t)+
+\color{Dark2.2} r_{\SSs\rm AO} {\cal L}(\ve^{\SSs\rm di}_t) \nonumber\\
+{\rm SO} &\color{black}::& \color{black}y^{\SSs\rm re}_t  \sim (1-r_{\SSs\rm SO}){\cal
+L}(y^{\SSs\rm id}_t)+\color{Dark2.2}r_{\SSs\rm SO}{\cal
+L}(y^{\SSs\rm di}_t)
+\nonumber\\[.5ex]
+%{\rm IO} &\color{black}::& \color{black}v^{\SSs\rm real}_t  \sim (1-r_{\SSs\rm IO}){\cal N}_p(0,Q_t)+\color{Dark2.2}r_{\SSs\rm
+%IO} {\cal L}(v^{\SSs\rm cont}_t)\color{black}
+\noalign{\mbox{\color{black} endogenous outliers / structural changes}}\nonumber\\[-2.5ex]
+{\rm IO} &\color{black}::& \color{black}v^{\SSs\rm re}_t  \sim
+(1-r_{\SSs\rm IO}){\cal L}(v^{\SSs\rm id}_t)+
+\color{Dark2.2}r_{\SSs\rm IO} {\cal L}(v^{\SSs\rm di}_t)\color{black}\nonumber
+\end{eqnarray}
+\color{black}}}
+Notation: $\qquad$
+%\begin{equation}
+$\mybm{\,\,\cdot\,\,}\hat=\mybm{\,\,\cdot\,}^{\SSs\rm id},\qquad
+ \hat{\mybm{\,\,\cdot\,\,}}\hat=\mybm{\,\,\cdot\,}^{\SSs\rm re},\qquad
+ \color{Dark2.2}\tilde{\mybm{\,\,\cdot\,\,}}\hat=\mybm{\,\,\cdot\,}^{\SSs\rm di}\color{black}$
+%\end{equation}
+\vspace{1ex}
+
+\uncover<2->{\structure{\large Different and competing goals}\vspace{.4ex}
+\begin{itemize}
+  \item<2->[A/SO\hphantom{ \& IO}] attenuation of ``false alarms''
+  \item<2->[IO \hphantom{ \& A/SO}] $\!$tracking: detect structural changes as fast as possible;\\
+  $\hspace{0.8cm}\!$ recovering: clean data from structural changes
+  \item<2->[A/SO \& IO] identification problem:\\ $\hspace{0.8cm}$simultaneous treatment only possible with delay
+\end{itemize}}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie I-4
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%-------------------------------------------------------------------------------
+\subsection{Classical Method: Kalman--Filter}
+%-------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie I-5
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\frametitle{Classical Method: Kalman--Filter}
+\structure{Filter Problem}
+\begin{equation}
+\mbox{\normalsize\color{Dark2.3} $\Ew \big| x_t-f_t(y_{1:t})\big|^2 = \min_{f_t}\,!,$ \color{black}} \nonumber
+\end{equation}
+$$\mbox{with  } y_{1:t}=(y_1,\ldots,y_t), \quad y_{1:0}:=\emptyset$$
+General solution: {\normalsize\color{Dark2.3} $\Ew[ x_t|y_{1:t}]$\color{black}}
+---difficult to compute \\[3ex]
+\uncover<2->{\structure{Kalman--Filter} \hspace{1em}{\footnotesize assuming $F(x,t)=F_t x$, $Z(x,t)=Z_t x$}\\
+optimal solution among linear filters --- {Kalman[/Bucy]~[60/61]}:
+\begin{align}%[lrclrcl]
+%
+\!\!\!\mbox{\color{Dark2.3}\mbox{Initialization: }\color{black}}&\!\!\!\!&
+ x_{0|0} &= a_0 \nonumber%\label{bet1}
+ \\
+\!\!\!\mbox{\color{Dark2.3}\mbox{Prediction: }\color{black}}&\!\!\!\!
+& x_{t|t-1}&= F_t  x_{t-1|t-1} ,\nonumber%\label{bet2}%\\
+\!\!\!\quad& \color{gray}[\Delta x_t&\color{gray}= x_t- x_{t|t-1}]%\nonumber
+\\
+\!\!\!\mbox{\color{Dark2.3}\mbox{Correction: }\color{black}}%\nonumber\\
+&\!\!\!\!& x_{t|t}&=  x_{t|t-1} + M^0_t \Delta y_t, \nonumber% \label{bet3}%\\
+\!\!\!\quad& \color{gray} [\Delta y_t &\color{gray}= y_t-Z_t x_{t|t-1}]%\nonumber
+%
+\end{align}
+and corresponding recursions for the prediction/filtering error covariances
+$\Sigma_{t|t[-1]}$ and the Kalman gain $M^0_t$
+}
+%
+\end{frame}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie I-7
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------------------------------------------------------
+%\subsection{Features of the Kalman--Filter}
+%-------------------------------------------------------------------------------
+\begin{frame}{}
+\frametitle{Features of the Kalman--Filter}
+\begin{itemize}
+\item[$+$] an easy, understandable structure:\\
+initialization, prediction, correction step
+\item[$+$] correction step is easily evaluable and interpretable: it is linear !
+\item[$+$] strict recursivity / Markovian structure:\\
+all information from the past useful for the future is captured in the
+value of $ x_{t|t-1}$.
+\item[$-$] the correction step is linear and thus not robust, as $y$ enters unbounded;
+\end{itemize}
+\uncover<2->{Aim of robustification:
+try to retain all {``$+$''}'s, revise {``$-$''}}
+\end{frame}
+%%
+
+%\setcounter{frame}%{0}
+%
+% Folie II-1
+%
+%
+%
+% ------------------------------------------------------------------------
+\section[Implementation: R-package robKalman]{Implementation: {\sf R}-package {\tt robKalman}}
+% ------------------------------------------------------------------------
+\subsection{Concept / Strategy}
+% ------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie III-1
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}%Frame 8
+  \frametitle{{\sf R}-package {\tt  robKalman} --- Contents}
+  \begin{itemize}
+     \item<2-> Kalman filter: filter, Kalman gain, covariances
+     \item<2-> ACM-filter: filter, multivariate version, GM-estimator
+     \item<2-> rLS-filter: filter, calibration of clipping height
+  \begin{itemize}
+    \item<2-> AO/SO-robust version 
+    \item<2-> IO-robust version
+    \item<2-> with a certain delay joint treatment of AO/SO's \& IO's
+  \end{itemize}%
+     \item<3-> extensible to further recursive filters:\\
+      $\leadsto$ general interface \lstinline{recursiveFilter}\\
+      with arguments:
+        \begin{itemize}
+           \item data
+           \item state space model (hyper parameters) \\ $\qquad${\color{Dark2.8}[will be: object of class SSM]}
+           \item {} {\bf functions for the init./pred./corr.step}\\ $\qquad$
+           {\color{Dark2.8}[will be: object containing them]}
+           \item {} {\color{Dark2.8}[will be: control object]}
+        \end{itemize}%
+  \end{itemize}%
+\end{frame}
+% ------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie III-2
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}%Frame 9
+  \frametitle{Implementation concept}
+\begin{itemize}
+  \item<1-> \structure{Programming language}
+  \begin{itemize}
+    \item completely in {\tt S}, $\quad$
+    %\item
+    perhaps some code in {\tt C} later ($\leadsto$ \pkg{FKF})
+  \end{itemize}%
+  \item<2-> \structure{Use existing infrastructure: \pkg{zoo}, \pkg{timeSeries}}
+  \begin{itemize}
+%      \item time series classes: {\tt ts}, {\tt its}, {\tt irts}, {\tt zoo}, {\tt zoo.reg}, {\tt tframe}
+      \item for: graphics, diagnostics, management of date/time
+   \end{itemize}
+   \item<3-> \structure{Code in different layers}
+   \begin{itemize}
+     \item internal functions: no {\tt S4}-objects, no time stamps\newline
+     {\footnotesize (helps bringing in code by ``non-{\tt S4}-people'')}
+     \item user interface: {\tt S4}-objects, time stamps
+   \end{itemize}%
+   \item<4-> \structure{Use generating functions for encapsulation}
+   \begin{itemize}
+     \item without using structured arguments:
+   \begin{itemize}
+     \item too many arguments $\leadsto$ user looses track
+     \item prone to name mis-matchings (positional, partial matching)
+     \item bad alternative: fix defaults\ldots
+   \end{itemize}%
+     \item have generating functions to produce control objects
+     \item control objects may be reused
+   \end{itemize}%
+\end{itemize}%
+\end{frame}
+
+% ------------------------------------------------------------------------
+\subsection{Implementation so far  and current devel topics}
+% ------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie III-3
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}%Frame 11
+  \frametitle{Implementation so far}
+\structure{Interfaces so far}
+\begin{itemize}
+  \item<1-> preliminary, ``{\tt S4}-free'' interfaces
+  \begin{itemize}
+     \item Kalman filter (in our context) \lstinline{KalmanFilter}
+     \item rLS: \lstinline{rLSFilter}($=$\lstinline{rLS.AO.Filter}), \\ 
+     $\mbox{\hphantom{ rLS:}}$ \lstinline{rLS.IO.Filter}, \lstinline{rLS.IOAO.Filter}%\\
+     \item<1-> ACM: \lstinline{ACMfilt}, \lstinline{ACMfilter}, \lstinline{mACMfilter}
+     \item<2-> all realized as wrappers to \lstinline{recursiveFilter}
+  \end{itemize}%
+%\item<3-> all required external packages available from \href{http://cran.r-project.org}{\tt CRAN}
+%{\tt methods}, {\tt graphics}, {\tt startupmsg}, {\tt dse1}, {\tt dse2}, {\tt MASS}, {\tt limma}, {\tt robustbase}
+\item<3-> availability:  \pkg{robKalman} version {\tt 0.3} (incl.\ demos)\\%[-1.5ex]
+$\quad$       \fbox{\hreft{http://r-forge.r-project.org/projects/robkalman/}}\vspace{0.7ex}
+\end{itemize}%
+%\end{frame}
+% ------------------------------------------------------------------------
+%\subsection{Next steps}
+% ------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie III-4
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{frame}%Frame 13
+%  \frametitle{Next steps --- to do in Wien :-)}
+\uncover<4->{\structure{Almost ready:}
+\begin{itemize}
+  \item<4-> {\tt  S4} classes: for SSM's; for output-classes; for method-classes;  \\
+    \visible<beamer:0 | handout:0>{{\tt  S4} classes:} for control-classes (reuse \pkg{robustbase}-code)
+  \item<5-> interfaces between {\tt S4}-layer and {\tt S4}-free layer\\
+  %\item<5->
+  \visible<beamer:0 | handout:0>{interfaces} to other SSM packages  \\
+  \visible<beamer:0 | handout:0>{interfaces} to \pkg{robfilter} (\Person{Roland Fried} \& \Person{K. Schettlinger})
+ \end{itemize}}%
+\end{frame}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Work in process]{Work in process}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie IV-1
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\frametitle{Work in process}
+\structure{Release Plans}
+\begin{itemize}
+  \item package \pkg{robKalman} should be on \UrL{CRAN} by UseR! 2009, but\ldots
+  \item at least: release on \UrL{CRAN} by end of August
+  \item till then: refer to \UrL{r-forge}
+\end{itemize}
+\uncover<2->{\structure{Extensions}
+\begin{itemize}
+\item robust smoothing \hfill {\footnotesize\color{Dark2.8}($80\%$ done)}
+\item robust EM-Algorithm to estimate unknown hyper parameters\\ (extending Shumway/Stoffer)
+\hfill {\footnotesize\color{Dark2.8}($70\%$ done)}
+\item interpretation as random coefficient regression \\$\leadsto$
+robust regression-type approach ({\bf rIC}, {\bf mIC}) \hfill {\footnotesize\color{Dark2.8}($30\%$ done)}
+\item connecttion to particle filters --- \\theory and computer interface  \hfill  {\footnotesize\color{Dark2.8}($10\%$ done)}
+\item speeding up things / bridging to fast Kalman filter of \\ \pkg{FKF} by \Person{David Luethi}, \Person{Philipp Erb}  \hfill {\footnotesize\color{Dark2.8}($1\%$ done)}
+\end{itemize}}
+\end{frame}
+% ------------------------------------------------------------------------
+\section[{Collaboration on r-forge}]{Collaboration on {\tt r-forge}}
+% ------------------------------------------------------------------------
+\begin{frame}{}
+\frametitle{Some experiences on collaborative programming on {\tt r-forge}}
+\begin{itemize}
+\item \structure{\UrL{r-forge}}:\newline {\bf very neat} for collaborative {\sf R} package development
+\begin{footnotesize}
+\begin{itemize}
+\item version management ({\tt svn})
+\item mail-forwarded {\tt log}-files of committed code \\$\leadsto$ keep track of work of others
+\item bug tracker, archived mailing lists, \ldots
+\item see slides by \Person{Stefan Theussl}
+\end{itemize}
+\end{footnotesize}
+\item<2->needs serious conceptional preparations  
+\begin{footnotesize}
+\begin{itemize}
+\item<2-> for separating/modularizing tasks
+\item<2-> consistency: coding \& documentation conventions 
+\end{itemize}
+\end{footnotesize}
+\item<2-> helpful: scheduling, reminders/deadlines for collaborators\ldots
+\item<3-> summarizing:\\[.5ex] \structure{\textit{Collaborative programming is enjoyable and very exciting!}}
+\end{itemize}\vspace{1ex}
+\uncover<4->{\centerline{\structure{\Large \sc Thanks for your attention!}}}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie IV-2
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Folie IV-3
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\mode<handout>{
+%\input{lit}
+%\begin{frame}%<1-| handout:0>
+%[allowframebreaks]%Frame 24
+%  \frametitle<presentation>{Bibliography}
+%\protect{\begin{tiny}
+%\bibliography{litdb1}
+%\end{tiny}}
+%\end{frame}
+%}
+%
+%\ifx\PRBeamer\undefined%
+%% ------------------------------------------------------------------------
+\section{References}
+%% ------------------------------------------------------------------------
+\begin{frame}%<presentation:0|handout>
+[allowframebreaks]%[fragile,allowframebreaks]
+\frametitle{References}\vspace{-1ex}%
+\begin{scriptsize}%\vspace{-3ex}
+\begin{description}\scriptsize
+\item[Birmiwal, K. and Shen, J. (1993)]:
+  \textit{Optimal robust filtering.} { Stat. Decis.\/}, {\bf 11}(2): 101--119.\vspace{-.4ex}
+ \item[Durbin, J. and Koopman, S. J. (2001)]: \textit{Time Series Analysis by
+   State Space Methods.} Oxford University Press.\vspace{-.4ex}
+%  \item[Gilbert, P. (2005)]: Brief User's Guide: Dynamic Systems Estimation (DSE).
+%{%\footnotesize
+%Available in the file\newline {\tt doc/dse-guide.pdf} distributed together with the {\sf R} bundle
+%  {\tt dse}, to be downloaded from \newline\hreft{http://cran.r-project.org}}
+\item[Fried, R. and Schettlinger, K. (2008)]: {{\sf R}-package {\tt robfilter}: Robust Time Series Filters.}
+\hreft{http://cran.r-project.org/web/packages/robfilter}.\vspace{-.4ex}
+\item[Kalman, R.E. (1960)]: {A new approach to linear
+  filtering and prediction problems.}\vspace{-.4ex}
+ {\em Journal of Basic Engineering---Transactions of the ASME\/}, {\bf
+  82}: 35--45.\vspace{-.4ex}
+\item[Kalman, R.E. and Bucy, R. (1961)]:
+  {New results in filtering and prediction theory.}
+ {\em Journal of Basic Engineering---Transactions of the ASME\/}, {\bf
+  83}: 95--108.\vspace{-.4ex}
+  \item[Martin, D. (1979)]:
+  \textit{Approximate conditional-mean type smoothers and interpolators.}
+  In  \emph{Smoothing techniques for curve estimation.\/}
+  Proc. Workshop Heidelberg 1979. Lect. Notes Math.~757, p.~117-143\vspace{-.4ex}
+  \item[Masreliez C.J. and Martin R. (1977)]: {Robust Bayesian estimation for the linear model and
+  robustifying the Kalman filter.}
+ {\em IEEE Trans. Autom. Control\/}, {\bf {AC-22}}: 361--371.\vspace{-.4ex}
+  \item[Ruckdeschel, P. (2001)]: \textit{Ans{\"a}tze zur Robustifizierung des Kalman Filters.}
+  Bayreuther Mathematische Schriften, Vol. 64.
+  \item[R Development Core Team (2009)]: \textit{{\sf R}: A language and environment for statistical computing\/}.
+R Foundation for Statistical Computing, Vienna, Austria.\\
+  \hreft{http://www.R-project.org}
+  \item[R-Forge Administration and Development Team (2008)]: \textit{{R-Forge User's Manual, {\sc beta}\/}.}
+{\tt SVN} revision: 47, August, 12 2008. \newline
+  \hreft{http://r-forge.r-project.org/R-Forge_Manual.pdf}
+\item [Schick, I.C. (1989)]: {\em {Robust recursive
+  estimation of a discrete--time stochastic linear dynamic system in the
+  presence of heavy-tailed observation noise}\/}.
+ {Dissertation}, {Massachusetts Institute of Technology}, {Cambridge,
+  MA}.
+  \item[Schick I.C. and Mitter S.K. (1994)]:
+  {Robust recursive estimation in the presence of heavy-tailed observation
+  noise.} {\em Ann. Stat.\/}, {\bf 22}(2): 1045--1080.
+  \item[Shumway, R.H. and Stoffer, D.S. (1982)]: \textit{An approach to time series smoothing and forecasting using the EM algorithm.}
+  Journal of Time Series Analysis, \textbf{3}: 253--264.
+  \item[Spangl, B. (2008)]: \textit{On Robust Spectral Density
+Estimation\/}. PhD Thesis at Technical University, Vienna.\bigskip
+\end{description}
+\end{scriptsize}
+\end{frame}
+%\fi
+
+\end{document}

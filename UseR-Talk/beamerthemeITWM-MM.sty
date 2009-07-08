@@ -1,0 +1,83 @@
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/themes/theme/beamerthemeITWM-MM.sty,v 1.6 2004/10/07 20:53:10 tantau Exp $
+
+% Copyright 2003 by Till Tantau <tantau@users.sourceforge.net>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+% Modiziert von Simone Gramsch <simone.gramsch@itwm.fraunhofer.de> am 26.02.2007
+% Noch mal modifiziert von Marlene Müller <marlene.mueller@itwm.fraunhofer.de> am 15.09.2008
+
+\mode<presentation>
+
+\usefonttheme{default}
+\usecolortheme{default}
+\useinnertheme{default}
+\useoutertheme{default}
+
+\setbeamercovered{transparent}
+\setbeamertemplate{navigation symbols}{}
+
+\setbeamertemplate{title page}
+{
+\parbox{0.9\textwidth}{
+  {\LARGE\bf\inserttitle}\vspace*{10mm}
+  
+  \insertauthor\vspace*{5mm}
+
+  \Gray{\tiny \insertdate}\vspace*{10mm}
+}
+\centerline{\includegraphics[height=12mm]{logo}}%%ITWMLOGO}}
+\setcounter{framenumber}{0}
+}
+
+
+\setbeamertemplate{headline}
+{
+  \leavevmode%
+  \vbox{
+  \vspace{8mm}%%\vspace{11.5mm}
+  \centering
+  \rule{108mm}{0.1pt}
+  }
+ \vskip0pt%
+}
+
+
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \vbox{
+    \hspace*{116mm}{\begin{color}{gray}\tiny
+        \insertframenumber\end{color}}\vspace*{-1mm} %% eingefügt MM
+  \begin{center}
+  \rule{108mm}{0.1pt} \end{center}
+  \rule{36mm}{0pt} \includegraphics[height=5mm]{logo} %%ITWMLOGO} %% Logo-Datei MM
+  \vspace{5mm}%%\vspace{8.5mm}
+  }
+ \vskip0pt%
+}
+
+\hypersetup{citecolor=black}
+\hypersetup{linkcolor=darkblue}
+\hypersetup{urlcolor=blue}
+
+\definecolor{pantonegreen}{rgb}{0,0.61,0.47}
+
+\setbeamersize{text margin left=10mm, text margin right=10mm}
+\setbeamercolor{structure}{fg=black}
+\setbeamercolor{block title}{fg=pantonegreen}
+%%\setbeamerfont{block title}{series=\normalfont\bfseries\sffamily}
+\setbeamerfont{frametitle}{series=\normalfont\bfseries\sffamily,size=\large}
+\setbeamertemplate{frametitle}{\insertframetitle}
+\setbeamertemplate{itemize items}{-}  %% Anstriche bei itemize
+\mode
+<all>
+
+\def\widepar#1{#1}
+\def\keypar#1#2{{#1}{#2}}
+
+
+
+
+

@@ -1,0 +1,214 @@
+%
+\ifx\PRBeamer\undefined%
+%
+% we use handout
+%
+  %
+  % 4 auf eine Seite mit pgfpages:
+  \usepackage{pgfpages}
+  \ifx\PRFourSided\undefined%
+  \pgfpagesuselayout{resize to}[a4paper,landscape,border shrink=3mm]
+  \else
+  \pgfpagesuselayout{4 on 1}[a4paper,landscape,border shrink=3mm]
+  \fi
+  %
+  \mode<handout>{
+     \setbeamercolor{background canvas}{bg=black!1}
+     \newcommand{\uP}{\vspace{-0.8ex}}
+     \newcommand{\newblock}{\relax}
+     \setbeamertemplate{footline}{\flushright\hfill
+     \begin{minipage}[b]{1.7cm}
+    \mbox{$ $}\\[1.2cm] {\includegraphics[height=0.6cm,width=1.7cm]{logo_neu}}\newline
+    \flushright{\hfill\insertpagenumber}
+  \end{minipage}}
+     %
+     %Modification of default-Beamer Stils:
+     %
+     \setbeamersize{description width=0.5cm}
+     \setbeamertemplate{navigation symbols}{}
+\setbeamercolor{structure}{fg=pantonegreen}
+\setbeamercolor{block title}{fg=pantonegreen}
+     %
+     \usepackage{beamerfoils} % for logo
+  }%
+  %--------------------------------------------
+  %
+  %Logo
+  %
+  %\MyLogo{}
+  %
+  %--------------------------------------------
+  %
+  %Colors
+  %
+  \usepackage{fhgcol_bw}
+  %
+  %--------------------------------------------
+\def\LogTitHeight{10mm}
+\def\LogHeight{10mm}
+\def\LogTitWidth{30mm}
+\def\LogWidth{30mm}
+\def\hw{.18}
+\def\hwup{-1.3ex}
+\def\hwhup{8.5mm}
+\setbeamertemplate{title page}
+{
+  \vspace*{\hwhup}
+  \leavevmode%
+  \vbox{
+  %%\vspace{11.5mm}
+\rule{108mm}{0.1pt}%
+\vspace*{2ex}
+}
+\parbox{0.8\textwidth}{
+  {\Huge\bf\inserttitle}\vspace*{10mm}
+
+  \insertauthor\vspace*{5mm}
+
+  \Gray{\tiny \insertdate}\vspace*{10mm}
+}
+
+  \vspace*{\hwup}
+  \leavevmode%
+  \vbox{
+  \centering\rule{108mm}{0.1pt}
+}
+  \leavevmode%
+  \vbox{
+\vspace*{1.32ex}
+\rule{40.1mm}{0pt}{\includegraphics[height=\LogTitHeight,width=\LogTitWidth]{logo_neu}
+\hspace{4cm}\includegraphics[height=\LogTitHeight,width=\LogTitWidth]{RLI_Logo_klein_CMYK}}%
+%\rule{40.1mm}{0pt}\includegraphics[width=26.4mm]{logo_neu}%
+%\rule{25.5mm}{0pt} %\flushleft{\mbox{\hspace{\hw\textwidth}}{
+%\includegraphics[height=\LogTitHeight,width=\LogTitWidth]{itwm_8_5c}%}}
+\vspace{6mm}}
+ \vskip0pt
+ \setcounter{framenumber}{0}
+}
+
+%
+\else%
+%
+% we use beamer slides
+%
+   \newcommand{\uP}{\vspace{-1.5ex}}
+%
+%
+   \mode<presentation>{%
+   %
+   \ifx\UBT\undefined % may be blocked defining \UBT
+   %
+     % \usetheme{ITWM-MM}
+      \usetheme{ITWM}
+   %
+   \fi
+   %
+      \setbeamersize{description width=0.5cm}
+      \usepackage{beamerfoils}% fuer logo
+      \setbeamercovered{highly dynamic}
+      %schalte die Navi-Symbole aus:
+      \setbeamertemplate{navigation symbols}{}
+      %zu Beginn jeder Sektion ein Inhaltsverzeichnis... (hier auskommentier!)
+      %\AtBeginSection[]{\frame{\tableofcontents[currentsection]}}
+      }%
+  %--------------------------------------------
+  %
+  %Logo
+  %
+  %\MyLogo{\includegraphics[height=0.8cm,width=2.2cm]{itwm_8_5c}}
+  %
+  %--------------------------------------------
+  %
+  %Colors
+  %
+  \usepackage{fhgcol}
+  %
+  %--------------------------------------------
+%
+\fi
+%
+%weitere eingebundene Packages:
+%
+\RequirePackage{ifthen}
+%
+%Fonts
+%
+\usepackage[latin1]{inputenc}
+\usepackage[ngerman,english]{babel}
+\usepackage[TS1,T1]{fontenc}
+\usepackage{textcomp}
+%
+%
+%
+%----------------------------------------------------
+%further Packages
+\usepackage{amsmath,amssymb}
+\usepackage{multimedia}
+\usepackage{natbib}
+%
+%----------------------------------------------------
+%Environments def's
+%----------------------------------------------------
+\newtheorem{Thm}[theorem]{Thm.}
+\newtheorem{Cor}[theorem]{Cor.}
+\newtheorem{Def}[theorem]{Def.}
+\newtheorem{Prop}[theorem]{Prop.}
+\newtheorem{Rem}[theorem]{Rem.}
+\def\newblock{\relax}
+%
+%----------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\ifx\PRStyles\undefined\relax\else
+%
+%personal abbreviations P.R. from BT
+%
+\def\UseBeam{1}
+\RequirePackage{defr}  %%  im Verzeichnis UBTstyle  --- für UBT Abkürzungen
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ \ifx\PRBeamer\undefined%
+%
+  \def\mitHarward{1} % for references in Harvard Style
+  \RequirePackage{Englenv} % meine Umgebungen bekommen englische Namen
+  \RequirePackage{defbib}  % mein Bibliotheks-Stil
+%
+ \fi
+%
+\fi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\ifx\PRSweave\undefined\relax\else
+%
+%---------------------------------------------------------------------------
+% Sweave preparations; cannot be delegated to another file
+%----------------------------------------------------
+\RequirePackage{listings}
+\RequirePackage{Sweave}
+%
+%
+%configuration of listings for R:
+\lstset{fancyvrb=true, escapechar=`,
+        language=R,basicstyle=\color{Rcolor}\footnotesize,
+        commentstyle=\color{Rcomment}\ttfamily\itshape,
+        literate={<-}{{$\leftarrow$}}2,
+        morekeywords=[2]{Norm,Pois,lambda,p,d,r,distroptions}}
+ \ifx\ttR\undefined
+  \newcommand{\ttR}[1]{{\color{Rcolor}\tt #1\color{normal}}}
+ \else
+  \renewcommand{\ttR}[1]{{\color{Rcolor}\tt #1\color{normal}}}
+ \fi
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{formatcom=\color{Rcolor}\lstset{fancyvrb=true,escapechar='}}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{formatcom=\footnotesize\color{Rout}\lstset{fancyvrb=false}}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{fontshape=sl,formatcom=\color{Rcolor}\lstset{fancyvrb=true}}
+\fi
+%----------------------------------------------------
+%
+%
+%----------------------------------------------------
+%FRUTIGER
+%----------------------------------------------------
+%must be loaded after Sweave prep's
+%
+\RequirePackage{PR_frutiger}
+%----------------------------------------------------

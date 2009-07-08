@@ -13,12 +13,13 @@ TI.SSM <- function(name = NULL, F, Z, Q, V, a = numeric(nrow(F)), S0 = Q, Tn = 1
        V <- as.matrix(V)
        S0 <- as.matrix(S0)
        if(missing(Tn)) 
-          Tn <- zoo(1)
+          Tn <- timeSeries(1,"1")
        if(missing(name)) 
           name <- gettext("a time-invariant state space")
        
-       if(!is(Tn,"zoo"))
-          Tn <- zoo(seq(Tn)) 
+       if(length(Tn)==1 && is.integer(Tn)) Tn <- 1:Tn
+       if(!is(Tn,"timeSeries"))
+          Tn <- as(Tn,"timeSeries")
        new("TimeInvariantSSM",  name = name, p = nrow(F), q=nrow(Z), 
                   F = F, Z = Z, Q = Q, V = V, a = a, S = S0, time = Tn)
        }

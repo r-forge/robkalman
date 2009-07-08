@@ -50,9 +50,9 @@
    x0 <- x1 + Huberize(dx, b, norm = norm)
    S0  <- .getcorrCov(S1, K, Z)
    if  (ncol(x1)==1)
-      Ind <- (norm(dx)>1)
+      Ind <- (norm(dx)>b)
    else
-      Ind <- apply(dx, 2, function(xx) norm(xx)>1)
+      Ind <- apply(dx, 2, function(xx) norm(xx)>b)
    list(x0  = x0, K = K, S0 = S0, Delta = Delta, Ind = Ind, DeltaY = DeltaY)}
 
 
@@ -72,3 +72,4 @@
    else
       Ind <- apply(de, 2, function(xx) norm(xx)>1)
    list(x0  = x0, K = K, S0 = S0, Delta = Delta, Ind = Ind, DeltaY = DeltaY)}
+

@@ -54,9 +54,6 @@ setClass("PosDefSymmMatrix", contains = "PosSemDefSymmMatrix",
 
 
 #
-## register zoo as "S4"-class
-setOldClass("zoo")
-#
 
 ### infra-structure classes / class unions
 
@@ -89,7 +86,7 @@ setClass("SSM",
                                 q = "numeric",  ## observation dimension
                                 a = "numeric", ##  mean value of starting state
                                 S = "Hyperparamtype", ##  variance of starting state
-                                time = "zoo"), ## time index
+                                time = "timeSeries"), ## time index
           prototype = prototype(name = gettext("a state space"), 
                                 F = NULL,
                                 Z = NULL,
@@ -99,7 +96,7 @@ setClass("SSM",
                                 q = 1,
                                 a = 0,
                                 S = NULL,
-                                time = zoo(1)), 
+                                time = timeSeries(1)),
           )
 
 # class TimeInvariantSSM 
@@ -136,7 +133,9 @@ setClass("recFilter", representation(name = "character",
                       Cov.filtered = "array",
                       Cov.predicted = "array",
                       Kalman.Gain = "array",
-                      time = "zoo"),
+                      Delta = "array",
+                      DeltaY = "array",
+                      time = "timeSeries"),
          prototype = prototype(name="classical Kalman Filter",
                               SSM = new("TimeInvariantSSM"),
                               Y = array(1,dim=c(1,1,1)),
@@ -145,7 +144,9 @@ setClass("recFilter", representation(name = "character",
                               Cov.filtered = array(1,dim = c(1,1,1)),
                               Cov.predicted = array(1,dim = c(1,1,1)),
                               Kalman.Gain = array(1,dim = c(1,1,1)),
-                              time = zoo(1))
+                              Delta = "array",
+                              DeltaY = "array",
+                              time = timeSeries(1))
                               
          )
 
@@ -157,6 +158,8 @@ setClass("robrecFilter", representation(
                       Cov.rob.filtered = "array",
                       Cov.rob.predicted = "array",
                       Kalman.rob.Gain = "array",
+                      Deltar = "array",
+                      DeltaYr = "array",
                       IndIO = "MatrixOrLogical", 
                       IndAO = "MatrixOrLogical",
                       rob.correction.ctrl = "list",
@@ -164,7 +167,7 @@ setClass("robrecFilter", representation(
                       nsim = "numeric",
                       RNGstate = "IntegerOrNULL",
                       Cov.rob.filtered.sim = "ArrayOrNULL",
-                      Cov.rob.predicted.sim = "ArrayOrNULL"
+                      Cov.rob.predicted.sim = "ArrayOrNULL",
                       ),
          prototype = prototype(
                       name="rLS Filter",
@@ -185,6 +188,40 @@ setClass("robrecFilter", representation(
                               
 ###############################################################################
 #
+# Smoother classes
+#
+###############################################################################
+
+setClass("recSmoother", representation(
+                      X.smoothed = "array",
+                      Cov.smoothed = "array",
+                      J = "array"),
+         prototype = prototype(name="classical Kalman Smoother",
+                              SSM = new("TimeInvariantSSM"),
+                              Y = array(1,dim=c(1,1,1)),
+                              X.filtered = array(1,dim=c(1,1,1)),
+                              X.predicted = array(1,dim=c(1,1,1)),
+                              Cov.filtered = array(1,dim = c(1,1,1)),
+                              Cov.predicted = array(1,dim = c(1,1,1)),
+                              Kalman.Gain = array(1,dim = c(1,1,1)),
+                              time = timeSeries(1)),
+
+         contains="recFilter")
+
+
+setClass("robrecSmoother", representation(
+                      X.rob.smoothed = "array",
+                      Cov.rob.smoothed = "array",
+                      J.rob = "array"),
+         prototype = prototype(
+                      name="rLS Smoother",
+                      X.rob.smoothed = array(1,dim=c(1,1,1,1)),
+                      Cov.rob.smoothed = array(1,dim = c(1,1,1,1)),
+                      J.rob = array(1,dim = c(1,1,1,1))),
+         contains = "recSmoother")
+
+###############################################################################
+#
 # Control classes 
 #
 ###############################################################################
@@ -199,7 +236,11 @@ setClass("RecFiltControl", representation(
                       correct = "function"),                                 
           contains = "VIRTUAL")
 
-setClass("KalmanControl",                                 
+setClass("RecSmoothControl", representation(
+                      smooth = "function"),
+          contains = c("VIRTUAL","RecFiltControl"))
+
+setClass("KalmanFiltControl",
           prototype = prototype(
                       name = "classical Kalman Filter",
                       init = .cKinitstep, 
@@ -207,8 +248,14 @@ setClass("KalmanControl",
                       correct = .cKcorrstep),
           contains="RecFiltControl"            
           )
-                       
-setClass("robrecControl", representation(
+setClass("KalmanSmoothControl",
+          prototype = prototype(
+                      name = "classical Kalman Smoother",
+                      smooth = .cKsmoothstep),
+          contains="KalmanFiltControl"
+          )
+
+setClass("RobRecFilterControl", representation(
                        controls = "list",
                        name.rob = "character",
                        init.rob = "function",
@@ -222,6 +269,18 @@ setClass("robrecControl", representation(
                       controls = list(b = 2, norm = EuclideanNorm)
                       ),
           contains="RecFiltControl"            
+              )
+setClass("RobRecSmoothControl", representation(
+                       smooth.rob = "function"),
+          prototype = prototype(
+                      name.rob = "rLS Filter",
+                      init.rob = .cKinitstep,
+                      predict.rob = .cKpredstep,
+                      correct.rob = .rLScorrstep,
+                      smooth.rob = .cKsmoothstep,
+                      controls = list(b = 2, norm = EuclideanNorm)
+                      ),
+          contains="RecFiltControl"
               )
 #                                = paste(gettext(
 #                            "Control set and init, prediction and"

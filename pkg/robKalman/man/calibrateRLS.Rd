@@ -7,7 +7,7 @@
 calibrates the clipping height \code{b} of the rLS-filter in a time-invariant, linear, Gaussian state space model
 }
 \usage{
-rLScalibrateB(Z, S, V, repl = 100000, eff, r, upto=20, IO = FALSE)
+rLScalibrateB(Z, S, V, repl = 100000, eff, r, upto=20, IO = FALSE, seed)
 }
 \arguments{
   \item{Z}{observation matrix in the (ti-l-G-SSM); see below}
@@ -18,6 +18,7 @@ rLScalibrateB(Z, S, V, repl = 100000, eff, r, upto=20, IO = FALSE)
   \item{repl}{number of replicates used for a LLN-approximation of the expectations needed in this calibration}
   \item{upto}{an upper bound to \code{b} used in the zero-search of \code{uniroot} within \code{rLScalibrateB}}
   \item{IO}{logical of length 1: Is it rLS.IO (\code{TRUE}) or rLS[.AO] which is to be calibrated?}
+  \item{seed}{if not missing: argument to \code{\link{set.seed}} to set the seed for MC integration}
 }
 \details{
 We work in the setup of the time-invariant, linear, Gaussian state space model (ti-l-G-SSM)

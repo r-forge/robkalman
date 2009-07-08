@@ -1,0 +1,38 @@
+% -----------------------------------------------------------------------
+%                               defbib.sty
+%             Befehle fuer Bibliographie aus litdb1
+%                            P.Ruckdeschel
+% -----------------------------------------------------------------------
+%
+%
+%\usepackage{harvard}
+\usepackage{natbib}
+\def\mitHarward{1}
+%
+%%\def\cia{\citeasnoun}
+%\def\cia#1{\hyperlink{#1}{\roColor{\xmycitecolor}\citeasnoun{#1}\roColor{normal}}}
+%\def\ciaH#1{\roColor{\xmycitecolor}\citeasnoun{#1}\roColor{normal}}
+%\newcommand{\cia}[2][{}]{\ifthenelse{\equal{#1}{}}{\citeasnoun[#1]{#2}}{\citeasnoun[#1]{#2}}}
+%\def\cia{\citeasnoun}
+\def\cia{\citet}
+\def\citeasnoun{\citet}
+\def\ciaH{\citet}
+%
+%\citationmode{abbr}
+%\citationstyle{dcu}
+%\bibliographystyle{dcu}
+\ifthenelse{\equal{\Litsprach}{Deutsch}}%
+{\bibliographystyle{p2sty}}%
+{\bibliographystyle{p2ste}}
+% oder
+%\bibliographystyle{dcu}
+% oder
+%\citationstyle{agsm}
+%\bibliographystyle{agsm}
+%
+\def\ANNALS{{\em Annals of Statistics}}
+\def\BIOK{{\em Biometrika}}
+\def\BMCS{{\em Biometrics}}
+\def\JASA{{\em Journal of the American Statistical Association}}
+\def\JRSSB{{\em Journal of the Royal Statistical Society, Series B}}
+%

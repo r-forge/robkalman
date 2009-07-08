@@ -7,7 +7,7 @@
 calibrates the clipping height \code{b} of the rLS-filter in a time-invariant, linear, Gaussian state space model
 }
 \usage{
-rLScalibrateB(Z, S, V, repl = 100000, eff, r, upto=20, IO = FALSE)
+rLScalibrateB(Z, S, V, repl = 100000, eff, r, upto=20, IO = FALSE, seed)
 }
 \arguments{
   \item{Z}{observation matrix in the (ti-l-G-SSM); see below}
@@ -18,6 +18,7 @@ rLScalibrateB(Z, S, V, repl = 100000, eff, r, upto=20, IO = FALSE)
   \item{repl}{number of replicates used for a LLN-approximation of the expectations needed in this calibration}
   \item{upto}{an upper bound to \code{b} used in the zero-search of \code{uniroot} within \code{rLScalibrateB}}
   \item{IO}{logical of length 1: Is it rLS.IO (\code{TRUE}) or rLS[.AO] which is to be calibrated?}
+  \item{seed}{if not missing: argument to \code{\link{set.seed}} to set the seed for MC integration}
 }
 \details{
 We work in the setup of the time-invariant, linear, Gaussian state space model (ti-l-G-SSM)
@@ -32,17 +33,17 @@ with \strong{initial condition}
 \deqn{y_t = Z x_{t}   +  \varepsilon_t, \qquad \varepsilon_t \sim {\cal N}_q(0,V),\qquad t\ge 1,}{y_t = Z x_t   +  e_t,      e_t ~ N_q(0,V),  t>=1,}
 and where all random variable \eqn{x_0}, \eqn{v_t}, \eqn{\varepsilon_t}{e_t} are independent.
 
-The clipping height \code{b} given \eqn{Z}, \eqn{V}, and prediction error covariance \eqn{S_{t|t-1}} 
-(of the classical Kalman filter) is either calibrated to a given efficiency \code{eff} in the ideal model or to given 
-(SO)-radius \code{r} about the ideal model. 
+The clipping height \code{b} given \eqn{Z}, \eqn{V}, and prediction error covariance \eqn{S_{t|t-1}}
+(of the classical Kalman filter) is either calibrated to a given efficiency \code{eff} in the ideal model or to given
+(SO)-radius \code{r} about the ideal model.
 
-The expectations needed for this calibration are calculated by a LLN 
+The expectations needed for this calibration are calculated by a LLN
 approximation with \code{repl} replicates;
 }
 
 \value{a clipping height \code{b} for the rLS filter}
 \author{
-  Peter Ruckdeschel \email{Peter.Ruckdeschel@itwm.fraunhofer.de},\cr 
+  Peter Ruckdeschel \email{Peter.Ruckdeschel@itwm.fraunhofer.de},\cr
   }
 
 
