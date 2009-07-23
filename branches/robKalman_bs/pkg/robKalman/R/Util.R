@@ -1,11 +1,12 @@
+
 ### the Euclidean norm
 
-Euclidnorm <- function(x) {sqrt(sum(x^2))}
+EuclideanNorm <- function(x) {sqrt(colSums(x^2))}
 
 
 ### huberizing a vector to length b
 
-Huberize <- function(x, b, norm=Euclidnorm, ...)
+Huberize <- function(x, b, norm=EuclideanNorm, ...)
    x*ifelse(norm(x) < b, 1, b/norm(x, ...))
     
 

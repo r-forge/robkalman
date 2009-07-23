@@ -36,9 +36,12 @@
 #Kalman filter routines
 #
 #
-.getKG <-  function(S1, Z, V)# calculates the Kalman Gain for S1 = S_{t|t-1}, Z, V as above
+.getDelta <-  function(S1, Z, V)# calculates the Cov(Delta y_t) for S1 = S_{t|t-1}, Z, V as above
 { H <- S1 %*% t(Z)
-  H %*% ginv( Z%*%H + V ) }
+  ginv( Z%*%H + V ) }
+
+.getKG <-  function(S1, Z, Delta)# calculates the Kalman Gain for S1 = S_{t|t-1}, Z, V as above
+{ S1 %*% t(Z) %*% Delta }
 
 .getcorrCov <-  function(S1, K, Z)# calculates S_{t|t} for S1 = S_{t|t-1}, K_t, Z as above
 { S1 - K %*% Z %*% S1 }
@@ -54,7 +57,9 @@
               {list( x1  = F %*% x0, S1 = .getpredCov(S0, F, Q), Ind=1)}
 
 .cKcorrstep <- function(y, x1, S1, Z, V, ...) 
-  {K  <- .getKG(S1, Z, V) 
-   x0 <- x1 + K %*% (y - Z %*% x1)
+  {Delta <- .getDelta(S1, Z, V)
+   K  <- .getKG(S1, Z, Delta)
+   DeltaY <-  y - Z %*% x1
+   x0 <- x1 + K %*% DeltaY
    S0 <- .getcorrCov(S1, K, Z)
-   list(x0  = x0, K = K, S0 = S0, Ind=1)}
+   list(x0  = x0, K = K, S0 = S0, Delta = Delta,  Ind=1, DeltaY = DeltaY)}

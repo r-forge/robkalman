@@ -1,4 +1,5 @@
 <html><head><title>Several recursive filters: the classical Kalman filter, the rLS filter, and the ACM filter</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="Rchm.css">
 </head>
 <body>
@@ -6,6 +7,8 @@
 <table width="100%"><tr><td>recFilter(robKalman)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
 <param name="keyword" value="R:   recFilter">
 <param name="keyword" value="R:   rLSFilter">
+<param name="keyword" value="R:   rLS.AO.Filter">
+<param name="keyword" value="R:   rLS.IO.Filter">
 <param name="keyword" value="R:   KalmanFilter">
 <param name="keyword" value="R:   ACMfilter">
 <param name="keyword" value="R:   recursiveFilter">
@@ -27,12 +30,16 @@ time-invariant, linear, Gaussian state space model (ti-l-G-SSM)
 <h3>Usage</h3>
 
 <pre>
-recursiveFilter(Y, a, S, F, Q, Z, V, 
-                initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep, 
-                initSr=NULL, predSr=NULL, corrSr=NULL, ...)
-KalmanFilter(Y, a, S, F, Q, Z, V)
-rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclidnorm)
-ACMfilter(Y, a, S, F, Q, Z, V, s0, psi,  apsi, bpsi, cpsi, flag)
+recursiveFilter(Y, a, S, F, Q, Z, V, initSc = .cKinitstep, predSc = .cKpredstep,
+                   corrSc = .cKcorrstep,
+                   initSr = NULL, predSr = NULL, corrSr = NULL,
+                   nsim = 0, seed = NULL, ..., dropRuns = TRUE,
+                   CovRunDep = FALSE, saveOpt = TRUE, dimsCheck = NULL)
+KalmanFilter(Y, a, S, F, Q, Z, V, dropRuns = TRUE)
+rLSFilter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm, dropRuns = TRUE)
+rLS.AO.Filter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm, dropRuns = TRUE)
+rLS.IO.Filter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm, dropRuns = TRUE)
+ACMfilter(Y, a, S, F, Q, Z, V, s0, psi,  apsi, bpsi, cpsi, flag, dropRuns = TRUE)
 </pre>
 
 
@@ -41,22 +48,33 @@ ACMfilter(Y, a, S, F, Q, Z, V, s0, psi,  apsi, bpsi, cpsi, flag)
 <table summary="R argblock">
 <tr valign="top"><td><code>a</code></td>
 <td>
-mean of the initial state</td></tr>
+mean of the initial state, in matrix form <i>p x runs</i>
+for <code>p</code> the state dimension
+and <code>runs</code> the number of paths to be followed in parallel.</td></tr>
 <tr valign="top"><td><code>S</code></td>
 <td>
-initial state covariance (see below)</td></tr>
+initial state covariance (see below), in matrix form <i>p x p</i>
+for <code>p</code> the state dimension.</td></tr>
 <tr valign="top"><td><code>Z</code></td>
 <td>
-observation matrix (see below)</td></tr>
+observation matrices (see below), in array form <i>q x p x t</i>
+for <code>q</code> and <code>p</code> the observation resp. state dimension
+and <code>t</code> the length of the observation series.</td></tr>
 <tr valign="top"><td><code>V</code></td>
 <td>
-observation error covariance (see below)</td></tr>
+observation error covariances (see below), in array form <i>q x q x t</i>
+for <code>q</code> the observation dimension
+and <code>t</code> the length of the observation series.</td></tr>
 <tr valign="top"><td><code>F</code></td>
 <td>
-innovation transition matrix (see below)</td></tr>
+innovation transition matrices (see below), in array form <i>p x p x t</i>
+for <code>p</code> the state dimension
+and <code>t</code> the length of the observation series.</td></tr>
 <tr valign="top"><td><code>Q</code></td>
 <td>
-innovation covariance (see below)</td></tr>
+innovation covariances (see below), in array form <i>p x p x t</i>
+for <code>p</code> the state dimension
+and <code>t</code> the length of the observation series.</td></tr>
 <tr valign="top"><td><code>b</code></td>
 <td>
 clipping height <code>b</code> for the rLS filter</td></tr>
@@ -67,8 +85,9 @@ returning a norm of <code>x</code> - not necessarily, but defaulting to, Euclide
 used by rLS filter to determine "too" large corrections</td></tr>
 <tr valign="top"><td><code>Y</code></td>
 <td>
-observations <i>y_t</i>, in matrix form <i>q x t</i> for <code>t</code> 
-the length of the observation series and <code>q</code> the observation dimension</td></tr>
+observations <i>y_t</i>, in array form <i>q x runs x t</i> for <code>t</code>
+the length of the observation series, <code>q</code> the observation dimension
+and <code>runs</code> the number of paths to be followed in parallel.</td></tr>
 <tr valign="top"><td><code>s0</code></td>
 <td>
 scale of nominal Gaussian component of additive noise</td></tr>
@@ -105,6 +124,25 @@ and <code>V</code> to produce the classical (non robust) correction value <i>x_{
 <td>
 either <code>NULL</code>  or a function with first arguments <code>y</code><i>=y_t</i>, <code>x1</code><i>=x_{t|t-1}</i> and <code>S1</code><i>=S_{t|t-1}</i>, <code>Z</code>, 
 and <code>V</code> to produce a robust correction value <i>x_{t|t}</i></td></tr>
+<tr valign="top"><td><code>nsim</code></td>
+<td>
+integer; if positive, we simulate a bunch of nsim paths (acc. to ideal model) to get emp. covariances</td></tr>
+<tr valign="top"><td><code>seed</code></td>
+<td>
+seed for the simulations</td></tr>
+<tr valign="top"><td><code>dropRuns</code></td>
+<td>
+logical; shall run-dimension be collapsed if it is one?</td></tr>
+<tr valign="top"><td><code>CovRunDep</code></td>
+<td>
+logical; shall covariances be run-dependent?</td></tr>
+<tr valign="top"><td><code>saveOpt</code></td>
+<td>
+logical; either single valued or (named) 4-valued:
+shall we store Kalman gain, Cov(Delta Y), Delta Y, ...?</td></tr>
+<tr valign="top"><td><code>dimsCheck</code></td>
+<td>
+logical or <code>NULL</code>; shall we check dimensions?</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 further arguments to the "step"-functions</td></tr>
@@ -119,10 +157,10 @@ with <STRONG>initial condition</STRONG>
 </p><p align="center"><i>x_0 ~ N_p(a,S),</i></p>
 <p>
 <STRONG>state equation</STRONG>
-</p><p align="center"><i>x_t = F x_{t-1} +  v_t,          v_t ~ N_p(0,Q),  t&gt;=1,</i></p>
+</p><p align="center"><i>x_t = F_t x_{t-1} +  v_t,          v_t ~ N_p(0,Q_t),  t&gt;=1,</i></p>
 <p>
 <STRONG>observation equation</STRONG>
-</p><p align="center"><i>y_t = Z x_t   +  e_t,      e_t ~ N_q(0,V),  t&gt;=1,</i></p><p>
+</p><p align="center"><i>y_t = Z_t x_t   +  e_t,      e_t ~ N_q(0,V_t),  t&gt;=1,</i></p><p>
 and where all random variable <i>x_0</i>, <i>v_t</i>, <i>e_t</i> are independent.
 </p>
 <p>
@@ -134,52 +172,64 @@ For notation, let us formulate the classical Kalman filter in this context:
 </p><p align="center"><i>S_{0|0}   = Cov(x_0-x_{0|0})   = S</i></p>
 <p>
 <STRONG>(1) prediction step</STRONG>       
-</p><p align="center"><i>x_{t|t-1} = F x_{t-1|t-1},         t&gt;=1</i></p><p>
+</p><p align="center"><i>x_{t|t-1} = F_t x_{t-1|t-1},         t&gt;=1</i></p><p>
 <i><code>      </code></i> with error covariance      
-</p><p align="center"><i>S_{t|t-1} = Cov(x_t-x_{t|t-1}) = F S_{t-1|t-1} F' + Q</i></p>
+</p><p align="center"><i>S_{t|t-1} = Cov(x_t-x_{t|t-1}) = F_t S_{t-1|t-1} F_t' + Q_t</i></p>
 <p>
 <STRONG>(2) correction step</STRONG>       
-</p><p align="center"><i>x_{t|t}   = x_{t|t-1} + K_t (y_t - Z x_{t|t-1}),        t&gt;=1</i></p><p>
+</p><p align="center"><i>x_{t|t}   = x_{t|t-1} + K_t (y_t - Z_t x_{t|t-1}),        t&gt;=1</i></p><p>
 <i><code>      </code></i> for Kalman Gain   
-</p><p align="center"><i>K_t = S_{t|t-1} Z' (Z S_{t|t-1} Z' + V )^-</i></p><p>
+</p><p align="center"><i>K_t = S_{t|t-1} Z_t' (Z_t S_{t|t-1} Z_t' + V_t )^-</i></p><p>
 <i><code>      </code></i> with error covariance 
-</p><p align="center"><i>S_{t|t}   = Cov(x_t-x_{t|t}) = S_{t|t-1} - K_t Z S_{t|t-1}</i></p>
+</p><p align="center"><i>S_{t|t}   =
+Cov(x_t-x_{t|t}) = S_{t|t-1} - K_t Z_t S_{t|t-1}</i></p>
 
 
 <h3>Value</h3>
 
-<p>
-<code>recursiveFilter</code> returns a list with the following elements
-</p>
 <table summary="R argblock">
 <tr valign="top"><td><code>Xf:</code></td>
 <td>
-the series <i>x_{t|t}</i> filtered by the classical filter &mdash; a matrix with dimensions <i>p x (t+1)</i></td></tr>
+the series <i>x_{t|t}</i> filtered by the classical filter &mdash; a matrix with
+dimensions <i>p x (t+1)</i></td></tr>
 <tr valign="top"><td><code>Xp:</code></td>
 <td>
-the series <i>x_{t|t-1}</i>  predicted by the classical filter &mdash; a matrix with dimensions <i>p x t</i></td></tr>
-<tr valign="top"><td><code>S0:</code></td>
-<td>
-the series <i>S_{t|t}</i> of filter error covariances produced by the classical filter &mdash; 
-an array with dimensions <i>p x (t+1)</i></td></tr>
-<tr valign="top"><td><code>S1:</code></td>
-<td>
-the series <i>S_{t|t-1}</i>  of prediction error covariances produced by the classical filter &mdash; 
-an array with dimensions <i>p x t</i></td></tr>
-<tr valign="top"><td><code>KG:</code></td>
-<td>
-the series <i>K_{t}</i>  of Kalman gains produced by the classical filter &mdash; 
-an array with dimensions <i>p x t</i></td></tr>
+the series <i>x_{t|t-1}</i>  predicted by the classical filter &mdash;
+a matrix with dimensions <i>p x t</i></td></tr>
 <tr valign="top"><td><code>Xrf:</code></td>
 <td>
 if any of the arguments <code>initSr</code>, <code>predSr</code>, <code>corrSr</code> is not <code>NULL</code>:
-the series <i>x_{t|t}</i> filtered by the robust filter &mdash; a matrix with dimensions <i>p x (t+1)</i> 
+the series <i>x_{t|t}</i> filtered by the robust filter &mdash; a matrix with dimensions
+<i>p x (t+1)</i>
 else <code>NULL</code></td></tr>
 <tr valign="top"><td><code>Xrp:</code></td>
 <td>
 if any of the arguments <code>initSr</code>, <code>predSr</code>, <code>corrSr</code> is not <code>NULL</code>:
-the series <i>x_{t|t-1}</i> predicted by the robust filter &mdash; a matrix with dimensions <i>p x t</i> 
+the series <i>x_{t|t-1}</i> predicted by the robust filter
+&mdash; a matrix with dimensions <i>p x t</i>
 else <code>NULL</code></td></tr>
+<tr valign="top"><td><code>S0:</code></td>
+<td>
+the series <i>S_{t|t}</i> of filter error covariances produced by the classical filter &mdash;
+an array with dimensions <i>p x p x (t+1)</i></td></tr>
+<tr valign="top"><td><code>S1:</code></td>
+<td>
+the series <i>S_{t|t-1}</i>  of prediction error covariances produced by the classical filter &mdash; 
+an array with dimensions <i>p x p x t</i></td></tr>
+<tr valign="top"><td><code>KG:</code></td>
+<td>
+the series <i>K_{t}</i>  of Kalman gains produced by the classical filter &mdash; 
+an array with dimensions <i>q x p x t</i></td></tr>
+<tr valign="top"><td><code>Delta:</code></td>
+<td>
+the series <i>Delta_t</i>  of covariances of
+<i>Delta y_t</i> produced by the classical filter &mdash;
+an array with dimensions <i>q x q x t</i></td></tr>
+<tr valign="top"><td><code>DeltaY:</code></td>
+<td>
+the series <i>Delta y_t</i>  of observation residuals
+produced by the classical filter &mdash;
+an array with dimensions <i>q x runs x t</i></td></tr>
 <tr valign="top"><td><code>Sr0:</code></td>
 <td>
 if any of the arguments <code>initSr</code>, <code>predSr</code>, <code>corrSr</code> is not <code>NULL</code>:
@@ -195,16 +245,16 @@ an array with dimensions <i>p x p x t</i></td></tr>
 if any of the arguments <code>initSr</code>, <code>predSr</code>, <code>corrSr</code> is not <code>NULL</code>:
 the series <i>K_{t}</i>  of Kalman gains produced by the robust filter &mdash; 
 an array with dimensions <i>q x p x t</i></td></tr>
-<tr valign="top"><td><code>rob0:</code></td>
+<tr valign="top"><td><code>Deltar:</code></td>
 <td>
-if any of the arguments <code>initSr</code>, <code>predSr</code>, <code>corrSr</code> is not <code>NULL</code>:
-a list of length <code>t+1</code> with the recursively produced values of <code>rob0</code> &mdash; 
-e.g.  in case of the ACM filter each element contains a corresponding value of <code>st</code></td></tr>
-<tr valign="top"><td><code>rob1:</code></td>
+the series <i>Delta_t</i>  of covariances of
+<i>Delta y_t</i> produced by the robust filter &mdash;
+an array with dimensions <i>q x q x t</i></td></tr>
+<tr valign="top"><td><code>DeltaYr:</code></td>
 <td>
-if any of the arguments <code>initSr</code>, <code>predSr</code>, <code>corrSr</code> is not <code>NULL</code>:
-a list of length <code>t+1</code> with the recursively produced values of <code>rob1</code> &mdash; 
-e.g.  in case of the ACM filter each element contains a corresponding value of <code>st</code></td></tr>
+the series <i>Delta y_t</i>  of observation residuals
+produced by the robust filter &mdash;
+an array with dimensions <i>q x runs x t</i></td></tr>
 <tr valign="top"><td><code>IndIO:</code></td>
 <td>
 if  <code>predSr</code> is not <code>NULL</code>:
@@ -215,14 +265,31 @@ else <code>NULL</code></td></tr>
 if  <code>corrSr</code> is not <code>NULL</code>:
 the indicator showing when the robust filter uses clipping &mdash; a vector with dimensions <i>t</i> 
 else <code>NULL</code></td></tr>
+<tr valign="top"><td><code>rob0L:</code></td>
+<td>
+if any of the arguments <code>initSr</code>, <code>predSr</code>, <code>corrSr</code> is not <code>NULL</code>:
+a list of length <code>t+1</code> with the recursively produced values of <code>rob0</code> &mdash;
+e.g.  in case of the ACM filter each element contains a corresponding value of <code>st</code></td></tr>
+<tr valign="top"><td><code>rob1L:</code></td>
+<td>
+if any of the arguments <code>initSr</code>, <code>predSr</code>, <code>corrSr</code> is not <code>NULL</code>:
+a list of length <code>t+1</code> with the recursively produced values of <code>rob1</code> &mdash;
+e.g.  in case of the ACM filter each element contains a corresponding value of <code>st</code></td></tr>
 </table>
 <p>
-      
-<code>KalmanFilter(Y, a, S, F, Q, Z, V)</code> is a wrapper to <code>recursiveFilter(Y, a, S, F, Q, Z, V)</code>.<br> 
-<code>rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclidnorm)</code> is a wrapper to<br>  
+
+<br>
+<code>KalmanFilter(Y, a, S, F, Q, Z, V)</code> is a wrapper to <code>recursiveFilter(Y, a, S, F, Q, Z, V)</code>.<br>
+<code>rLS.AO.Filter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm)</code> and (synonymously)
+<code>rLSFilter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm)</code> are wrappers to<br>
 <code>recursiveFilter(Y, a, S, F, Q, Z, V,  
            initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep,
-           initSr=.cKinitstep, predSr=.cKpredstep, corrSr=rLScorrstep, 
+           initSr=.cKinitstep, predSr=.cKpredstep, corrSr=.rLScorrstep,
+           b=b, norm=norm)</code>.
+<code>rLS.IO.Filter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm)</code> is a wrapper to<br>
+<code>recursiveFilter(Y, a, S, F, Q, Z, V,
+           initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep,
+           initSr=.cKinitstep, predSr=.cKpredstep, corrSr=.rLS.IO.corrstep,
            b=b, norm=norm)</code>.
 <code>ACMFilter(Y, a, S, F, Q, Z, V, s0, psi, apsi, bpsi, cpsi, flag)</code> is a wrapper to <br>
 <code>recursiveFilter(Y, a, S, F, Q, Z, V, 
@@ -233,7 +300,7 @@ else <code>NULL</code></td></tr>
 <h3>Author(s)</h3>
 
 <p>
-Peter Ruckdeschel <a href="mailto:Peter.Ruckdeschel@uni-bayreuth.de">Peter.Ruckdeschel@uni-bayreuth.de</a>,<br> 
+Peter Ruckdeschel <a href="mailto:Peter.Ruckdeschel@itwm.fraunhofer.de">Peter.Ruckdeschel@itwm.fraunhofer.de</a>,<br> 
 Bernhard Spangl <a href="mailto:bernhard.spangl@boku.ac.at">bernhard.spangl@boku.ac.at</a>,<br>
 </p>
 
@@ -274,7 +341,7 @@ m0c  &lt;- -30
 V0c  &lt;- 0.1
 ract &lt;- 0.1
 
-X  &lt;- simulateState( a = a0, S = SS0, F = F0, Q = Q0, tt = TT)
+X  &lt;- simulateState( a = a0, S = SS0, F = F0, Qi = Q0, tt = TT)
 Y  &lt;- simulateObs(X = X, Z = Z0, Vi = V0i, mc = m0c, Vc = V0c, r = ract)
 SS &lt;- limitS(S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i)
 
@@ -286,18 +353,33 @@ SS &lt;- limitS(S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i)
 # r  =  0.1
 (B2 &lt;- rLScalibrateB(r = 0.1, S = SS, Z = Z0, V = V0i))
 
+# IO-filter
+# by efficiency in the ideal model
+# efficiency  =  0.9
+(B1.IO &lt;- rLScalibrateB(eff = 0.9, S = SS, Z = Z0, V = V0i, IO = TRUE))
+# by contamination radius
+# r  =  0.1
+(B2.IO &lt;- rLScalibrateB(r = 0.1, S = SS, Z = Z0, V = V0i, IO = TRUE))
+
 erg &lt;- KalmanFilter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i)
 
 rerg1 &lt;- rLSFilter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i, b = B1$b)
 rerg2 &lt;- rLSFilter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i, b = B2$b)
-mean((X - rerg1$Xf)^2) ### empirical MSE of the filters considered
-mean((X - rerg1$Xrf)^2)
-mean((X - rerg2$Xrf)^2)
+
+rerg1.IO &lt;- rLS.IO.Filter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i, b = B1.IO$b)
+rerg2.IO &lt;- rLS.IO.Filter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i, b = B2.IO$b)
+
+mean((X[,1,] - rerg1$Xf)^2) ### empirical MSE of the filters considered
+mean((X[,1,] - rerg1$Xrf)^2)
+mean((X[,1,] - rerg2$Xrf)^2)
+### not surprisingly IO-rob filter is not a good idea for AO - situation
+mean((X[,1,] - rerg1.IO$Xrf)^2)
+mean((X[,1,] - rerg2.IO$Xrf)^2)
 
 </pre>
 
 
 
-<hr><div align="center">[Package <em>robKalman</em> version 0.1 <a href="00Index.html">Index]</a></div>
+<hr><div align="center">[Package <em>robKalman</em> version 0.3 <a href="00Index.html">Index</a>]</div>
 
 </body></html>

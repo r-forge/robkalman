@@ -11,12 +11,13 @@ For testing purposes, with these routines, AO-contaminated observations from a
 multivariate time-invariant, linear, Gaussian state space model may be generated
 }
 \usage{
-rcvmvnorm(mi, Si, mc, Sc, r) 
-simulateState(a, S, F, Q, tt)
-simulateObs(X, Z, Vi, mc, Vc, r)
+rcvmvnorm(runs, mi, Si, mc, Sc, r)
+simulateState(a, S, F, Qi, mc=0, Qc=Qi, runs = 1, tt, r=0)
+simulateObs(X, Z, Vi, mc=0, Vc=Vi, runs = 1, r=0)
 }
 
 \arguments{
+  \item{runs}{number of runs to be generated}
   \item{mi}{mean of the ideal multivariate normal distribution}
   \item{mc}{mean of the contaminating multivariate normal distribution}
   \item{Si}{covariance of the ideal multivariate normal distribution}
@@ -25,7 +26,8 @@ simulateObs(X, Z, Vi, mc, Vc, r)
   \item{a}{mean of the initial state}
   \item{S}{initial state covariance (see below)}
   \item{F}{innovation transition matrix (see below)}
-  \item{Q}{innovation covariance (see below)}
+  \item{Qi}{ideal innovation covariance (see below)}
+  \item{Qc}{contaminating innovation covariance (see below)}
   \item{tt}{length of the simulated series of states/observations}
   \item{Z}{observation matrix (see below)}
   \item{Vi}{ideal observation error covariance (see below)}
@@ -87,7 +89,7 @@ For notation, let us formulate the classical Kalman filter in this context:
 }
 
 \author{
-  Peter Ruckdeschel \email{Peter.Ruckdeschel@uni-bayreuth.de},\cr 
+  Peter Ruckdeschel \email{Peter.Ruckdeschel@itwm.fraunhofer.de},\cr 
   }
 
 \seealso{
@@ -109,7 +111,7 @@ m0c  <- -30
 V0c  <- 0.1
 ract <- 0.1
 
-X  <- simulateState( a = a0, S = SS0, F = F0, Q = Q0, tt = TT)
+X  <- simulateState( a = a0, S = SS0, F = F0, Qi = Q0, tt = TT)
 Y  <- simulateObs(X = X, Z = Z0, Vi = V0i, mc = m0c, Vc = V0c, r = ract)
 
 }

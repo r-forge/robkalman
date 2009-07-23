@@ -12,16 +12,13 @@ Currently, the ACM-filter and the rLS-Filter are provided.
 \details{
 \tabular{ll}{
 Package: \tab robKalman\cr
-Version: \tab 0.2 \cr
-Date: \tab 2007-07-03 \cr
+Version: \tab 0.2.1 \cr
+Date: \tab 2009-03-18 \cr
 Depends: \tab R(>= 2.3.0), methods, graphics, startupmsg, dse1, dse2, MASS\cr 
 Imports: \tab stats\cr
-SaveImage: \tab no\cr
 LazyLoad: \tab yes\cr
-License: \tab GPL (version 2 or later)\cr
-URL: \tab http://www.uni-bayreuth.de/departments/math/org/mathe7/robKalman/\cr
-Packaged: \tab Sun June 11 10:16:03 2006; Peter\cr
-Built: \tab R 2.4.0dev; i386-pc-mingw32; 2006-06-11 10:20:11; windows\cr
+License: \tab LGPL-3\cr
+URL: \tab http://distr.r-forge.r-project.org/\cr
 }}
 
 \section{Setup}{
@@ -49,8 +46,11 @@ yet to be filled}
 general recursive filters
 +recursiveFilter
  -KalmanFilter 
- -rLSFilter
+ -rLSFilter:
+    *rLS.AO.Filter
+    *rLS.IO.Filter
  -ACMfilter
+ -mACMfilter
 
 ACMfilter:
 +ACMfilt
@@ -74,7 +74,7 @@ We thank Paul Gilbert for their help
 in preparing this package.}
 
 \author{
-Peter Ruckdeschel (Maintainer) \email{Peter.Ruckdeschel@uni-bayreuth.de},\cr 
+Peter Ruckdeschel (Maintainer) \email{Peter.Ruckdeschel@itwm.fraunhofer.de},\cr 
 Bernhard Spangl \email{bernhard.spangl@boku.ac.at},\cr 
 }
 
@@ -86,6 +86,8 @@ Martin, R.D. (1981): Robust Methods for Time Series\cr
 Martin, R.D. and Thomson, D.J. (1982): Robust-resistent Spectrum Estimation. \cr
 Ruckdeschel, P. (2001) \emph{Ans\"atze zur Robustifizierung des
 Kalman Filters.} Bayreuther Mathematische Schriften, Vol. 64. \cr
+Spangl, B. (2008): On Robust Spectral Density
+Estimation. PhD Thesis at Technical University, Vienna. \cr
 Stockinger, N. and Dutter, R. (1987): Robust Time Series Analysis: A Survey.  \cr
 }
 

@@ -1,8 +1,13 @@
 import("methods")
 import("stats")
+import("MASS")
 import("startupmsg")
+import("limma")
+import("robustbase")
+import("numDeriv")
 
-export("ACMfilt", "ACMfilter", "arGM", "Euclidnorm",  
+export("ACMfilt", "ACMfilter", "arGM", "EuclideanNorm",  
        "simulateState", "simulateObs", "rcvmvnorm", "Huberize",
-       "rLScalibrateB", "limitS", "rLSFilter", "KalmanFilter", 
+       "rLScalibrateB", "limitS", "rLSFilter", "rLS.IO.Filter",
+       "rLS.AO.Filter", "KalmanFilter", 
        "recursiveFilter")

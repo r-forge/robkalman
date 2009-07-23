@@ -1,4 +1,5 @@
 <html><head><title>Internal functions of package robKalman for the ACM filter</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="Rchm.css">
 </head>
 <body>
@@ -28,8 +29,8 @@ These functions are used internally by package robKalman for the ACM filter
 <pre>
 .getcorrCovACM(S1, K,  Z, W=diag(nrow(Z)))
 .ACMinitstep(a, S, ...) 
-.ACMpredstep(x0, S0, F, Q, rob0, s0, ...) 
-.ACMcorrstep(y, x1, S1, Z, V, rob1, dum, psi, apsi, bpsi, cpsi, flag, ...) 
+.ACMpredstep(x0, S0, F, Q, i, rob0, s0, ...)
+.ACMcorrstep(y, x1, S1, Z, V, i, rob1, dum, psi, apsi, bpsi, cpsi, flag, ...)
 </pre>
 
 
@@ -54,6 +55,9 @@ innovation transition matrix (see below)</td></tr>
 <tr valign="top"><td><code>Q</code></td>
 <td>
 innovation covariance (see below)</td></tr>
+<tr valign="top"><td><code>i</code></td>
+<td>
+the time instance</td></tr>
 <tr valign="top"><td><code>K</code></td>
 <td>
 Kalman gain <i>K_t</i></td></tr>
@@ -150,7 +154,7 @@ FURTHER DETAILS TO BE FILLED
 <h3>Author(s)</h3>
 
 <p>
-Peter Ruckdeschel <a href="mailto:Peter.Ruckdeschel@uni-bayreuth.de">Peter.Ruckdeschel@uni-bayreuth.de</a>,<br> 
+Peter Ruckdeschel <a href="mailto:Peter.Ruckdeschel@itwm.fraunhofer.de">Peter.Ruckdeschel@itwm.fraunhofer.de</a>,<br> 
 Bernhard Spangl <a href="mailto:bernhard.spangl@boku.ac.at">bernhard.spangl@boku.ac.at</a>,<br>
 </p>
 
@@ -172,6 +176,6 @@ Martin, R.D. and Thomson, D.J. (1982): Robust-resistent Spectrum Estimation. <br
 
 
 
-<hr><div align="center">[Package <em>robKalman</em> version 0.1 <a href="00Index.html">Index]</a></div>
+<hr><div align="center">[Package <em>robKalman</em> version 0.3 <a href="00Index.html">Index</a>]</div>
 
 </body></html>
