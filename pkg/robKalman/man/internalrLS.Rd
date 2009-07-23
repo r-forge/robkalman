@@ -11,7 +11,7 @@ This function is used internally by package robKalman for the rLS filter
 }
 
 \usage{
-.rLScorrstep(y, x1, S1, Z, V, i,  rob1=NULL, b, norm=Euclideannorm, ...)
+.rLScorrstep(y, x1, S1, Z, V, i,  rob1=NULL, b, norm=EuclideanNorm, ...)
 }
 
 \arguments{

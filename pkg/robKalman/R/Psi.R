@@ -142,7 +142,7 @@ mvpsiHampel <- function (x, a=2, b=4, c=8)
 ##  Paramters:
 ##  x ... vector 
 ##  a, b, c ... tuning constants
-    x.norm <- Euclideannorm(x)
+    x.norm <- EuclideanNorm(x)
     small <- (x.norm <= a)
     dummy <- pmin(a, a/(c-b)*(c-x.norm))
     dummy <- pmax(dummy, 0)/(x.norm+small)*(!small) + small

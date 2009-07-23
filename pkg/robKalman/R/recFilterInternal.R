@@ -84,9 +84,9 @@ WriteRecF <- function (CovRunDep)
 ##             vectorization may not be possible!)
 
     if (CovRunDep) {
-        .writing(arr)
+        .writing("arr")
     } else {
-        .writing(mat)
+        .writing("mat")
     }
 
 }

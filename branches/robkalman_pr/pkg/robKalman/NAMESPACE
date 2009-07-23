@@ -2,6 +2,10 @@ import("methods")
 import("stats")
 import("MASS")
 import("startupmsg")
+import("timeSeries")
+import("limma")
+import("robustbase")
+import("numDeriv")
 
 export("ACMfilt", "ACMfilter", "arGM", "Euclideannorm",  
        "simulateState", "simulateObs", "rcvmvnorm", "Huberize",

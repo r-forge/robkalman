@@ -30,7 +30,7 @@
 <param name="Local" value="calibrateRLS.html">
 </OBJECT>
 <LI> <OBJECT type="text/sitemap">
-<param name="Name" value="Euclideannorm">
+<param name="Name" value="EuclideanNorm">
 <param name="Local" value="util.html">
 </OBJECT>
 <LI> <OBJECT type="text/sitemap">

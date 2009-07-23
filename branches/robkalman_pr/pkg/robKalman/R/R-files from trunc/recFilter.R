@@ -1,13 +1,58 @@
-recursiveFilter <- function(Y, a, S, F, Q, Z, V,
-                   initSc = .cKinitstep, predSc = .cKpredstep,
-                   corrSc = .cKcorrstep,
-                   initSr = NULL, predSr = NULL, corrSr = NULL,
+<<<<<<< .mine
+=======
+setMethod("kalmanRob", signature(method = "robrecControl", smooth = "missing"),
+           function(method = rLSControl(), Y, SSM, nsim = 0, seed = NULL){
+   SSMa <- makeArrayRepresentation(SSM)
+   erg <- do.call(recursiveFilter, 
+                  args = c(list(Y = Y, a = SSM@a, S = SSMa@S, 
+                         F = SSMa@F, Q = SSMa@Q, Z = SSMa@Z, V = SSMa@V,
+                         nsim = nsim, seed = seed,
+                         initSc = init(method),
+                         predSc = predict(method),
+                         corrSc = correct(method),
+                         initSr = init.rob(method),
+                         predSr = predict.rob(method),
+                         corrSr = correct.rob(method)), 
+                         controls(method), dropRuns = FALSE)
+                  )                              
+              
+   return(generateRobRecFilter(
+            name = name(method), name.rob = name.rob(method), 
+            SSM = SSM, Y = Y, time = SSM@time, 
+            Xf = erg$Xf, Xp = erg$Xp, S0 = erg$S0, S1 = erg$S1, KG = erg$KG,
+            Xrf = erg$Xrf, Xrp = erg$Xrp, Sr0 = erg$Sr0, Sr1 = erg$Sr1,
+            KGr = erg$KGr, IndIO = erg$IndIO, IndAO = erg$IndAO,
+            rob0L = erg$rob0L, rob1L = erg$rob1L, St0s = erg$St0s,
+            St1s = erg$St1s, nsim = erg$nsim, RNGstate = erg$RNGstate
+            ))           
+   })
+>>>>>>> .r15
+
+setMethod("kalman", signature(smooth = "missing"), 
+          function(Y, SSM){
+   method <- KalmanControl()
+   SSMa <- makeArrayRepresentation(SSM)
+   erg <- recursiveFilter(Y = Y, a = SSM@a, S = SSMa@S, 
+                          F = SSMa@F, Q = SSMa@Q, Z = SSMa@Z, V = SSMa@V,
+                          initSc = init(method),
+                          predSc = predict(method),
+                          corrSc = correct(method), dropRuns = FALSE)
+   return(generateRecFilter(
+          name = name(method), SSM = SSM, Y = Y, time = SSM@time, 
+          Xf = erg$Xf, Xp = erg$Xp, S0 = erg$S0, S1 = erg$S1, KG = erg$KG
+          ))})
+
+
+recursiveFilter <- function(Y, a, S, F, Q, Z, V, 
+                   initSc = .cKinitstep, predSc = .cKpredstep, 
+                   corrSc = .cKcorrstep, 
+                   initSr = NULL, predSr = NULL, corrSr = NULL,                    
                    nsim = 0, seed = NULL, ..., dropRuns = TRUE)
                    # a generalization of the Kalmanfilter
-#arguments:
+#arguments: 
 # +  Y               :observations in an array with dimensions qd x runs x tt
-#                    :for backward compatibility: or a vector /a matrix in
-#                     dimensions qd x tt
+#                    :for backward compatibility: or a vector /a matrix in 
+#                     dimensions qd x tt 
 # +  a, S, F, Q, Z, V: Hyper-parameters of the ssm
 # +  initSc, predSc, corrSc:  (classical) initialization-, prediction-, and correction-step function
 # +  initSr, predSr, corrSr:  (robust) initialization-, prediction-, and correction-step function
@@ -19,6 +64,7 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
 # +  dropRuns: shall run-dimension be collapsed if it is one?
 {
  qd <- ifelse(length(Z)==1, 1, (dim(Y))[1])
+
  ########################
  # for backward compatibility
  if (!is.array(Y)){
@@ -29,38 +75,30 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
  ########################
 
  tt <- (dim(Y))[3]
- runs <- (dim(Y))[2]
+ runs <- (dim(Y))[2] 
 
  pd <- length(a)
  IndIO <- NULL
  IndAO <- NULL
- St0s <- St1s <- NULL
- DeltaYr <- NULL
- Deltar <- NULL
+ St0s <- St1s <- NULL 
 
- if(pd==1) F <- array(F, dim = c(pd,pd,tt))
- if(pd==1 && qd==1) Z <- array(Z, dim = c(pd,qd,tt))
- if(pd==1) Q <- array(Q, dim = c(pd,pd,tt))
- if(qd==1) V <- array(V, dim = c(qd,qd,tt))
  if(is.matrix(F)) F <- array(F, dim = c(pd,pd,tt))
  if(is.matrix(Z)) Z <- array(Z, dim = c(pd,qd,tt))
  if(is.matrix(Q)) Q <- array(Q, dim = c(pd,pd,tt))
  if(is.matrix(V)) V <- array(V, dim = c(qd,qd,tt))
 
  robust <- !(is.null(initSr)&&is.null(predSr)&&is.null(corrSr))
-
+ 
  Xf  <- array(0, dim = c(pd, runs, tt + 1))
  Xp  <- array(0, dim = c(pd, runs, tt))
- DeltaY  <- array(0, dim = c(qd, runs, tt))
  St0 <- array(0, dim = c(pd, pd, tt + 1))
  St1 <- array(0, dim = c(pd, pd, tt))
  KG  <- array(0, dim = c(pd, qd, tt))
- Delta  <- array(0, dim = c(qd, qd, tt))
-
+ 
  if (nsim)
-   {if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+   {if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) 
         runif(1)
-    if (is.null(seed))
+    if (is.null(seed)) 
         RNGstate <- get(".Random.seed", envir = .GlobalEnv)
     else {
         R.seed <- get(".Random.seed", envir = .GlobalEnv)
@@ -78,8 +116,6 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
      Str0 <- array(0, dim = c(pd, pd, tt + 1))
      Str1 <- array(0, dim = c(pd, pd, tt))
      KGr  <- array(0, dim = c(pd, qd, tt))
-     Deltar  <- array(0, dim = c(qd, qd, tt))
-     DeltaYr  <- array(0, dim = c(qd, runs, tt))
     }
 
  if(!is.null(predSr))
@@ -87,44 +123,43 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
 
  if(!is.null(corrSr))
      IndAO <- matrix(FALSE,runs,tt)
-
+ 
  ini <- initSc(a, S, i = 0, ...)
  x0  <- ini$x0
  S0  <- ini$S0
 
  Xf[, , 1] <- ini$x0
  St0[, , 1] <- ini$S0
-
+ 
  if(robust)
       {
        if(nsim){
-           Xs <- t(mvrnorm(nsim, a, S))
+           Xs <- t(rmvnorm(nsim, a, S))
            St0s <- array(0, c(pd, pd, tt))
-           St1s <- array(0, c(pd, pd, tt))
+           St1s <- array(0, c(pd, pd, tt))  
        }
        if(!is.null(initSr))
            {inir <- initSr(a, S, i = 0, ...)
             xr0  <- inir$x0
             Sr0  <- inir$S0
             rob0  <- inir$rob
-           }
+           }          
        else
            {
             xr0  <- x0
             Sr0  <- S0
             rob0  <- NULL
-           }
+           }          
        Xrf[,, 1] <- xr0
        Str0[,, 1] <- xr0
-       rob0L <- list(rob0)
-
+       rob0L <- list(rob0)  
+       
       }
  else{Xrf <- NULL
       Xrp <- NULL
       Str0 <- NULL
       Str1 <- NULL
       KGr <- NULL
-      Deltar <- NULL
       rob0L <- NULL
       rob1L <- NULL
      }
@@ -134,38 +169,38 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
       Q0 <- matrix(Q[,,i], nrow = pd, ncol = pd)
 
       ps  <- predSc(x0 = x0, S0 = S0, F = F0, Q = Q0, i = i, ...)
-      x1  <- matrix(ps$x1, nrow = pd, ncol = runs)
+      x1  <- ps$x1
       S1  <- ps$S1
-
+      
       Xp[,, i]   <- x1
       St1[,, i] <- S1
 
       if(robust)
           {if(!is.null(predSr))
-               {psr <- predSr(x0 = xr0, S0 = Sr0, F = F0, Q = Q0, i = i,
+               {psr <- predSr(x0 = xr0, S0 = Sr0, F = F0, Q = Q0, i = i, 
                               ..., rob0 = rob0)
                 IndIO[,i]  <- as.logical(psr$Ind)
                 if(nsim){
-                     vs <- t(mvrnorm(nsim, a*0, Q0))
+                     vs <- t(rmvnorm(nsim, a*0, Q0))
                      Xs <- F0 %*% Xs + vs
                      xr1s <- predSr(x0 = xr0s, S0 = Sr0, F = F0, Q = Q0, i = i,
                                     ..., rob0 = rob0)$x1
-                     St1s[,,i] <- cov(t(xr1s))
+                     St1s[,,i] <- cov(t(xr1s))          
                     }
-           }else{
+           }else{ 
                 psr <- predSc(x0 = xr0, S0 = Sr0, F = F0, Q = Q0, i = i, ...)
                 if(nsim){
-                     vs <- t(mvrnorm(nsim, a*0, Q0))
+                     vs <- t(rmvnorm(nsim, a*0, Q0))
                      Xs <- F %*% Xs + vs
                      xr1s <- predSc(x0 = xr0s, S0 = Sr0, F = F0, Q = Q0, i = i,
                                     ...)$x1
-                     St1s[,,i] <- cov(t(xr1s))
+                     St1s[,,i] <- cov(t(xr1s))          
                     }
            }
            xr1       <- psr$x1
            Sr1       <- psr$S1
-           rob1      <- psr$rob1
-
+           rob1      <- psr$rob1     
+           
            Xrp[,, i]  <- xr1
            Str1[,, i]<- S1
            if(i==1)  rob1L <- list(rob1)
@@ -181,46 +216,42 @@ recursiveFilter <- function(Y, a, S, F, Q, Z, V,
       cs <- corrSc(y = Y0, x1 = x1, S1 = S1, Z = Z0, V = V0, i = i,...)
       x0 <- cs$x0
       S0 <- cs$S0
-      DeltaY[,,i] <- cs$DeltaY
-
+      
       Xf[,,  i + 1]  <- x0
       St0[,, i + 1] <- S0
       KG[,,  i]     <- cs$K
-      Delta[,,  i]     <- cs$Delta
-
+      
       if(robust)
           {if (!is.null(corrSr))
-               {csr <- corrSr(y = Y0, x1 = xr1, S1 = Sr1,
+               {csr <- corrSr(y = Y0, x1 = xr1, S1 = Sr1, 
                               Z = Z0, V = V0, i = i, ..., rob1 = rob1)
-               IndAO[,i]  <- as.logical(csr$Ind)
+               IndAO[,i]  <- as.logical(csr$Ind) 
                if(nsim){
-                    es <- t(mvrnorm(nsim, Y[,1]*0, V0))
+                    es <- t(rmvnorm(nsim, Y[,1]*0, V0))
                     Ys <- Z0 %*% Xs + es
-                    xr0s <- corrSr(y = Ys, x1 = xr1s, S1 = Sr1,
+                    xr0s <- corrSr(y = Ys, x1 = xr1s, S1 = Sr1, 
                                    Z = Z0, V = V0, i = i, ..., rob1 = rob1)$x0
-                    St0s[,,i] <- cov(t(xr0s))
+                    St0s[,,i] <- cov(t(xr0s))          
                    }
           }else{
-                csr <- corrSc(y = Y0, x1 = xr1, S1 = Sr1, Z = Z0, V = V0,
+                csr <- corrSc(y = Y0, x1 = xr1, S1 = Sr1, Z = Z0, V = V0, 
                               i = i, ...)
                if(nsim){
-                    es <- t(mvrnorm(nsim, Y[,1]*0, V0))
+                    es <- t(rmvnorm(nsim, Y[,1]*0, V0))
                     Ys <- Z0 %*% Xs + es
-                    xr0s <- corrSc(y = Ys, x1 = xr1s, S1 = Sr1,
+                    xr0s <- corrSc(y = Ys, x1 = xr1s, S1 = Sr1, 
                                    Z = Z0, V = V0, i = i, ...)$x0
-                    St0s[,,i] <- cov(t(xr0s))
+                    St0s[,,i] <- cov(t(xr0s))          
                    }
-          }
+          }      
            xr0       <- csr$x0
            Sr0       <- csr$S0
-           rob0      <- csr$rob0
-           DeltaYr[,,i] <- csr$DeltaY
+           rob0      <- csr$rob0     
 
-           Xrf[,, i + 1]  <- xr0
+           Xrf[,, i + 1]   <- xr0
            Str0[,, i + 1] <- S0
-           rob0L[[i + 1]] <- rob0
+           rob0L[[i + 1]] <- rob0     
            KGr[,, i]      <- csr$K
-           Deltar[,,  i]  <- csr$Delta
           }
  }
 
@@ -229,16 +260,14 @@ if((runs==1)&&(dropRuns))
     Xp <- matrix(Xp,pd,tt)
     if(!is.null(Xrp)) {
        Xrf <- matrix(Xrf,pd,tt+1)
-       Xrp <- matrix(Xrp,pd,tt)
+       Xrp <- matrix(Xrp,pd,tt)    
        IndIO <- as.logical(IndIO)
-       IndAO <- as.logical(IndAO)
+       IndAO <- as.logical(IndAO)    
     }}
-list(Xf = Xf, Xp = Xp, Xrf = Xrf, Xrp = Xrp,
-     S0 = St0, S1 = St1, KG = KG, Delta = Delta,
-     DeltaY = DeltaY,
-     Sr0 = Str0, Sr1 = Str1,
-     KGr = KGr, Deltar = Deltar, DeltaYr = DeltaYr,
-     IndIO = IndIO, IndAO = IndAO,
+list(Xf = Xf, Xp = Xp, Xrf = Xrf, Xrp = Xrp, 
+     S0 = St0, S1 = St1, KG = KG,
+     Sr0 = Str0, Sr1 = Str1, 
+     KGr = KGr, IndIO = IndIO, IndAO = IndAO,
      rob0L = rob0L, rob1L = rob1L,
      nsim = nsim, RNGstate = RNGstate,
      St0s = St0s, St1s = St1s)
@@ -249,61 +278,54 @@ list(Xf = Xf, Xp = Xp, Xrf = Xrf, Xrp = Xrp,
 # simple wrappers:
 ######################################################
 
-KalmanFilter <- function(Y, a, S, F, Q, Z, V, dropRuns = TRUE)#
-#arguments:
+KalmanFilter <- function(Y, a, S, F, Q, Z, V)#
+#arguments: 
 # +  Y               :observations
 # +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
-{recursiveFilter(Y, a, S, F, Q, Z, V, dropRuns = dropRuns)}
+{recursiveFilter(Y, a, S, F, Q, Z, V)}
 
-rLSFilter <- function(Y, a, S, F, Q, Z, V,
-                      b = NULL, eff = NULL, r = NULL,
-                      rlow = 0, rup = NULL, repl = 100000, with.b.eff.r = TRUE,
-                      upto = 20,
-                      norm = Euclideannorm, dropRuns = TRUE)#
-#arguments:
+rLSFilter <- function(Y, a, S, F, Q, Z, V, b = NULL, repl = 100000,
+                      eff = NULL, r = NULL,
+                      rlow = NULL, rup = NULL, upto = 20,
+                      seed = NULL, norm = EuclideanNorm,
+                          dropRuns = TRUE)#
+#arguments: 
 # +  Y               :observations
 # +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
 # +  b               :clipping height
-{if( (!is.null(b)&&with.b.eff.r)||is.null(b)){
+{if(is.null(b)&&is.null(eff)&&is.null(r)&&is.null(rup))
+    stop("'b', 'eff', 'r', 'rup' may not be simultaneously 'NULL'")
+ if(is.null(b)){
     SS <- limitS(S = S, F = F, Q = Q, Z = Z, V = V)
-    b.erg <- rLScalibrateB(Z = Z, S = SS, V = V,
-                           b = b, eff = eff, r = r, rlow = rlow, rup = rup,
-                           repl = repl, with.b.eff.r = with.b.eff.r,
-                           upto = upto, norm = norm)#
-    cat("calibrating values:\n", "b = ", round(b.erg$b,3), "eff = ",
-         round(b.erg$eff,3), "r = ", round(b.erg$r,3), "\n")
+    b <- rLScalibrateB(Z = Z, S = SS, V = V, repl = repl, eff = eff, r = r,
+                       rlow = rlow, rup = rup, upto = upto, seed = seed)
  }
- b <- b.erg$b
  recursiveFilter(Y, a, S, F, Q, Z, V,
-                 initSc = .cKinitstep, predSc = .cKpredstep,
-                 corrSc = .cKcorrstep,
+                 initSc = .cKinitstep, predSc = .cKpredstep, 
+                 corrSc = .cKcorrstep, 
                  #initSr=NULL, predSr=NULL,
-                 initSr = .cKinitstep, predSr = .cKpredstep,
-                 corrSr = .rLScorrstep, b = b, norm = norm, dropRuns = dropRuns)
- }
+                 initSr = .cKinitstep, predSr = .cKpredstep, 
+                 corrSr = .rLScorrstep, b = b, norm = norm, dropRuns = dropRuns)}
 
-##just a synonym for AO/SO robust filter
 rLS.AO.Filter <- rLSFilter
 
 ## IO robust filter
-rLS.IO.Filter <- function(Y, a, S, F, Q, Z, V, b = NULL, eff = NULL, r = NULL,
-                      rlow = 0, rup = NULL, repl = 100000, with.b.eff.r = TRUE,
-                      upto = 20,
-                      norm = Euclideannorm, dropRuns = TRUE)#
+rLS.IO.Filter <- function(Y, a, S, F, Q, Z, V, b = NULL, repl = 100000,
+                      eff = NULL, r = NULL,
+                      rlow = NULL, rup = NULL, upto = 20,
+                      seed = NULL, norm = EuclideanNorm,
+                      dropRuns = TRUE)#
 #arguments:
 # +  Y               :observations
 # +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
 # +  b               :clipping height
-{if( (!is.null(b)&&with.b.eff.r)||is.null(b)){
+{if(is.null(b)&&is.null(eff)&&is.null(r)&&is.null(rup))
+    stop("'b', 'eff', 'r', 'rup' may not be simultaneously 'NULL'")
+ if(is.null(b)){
     SS <- limitS(S = S, F = F, Q = Q, Z = Z, V = V)
-    b.erg <- rLScalibrateB(Z = Z, S = SS, V = V,
-                           b = b, eff = eff, r = r, rlow = rlow, rup = rup,
-                           repl = repl, with.b.eff.r = with.b.eff.r,
-                           upto = upto, norm = norm, IO = TRUE)#
-    cat("calibrating values:\n", "b = ", round(b.erg$b,3), "eff = ",
-         round(b.erg$eff,3), "r = ", round(b.erg$r,3), "\n")
+    b <- rLScalibrateB(Z = Z, S = SS, V = V, repl = repl, eff = eff, r = r,
+                       IO = TRUE, rlow = rlow, rup = rup, upto = upto, seed = seed)
  }
- b <- b.erg$b
  recursiveFilter(Y, a, S, F, Q, Z, V,
                  initSc = .cKinitstep, predSc = .cKpredstep,
                  corrSc = .cKcorrstep,
@@ -311,101 +333,70 @@ rLS.IO.Filter <- function(Y, a, S, F, Q, Z, V, b = NULL, eff = NULL, r = NULL,
                  initSr = .cKinitstep, predSr = .cKpredstep,
                  corrSr = .rLS.IO.corrstep, b = b, norm = norm, dropRuns = dropRuns)}
 
-## IOAO robust filter
-rLS.IOAO.Filter <- function(Y, a, S, F, Q, Z, V,
-                      window = 5, quantile = 0.95,
-                     b.AO = NULL, eff.AO = NULL, r.AO = NULL,
-                      rlow.AO = 0, rup.AO = NULL, repl.AO = 100000,
-                      with.b.eff.r.AO = TRUE,
-                      upto.AO = 20, norm.AO = Euclideannorm,
-                     b.IO = NULL, eff.IO = NULL, r.IO = NULL,
-                      rlow.IO = 0, rup.IO = NULL, repl.IO = 100000,
-                      with.b.eff.r.IO = TRUE,
-                      upto.IO = 20, norm.IO = Euclideannorm,
-                      dropRuns = TRUE)#
+rLS.IOAO.Filter <- function(Y, a, S, F, Q, Z, V, window,
+                            b.IO = NULL, eff.IO= NULL, r.IO= NULL,
+                            rlow.IO = NULL, rup.IO = NULL,
+                            b.AO= NULL, eff.AO = NULL, r.AO= NULL,
+                            rlow.AO = NULL, rup.AO = NULL,
+                            qtl = 0.995,
+                            norm = Euclideannorm,
+                            dropRuns = TRUE)#
 #arguments:
 # +  Y               :observations
 # +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
 # +  b               :clipping height
-{SS <- NULL
- if( (!is.null(b.IO)&&with.b.eff.r.IO)||is.null(b.IO)){
+{if(is.null(b.IO)&&is.null(eff.IO)&&is.null(r.IO)&&is.null(rup.IO))
+    stop("'b.IO', 'eff.IO', 'r.IO', 'rup.IO' may not be simultaneously 'NULL'")
+ SS <- NULL
+ if(is.null(b.IO)){
     SS <- limitS(S = S, F = F, Q = Q, Z = Z, V = V)
-    b.IO.erg <- rLScalibrateB(Z = Z, S = SS, V = V,
-                           b = b.IO, eff = eff.IO, r = r.IO, rlow = rlow.IO,
-                           rup = rup.IO, repl = repl.IO,
-                           with.b.eff.r = with.b.eff.r.IO,
-                           upto = upto.IO, norm = norm.IO, IO = TRUE)#
-    cat("calibrating values:\n", "b.IO = ", round(b.IO.erg$b,3), "eff.IO = ",
-         round(b.IO.erg$eff,3), "r.IO = ", round(b.IO.erg$r,3), "\n")
+    b.IO <- rLScalibrateB(Z = Z, S = SS, V = V, repl = repl, eff = eff.IO, r = r.IO,
+                       IO = TRUE, rlow = rlow.IO, rup = rup.IO,
+                       upto = upto, seed = seed)
  }
- b.IO <- b.IO.erg$b
- if( (!is.null(b.AO)&&with.b.eff.r.AO)||is.null(b.AO)){
+ if(is.null(b.AO)&&is.null(eff.AO)&&is.null(r.AO)&&is.null(rup.AO))
+    stop("'b.AO', 'eff.AO', 'r.AO', 'rup.AO' may not be simultaneously 'NULL'")
+ if(is.null(b.AO)){
     if(is.null(SS))
        SS <- limitS(S = S, F = F, Q = Q, Z = Z, V = V)
-    b.AO.erg <- rLScalibrateB(Z = Z, S = SS, V = V,
-                           b = b.AO, eff = eff.AO, r = r.AO, rlow = rlow.AO,
-                           rup = rup.AO, repl = repl.AO,
-                           with.b.eff.r = with.b.eff.r.AO,
-                           upto = upto.AO, norm = norm.AO)#
-    cat("calibrating values:\n", "b.AO = ", round(b.AO.erg$b,3), "eff.AO = ",
-         round(b.AO.erg$eff,3), "r.AO = ", round(b.AO.erg$r,3), "\n")
+    b.AO <- rLScalibrateB(Z = Z, S = SS, V = V, repl = repl, eff = eff.AO, r = r.AO,
+                       rlow = rlow.AO, rup = rup.AO, upto = upto, seed = seed)
  }
- b.AO <- b.AO.erg$b
-
- diA <- c(dim(F)[1],dim(Y)[2],window)
- diAy <- c(dim(Y)[1:2],window)
- diB0 <- c(dim(F)[1],dim(Y)[2],dim(Y)[3]+1)
- diB1 <- c(dim(F)[1],dim(Y)[2],dim(Y)[3])
- diC <- c(dim(Y)[2],dim(Y)[3])
-
- rob0 <- list(dy = numeric(window),
-              dx0.io = array(0, dim = diA),
-              dx1.io = array(0, dim = diA),
-              Ind.io = matrix(0, dim = diAy[2:3]),
-              DeltaY.io = array(0, dim = diAy),
-              dx0 = array(0, dim = diB0),
-              dx1 = array(0, dim = diB1),
-              Ind.IO = matrix(0, dim = diB1[2:3]),
-              Ind.AO = matrix(0, dim = diB1[2:3]),
-              DeltaY = 0*Y
-              )
-
  recursiveFilter(Y, a, S, F, Q, Z, V,
                  initSc = .cKinitstep, predSc = .cKpredstep,
                  corrSc = .cKcorrstep,
                  #initSr=NULL, predSr=NULL,
-                 initSr = .cKinitstep, predSr = .rLS.IOAO.predstep,
-                 corrSr = .rLS.IOAO.corrstep, window = window,
-                 quantile = quantile, b.IO = b.IO, norm.IO = norm.IO,
-                 b.AO = b.AO, norm.AO = norm.AO, rob0 = rob0,
-                 dropRuns = dropRuns)
- }
+                 initSr = .cKinitstep, predSr = .cKpredstep,
+                 corrSr = .rLS.IOAO.corrstep,
+                 window = window,
+                 b.IO = b.IO, b.AO = b.AO, robHist = rep(0, window)
+                 norm = Euclideannorm, dropRuns = dropRuns)}
 
-ACMfilter <- function(Y, a, S, F, Q, Z, V, s0, psi, apsi, bpsi, cpsi, flag, dropRuns = TRUE)#
-#arguments:
+ACMfilter <- function(Y, a, S, F, Q, Z, V, s0, psi, apsi, bpsi, cpsi, flag)#
+#arguments: 
 # +  Y               :observations
 # +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
-# +  b               :clippingheight
-##  Y=x ... observed time series
+# +  b               :clippingheight 
+##  Y=x ... observed time series 
 ##  a=m0 ... unconditional mean
 ##  S=Cx ... covariance matrix
-##  F=Phi ... design matrix of state equation
+##  F=Phi ... design matrix of state equation 
 ##  Q ... covariance matrix of state innovation process
 ##  Z=H ... observation matrix
 ##  V ... covariance matrix of observation noise
 ##  s0 ... scale of nominal Gaussian component of additive noise
-##  psi ... influence function to be used (default: Hampel's psi function,
+##  psi ... influence function to be used (default: Hampel's psi function, 
 ##          only that is available at the moment)
 ##  apsi, bpsi, cpsi ... tuning constants for Hampel's psi-function
 ##              (default: a=b=2.5, c=5.0)
-##  flag ... character, if "weights" (default), use psi(t)/t to calculate
+##  flag ... character, if "weights" (default), use psi(t)/t to calculate 
 ##           the weights; if "deriv", use psi'(t)
-{ recursiveFilter(Y, a, S, F, Q, Z, V,
-                 initSc = .cKinitstep, predSc = .cKpredstep,
-                 corrSc = .cKcorrstep,
-                 initSr = .cKinitstep, predSr = .ACMpredstep,
-                 corrSr = .ACMcorrstep, s0=s0, psi=psi,
-                 apsi=2.5, bpsi=2.5, cpsi=5.0, flag=flag, dropRuns = dropRuns)}
+{recursiveFilter(Y, a, S, F, Q, Z, V, 
+                 initSc = .cKinitstep, predSc = .cKpredstep, 
+                 corrSc = .cKcorrstep, 
+                 initSr = .cKinitstep, predSr = .ACMpredstep, 
+                 corrSr = .ACMcorrstep, s0, psi, 
+                 apsi=2.5, bpsi=2.5, cpsi=5.0, flag)}
 ###########################################
 ##
 ##  R-function: ACMfilter - approximate conditional-mean filtering
@@ -415,24 +406,24 @@ ACMfilter <- function(Y, a, S, F, Q, Z, V, s0, psi, apsi, bpsi, cpsi, flag, drop
 ###########################################
 
 ##  Paramters:
-##  Y=x ... observed time series
+##  Y=x ... observed time series 
 ##  a=m0 ... unconditional mean
 ##  S=Cx ... covariance matrix
-##  F=Phi ... design matrix of state equation
+##  F=Phi ... design matrix of state equation 
 ##  Q ... covariance matrix of state innovation process
 ##  Z=H ... observation matrix
 ##  V ... covariance matrix of observation noise
 ##  s0 ... scale of nominal Gaussian component of additive noise
-##  psi ... influence function to be used (default: Hampel's psi function,
+##  psi ... influence function to be used (default: Hampel's psi function, 
 ##          only that is available at the moment)
 ##  a, b, c ... tuning constants for Hampel's psi-function
 ##              (defaul: a=b=2.5, c=5.0)
-##  flag ... character, if "weights" (default), use psi(t)/t to calculate
+##  flag ... character, if "weights" (default), use psi(t)/t to calculate 
 ##           the weights; if "deriv", use psi'(t)
 
-mACMfilter <- function(Y, a, S, F, Q, Z, V,
-                       psi=mvpsiHampel, apsi=2.5, bpsi=2.5, cpsi=5.0,
-                       flag="deriv", dropRuns = TRUE)
+mACMfilter <- function(Y, a, S, F, Q, Z, V, 
+                       psi=mvpsiHampel, apsi=2.5, bpsi=2.5, cpsi=5.0, 
+                       flag="deriv") 
 {
 ###########################################
 ##
@@ -443,26 +434,26 @@ mACMfilter <- function(Y, a, S, F, Q, Z, V,
 ###########################################
 
 ##  Paramters:
-##  Y ... observed vector-valued time series
-##        (column-wise, matrix: q rows, number of columns equal to time points)
+##  Y ... observed vector-valued time series 
+##        (column-wise, matrix: q rows, number of columns equal to time points) 
 ##  a ... unconditional mean vector (formerly: m0)
 ##  S ... covariance matrix (formerly: Cx)
 ##  F ... design matrix of state equation (formerly: Phi)
-##  Q ... covariance matrix of state innovation process
+##  Q ... covariance matrix of state innovation process 
 ##  Z ... observation matrix (formerly: H)
 ##  V ... covariance matrix of observation noise (formerly: R)
-##  psi ... influence function to be used (default: Hampel's psi function,
+##  psi ... influence function to be used (default: Hampel's psi function, 
 ##          only that is available at the moment)
 ##  apsi, bpsi, cpsi ... tuning constants for Hampel's psi-function
 ##                       (default: a=b=2.5, c=5.0)
-##  flag ... character, weight matrix to be used in correction step,
-##           if "deriv" (default), Jacobian matrix of multivariate analogue
-##           of Hampel's psi-function is used (only default is available
+##  flag ... character, weight matrix to be used in correction step, 
+##           if "deriv" (default), Jacobian matrix of multivariate analogue 
+##           of Hampel's psi-function is used (only default is available 
 ##           at the moment)
 
-    recursiveFilter(Y, a, S, F, Q, Z, V,
-                initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep,
-                initSr=.cKinitstep, predSr=.cKpredstep, corrSr=.mACMcorrstep,
-                psi, apsi, bpsi, cpsi, flag, dropRuns = dropRuns)
+    recursiveFilter(Y, a, S, F, Q, Z, V, 
+                initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep, 
+                initSr=.cKinitstep, predSr=.cKpredstep, corrSr=.mACMcorrstep, 
+                psi, apsi, bpsi, cpsi, flag)
 }
 

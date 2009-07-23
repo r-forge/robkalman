@@ -70,7 +70,7 @@ or Robustness for Kalman Filtering revisited})
 \and Bernhard Spangl\inst{2}\\[2ex]
 %\protect{%
 %{\parbox[b]{12cm}\begin{group}
-\tiny $^1$ 
+\tiny $^1$
 {%{\includegraphics[bb=262 426 291 472,width=0.35cm]{ITWMLOGO}}\hspace{0.3cm}
 \tiny Fraunhofer ITWM, Kaiserslautern, Germany, \hspace{0.18cm}
 \href{mailto:Peter.Ruckdeschel@itwm.fraunhofer.de}{\tt\tiny Peter.Ruckdeschel@itwm.fraunhofer.de}}\\
@@ -138,7 +138,7 @@ extensible to:
 \begin{itemize}
   \item continuous time (SDE's)
   \item incorporate user-specified controls
-\end{itemize}} 
+\end{itemize}}
 \end{frame}
 %
 
@@ -173,15 +173,9 @@ L}(y^{\SSs\rm di}_t)
 \color{Dark2.2}r_{\SSs\rm IO} {\cal L}(v^{\SSs\rm di}_t)\color{black}\nonumber
 \end{eqnarray}
 \color{black}}}
-Notation: $\qquad$
-%\begin{equation}
-$\mybm{\,\,\cdot\,\,}\hat=\mybm{\,\,\cdot\,}^{\SSs\rm id},\qquad
- \hat{\mybm{\,\,\cdot\,\,}}\hat=\mybm{\,\,\cdot\,}^{\SSs\rm re},\qquad
- \color{Dark2.2}\tilde{\mybm{\,\,\cdot\,\,}}\hat=\mybm{\,\,\cdot\,}^{\SSs\rm di}\color{black}$
-%\end{equation}
-\vspace{1ex}
+\vspace{0.5ex}
 
-\uncover<2->{\structure{\large Different and competing goals}\vspace{.4ex}
+\uncover<2->{\structure{\large \bf Different and competing goals}\vspace{1ex}
 \begin{itemize}
   \item<2->[A/SO\hphantom{ \& IO}] attenuation of ``false alarms''
   \item<2->[IO \hphantom{ \& A/SO}] $\!$tracking: detect structural changes as fast as possible;\\
@@ -283,7 +277,7 @@ try to retain all {``$+$''}'s, revise {``$-$''}}
      \item<2-> ACM-filter: filter, multivariate version, GM-estimator
      \item<2-> rLS-filter: filter, calibration of clipping height
   \begin{itemize}
-    \item<2-> AO/SO-robust version 
+    \item<2-> AO/SO-robust version
     \item<2-> IO-robust version
     \item<2-> with a certain delay joint treatment of AO/SO's \& IO's
   \end{itemize}%
@@ -354,7 +348,7 @@ try to retain all {``$+$''}'s, revise {``$-$''}}
   \item<1-> preliminary, ``{\tt S4}-free'' interfaces
   \begin{itemize}
      \item Kalman filter (in our context) \lstinline{KalmanFilter}
-     \item rLS: \lstinline{rLSFilter}($=$\lstinline{rLS.AO.Filter}), \\ 
+     \item rLS: \lstinline{rLSFilter}($=$\lstinline{rLS.AO.Filter}), \\
      $\mbox{\hphantom{ rLS:}}$ \lstinline{rLS.IO.Filter}, \lstinline{rLS.IOAO.Filter}%\\
      \item<1-> ACM: \lstinline{ACMfilt}, \lstinline{ACMfilter}, \lstinline{mACMfilter}
      \item<2-> all realized as wrappers to \lstinline{recursiveFilter}
@@ -408,7 +402,7 @@ $\quad$       \fbox{\hreft{http://r-forge.r-project.org/projects/robkalman/}}\vs
 \hfill {\footnotesize\color{Dark2.8}($70\%$ done)}
 \item interpretation as random coefficient regression \\$\leadsto$
 robust regression-type approach ({\bf rIC}, {\bf mIC}) \hfill {\footnotesize\color{Dark2.8}($30\%$ done)}
-\item connecttion to particle filters --- \\theory and computer interface  \hfill  {\footnotesize\color{Dark2.8}($10\%$ done)}
+\item connection to particle filters --- \\theory and computer interface  \hfill  {\footnotesize\color{Dark2.8}($10\%$ done)}
 \item speeding up things / bridging to fast Kalman filter of \\ \pkg{FKF} by \Person{David Luethi}, \Person{Philipp Erb}  \hfill {\footnotesize\color{Dark2.8}($1\%$ done)}
 \end{itemize}}
 \end{frame}
@@ -427,11 +421,11 @@ robust regression-type approach ({\bf rIC}, {\bf mIC}) \hfill {\footnotesize\col
 \item see slides by \Person{Stefan Theussl}
 \end{itemize}
 \end{footnotesize}
-\item<2->needs serious conceptional preparations  
+\item<2->needs serious conceptional preparations
 \begin{footnotesize}
 \begin{itemize}
 \item<2-> for separating/modularizing tasks
-\item<2-> consistency: coding \& documentation conventions 
+\item<2-> consistency: coding \& documentation conventions
 \end{itemize}
 \end{footnotesize}
 \item<2-> helpful: scheduling, reminders/deadlines for collaborators\ldots

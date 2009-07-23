@@ -33,11 +33,12 @@ time-invariant, linear, Gaussian state space model (ti-l-G-SSM)
 recursiveFilter(Y, a, S, F, Q, Z, V, initSc = .cKinitstep, predSc = .cKpredstep,
                    corrSc = .cKcorrstep,
                    initSr = NULL, predSr = NULL, corrSr = NULL,
-                   nsim = 0, seed = NULL, ..., dropRuns = TRUE)
+                   nsim = 0, seed = NULL, ..., dropRuns = TRUE,
+                   CovRunDep = FALSE, saveOpt = TRUE, dimsCheck = NULL)
 KalmanFilter(Y, a, S, F, Q, Z, V, dropRuns = TRUE)
-rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm, dropRuns = TRUE)
-rLS.AO.Filter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm, dropRuns = TRUE)
-rLS.IO.Filter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm, dropRuns = TRUE)
+rLSFilter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm, dropRuns = TRUE)
+rLS.AO.Filter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm, dropRuns = TRUE)
+rLS.IO.Filter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm, dropRuns = TRUE)
 ACMfilter(Y, a, S, F, Q, Z, V, s0, psi,  apsi, bpsi, cpsi, flag, dropRuns = TRUE)
 </pre>
 
@@ -132,6 +133,16 @@ seed for the simulations</td></tr>
 <tr valign="top"><td><code>dropRuns</code></td>
 <td>
 logical; shall run-dimension be collapsed if it is one?</td></tr>
+<tr valign="top"><td><code>CovRunDep</code></td>
+<td>
+logical; shall covariances be run-dependent?</td></tr>
+<tr valign="top"><td><code>saveOpt</code></td>
+<td>
+logical; either single valued or (named) 4-valued:
+shall we store Kalman gain, Cov(Delta Y), Delta Y, ...?</td></tr>
+<tr valign="top"><td><code>dimsCheck</code></td>
+<td>
+logical or <code>NULL</code>; shall we check dimensions?</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 further arguments to the "step"-functions</td></tr>
@@ -269,13 +280,13 @@ e.g.  in case of the ACM filter each element contains a corresponding value of <
 
 <br>
 <code>KalmanFilter(Y, a, S, F, Q, Z, V)</code> is a wrapper to <code>recursiveFilter(Y, a, S, F, Q, Z, V)</code>.<br>
-<code>rLS.AO.Filter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm)</code> and (synonymously)
-<code>rLSFilter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm)</code> are wrappers to<br>
+<code>rLS.AO.Filter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm)</code> and (synonymously)
+<code>rLSFilter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm)</code> are wrappers to<br>
 <code>recursiveFilter(Y, a, S, F, Q, Z, V,  
            initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep,
            initSr=.cKinitstep, predSr=.cKpredstep, corrSr=.rLScorrstep,
            b=b, norm=norm)</code>.
-<code>rLS.IO.Filter(Y, a, S, F, Q, Z, V, b, norm=Euclideannorm)</code> is a wrapper to<br>
+<code>rLS.IO.Filter(Y, a, S, F, Q, Z, V, b, norm=EuclideanNorm)</code> is a wrapper to<br>
 <code>recursiveFilter(Y, a, S, F, Q, Z, V,
            initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep,
            initSr=.cKinitstep, predSr=.cKpredstep, corrSr=.rLS.IO.corrstep,

@@ -41,9 +41,9 @@ recursiveFilter <- function (Y, a, S, F, Q, Z, V,
     
         ########################
         # for backward compatibility
-        l0 <- lenght(dim(Y))
+        l0 <- length(dim(Y))
         if (l0 < 3) {
-            if (l0 == 0) Y <- array(Y, dim = c(1, 1, lenght(Y)))
+            if (l0 == 0) Y <- array(Y, dim = c(1, 1, length(Y)))
             if (l0 == 2) {
                 if (dim(Y)[2] == qd) {
                     Y <- aperm(array(Y, dim = c(dim(Y), 1)), c(1, 3, 2))
@@ -74,7 +74,7 @@ recursiveFilter <- function (Y, a, S, F, Q, Z, V,
    
     WriteRecF <- WriteRecF(CovRunDep)
 
-    saveOpt <- rep(saveOpt, lenght.out=8)
+    saveOpt <- rep(saveOpt, length.out=8)
     if (length(names(saveOpt))==0) {
         names(saveOpt) <- c("KG", "KGr", "Delta", "Deltar", 
                             "DeltaY", "DeltaYr", "IndIO", "IndAO")
@@ -309,7 +309,7 @@ KalmanFilter <- function(Y, a, S, F, Q, Z, V, dropRuns = TRUE)#
 # +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
 {recursiveFilter(Y, a, S, F, Q, Z, V, dropRuns = dropRuns)}
 
-rLSFilter <- function(Y, a, S, F, Q, Z, V, b, norm = Euclideannorm, dropRuns = TRUE)#
+rLSFilter <- function(Y, a, S, F, Q, Z, V, b, norm = EuclideanNorm, dropRuns = TRUE)#
 #arguments:
 # +  Y               :observations
 # +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
@@ -325,7 +325,7 @@ rLSFilter <- function(Y, a, S, F, Q, Z, V, b, norm = Euclideannorm, dropRuns = T
 rLS.AO.Filter <- rLSFilter
 
 ## IO robust filter
-rLS.IO.Filter <- function(Y, a, S, F, Q, Z, V, b, norm = Euclideannorm,
+rLS.IO.Filter <- function(Y, a, S, F, Q, Z, V, b, norm = EuclideanNorm,
                           dropRuns = TRUE)#
 #arguments:
 # +  Y               :observations

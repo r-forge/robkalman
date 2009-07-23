@@ -1,7 +1,7 @@
 \name{utilitiesrobKalman}
 \alias{utilitiesrobKalman}
 \alias{Huberize}
-\alias{Euclideannorm}
+\alias{EuclideanNorm}
 \alias{limitS}
 
 \title{Utility functions of package robKalman}
@@ -10,8 +10,8 @@
 These functions are used internally by package robKalman
 }
 \usage{
-Euclideannorm(x)
-Huberize(x, b, norm=Euclideannorm, ...)    
+EuclideanNorm(x)
+Huberize(x, b, norm=EuclideanNorm, ...)
 limitS(S, F, Z, Q, V, tol = 10^-4, itmax = 1000)#
 }
 \arguments{
@@ -32,7 +32,7 @@ limitS(S, F, Z, Q, V, tol = 10^-4, itmax = 1000)#
 
 \note{\code{limitS} does no dimension checking!}
 
-\value{\code{Euclideannorm(x)} returns the Euclidean norm of \code{x}, 
+\value{\code{EuclideanNorm(x)} returns the Euclidean norm of \code{x},
 \code{Huberize(x,b,norm)} huberizes \code{x} to length \code{b} measured in norm \code{norm}, 
 \code{limitS(S, F, Z, Q, V)} returns the limiting prediction error covariance
 of the classical Kalman Filter, in the time-invariant
@@ -64,9 +64,9 @@ of the classical Kalman filter converge.
 
 \examples{
 require(robKalman)
-x <- 1:4
+x <- matrix(1:4)
 
-Euclideannorm(x)
+EuclideanNorm(x)
 
 Huberize(x,b=5) ## does clipping
 Huberize(x,b=11) ## does no clipping

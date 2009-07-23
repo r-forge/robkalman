@@ -1,0 +1,535 @@
+% ------------------------------------------------------------------------
+% Vortrag: Wien 18-06-06
+% ------------------------------------------------------------------------
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% fuer Handout ab %%<H  bis  %%>H einkommentieren
+%      (und %%<D, %%>D rauskommentieren)
+% fuer dynam.Slides ab %%<D  bis  %%>D einkommentieren
+%      (und %%<H, %%>H rauskommentieren)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%<H
+%\documentclass[handout]{beamer}
+%%>H
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%<D
+\documentclass[10pt]{beamer}
+%
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+%  % oder ...%%%
+%
+  \setbeamercovered{transparent=20, again covered = \opaqueness<1->{60}}
+%  % oder auch nicht
+  \usecolortheme{UBT}
+}
+%%>D
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\mode{handout}
+%{
+%  \usetheme{Warsaw}
+%  % oder ...%
+%
+%  \setbeamercovered{transparent=20, again covered = \opaqueness<1->{60}}
+%  % oder auch nicht
+%  \usecolortheme{UBT}
+%}
+%
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\RequirePackage{defrbeam}  %%  im Verzeichnis UBTstyle  --- für UBT Abkürzungen
+\RequirePackage{listings}  %%  im Verzeichnis listings  --- für Programm-Stückchen
+%
+%FARBdefs
+\definecolor{notrot}{rgb}{0,0,0}%{HTML}{802040}
+\definecolor{normal}{rgb}{0,0,0} %{0.9807843,0.8455490,0.3125490}
+\definecolor{Rcolor}{rgb}{0.065,0.065,0.485}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Spezifikation von <- im R-Code modus
+\lstset{language=R,basicstyle=\small\color{Rcolor},literate={<-}{{$\leftarrow$}}2,morekeywords=[2]{Norm,Pois,lambda,p,d,r,distroptions}}
+\newcommand{\ttR}[1]{{\color{Rcolor}\tt #1\color{normal}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\title%[] % (optional, nur bei langen Titeln nötig)
+{{\tt robKalman} --- a package on Robust Kalman Filtering}
+
+\author{Peter Ruckdeschel\inst{1} \and
+Bernhard Spangl\inst{2}%
+}
+\institute
+{\inst{1}{\includegraphics[width=1.4cm]{UBTlogo}\hspace{0.3cm}Fakult\"at f\"ur Mathematik und Physik\smallskip\\
+\mref{Peter.Ruckdeschel@uni-bayreuth.de}\\
+\href{http://www.uni-bayreuth.de/departments/math/org/mathe7/RUCKDESCHEL}{\tiny \tt www.uni-bayreuth.de/departments/math/org/mathe7/RUCKDESCHEL}}
+\and \inst{2}{\includegraphics[bb=262 426 291 472,width=0.35cm]{RLI_Logo_klein_CMYK}\hspace{0.3cm}
+Universit\"at f\"ur Bodenkultur, Wien\smallskip\\
+%Gregor-Mendel-Stra\ss{}e 33\smallskip\\
+%A-1180 Vienna\smallskip\\
+\mref{Bernhard.Spangl@boku.ac.at}\\
+\href{http://www.rali.boku.ac.at/statedv.html}{\tiny \tt www.rali.boku.ac.at/statedv.html}}
+}
+% - Der \inst{?} Befehl sollte nur verwendet werden, wenn die Autoren
+%   unterschiedlichen Instituten angehören.
+% - Keep it simple, niemand interessiert sich für die genau Adresse.
+%
+\date{\includegraphics[bb=0 0 236 113,width=1.65cm]{useR-middle}\hspace{0.3cm}%UseR\\%
+16.06.2006}
+% - Volle oder abgekürzter Name sind möglich.
+% - Dieser Eintrag ist nicht für das Publikum gedacht (das weiß
+%   nämlich, bei welcher Konferenz es ist), sondern für Leute, die die
+%   Folien später lesen.
+
+
+% Falls eine Logodatei namens "university-logo-filename.xxx" vorhanden
+% ist, wobei xxx ein von latex bzw. pdflatex lesbares Graphikformat
+% ist, so kann man wie folgt ein Logo einfügen:
+
+%\pgfdeclareimage[height=0.4cm,width=1.8cm]{logo}{ubtlogo}
+%\logo{\pgfuseimage{logo}}
+
+
+
+% Folgendes sollte gelöscht werden, wenn man nicht am Anfang jedes
+% Unterabschnitts die Gliederung nochmal sehen möchte.
+%\AtBeginSubsection[]
+%{
+%  \begin{frame}<beamer>
+%    \frametitle{Outline}
+%    \tableofcontents[currentsection,currentsubsection]
+%  \end{frame}
+%}
+
+
+% Falls Aufzählungen immer schrittweise gezeigt werden sollen, kann
+% folgendes Kommando benutzt werden:
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+
+\begin{document}
+
+% ------------------------------------------------------------------------
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 1
+  \titlepage
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  aus den Guidelines von Paket beamer
+%
+%\begin{frame}
+%  \frametitle{Outline}
+%  \tableofcontents[pausesections]
+%  % Die Option [pausesections] könnte nützlich sein.
+%\end{frame}
+%
+%
+% Einen Vortrag zu strukturieren ist nicht immer einfach. Die
+% nachfolgende Struktur kann unangemessen sein. Hier ein paar Regeln,
+% die für diese Lösungsvorlage gelten:
+%
+% - Es sollte genau zwei oder drei Abschnitte geben (neben der
+%   Zusammenfassung).
+% - *Höchstens* drei Unterabschnitte pro Abschnitt.
+% - Pro Rahmen sollte man zwischen 30s und 2min reden. Es sollte also
+%   15 bis 30 Rahmen geben.
+%
+% - Konferenzteilnehmer wissen oft wenig von der Materie des
+%   Vortrags. Deshalb: vereinfachen!
+% - In 20 Minuten ist es schon schwer genug, die Hauptbotschaft zu
+%   vermitteln. Deshalb sollten Details ausgelassen werden, selbst
+%   wenn dies zu Ungenauigkeiten oder Halbwahrheiten führt.
+% - Falls man Details weglässt, die eigentlich wichtig für einen
+%   Beweis/Implementation sind, so sagt man dies einmal nüchtern. Alle
+%   werden damit glücklich sein.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------------------------------------------------------------
+\section{Robust Kalman Filtering}
+% ------------------------------------------------------------------------
+\subsection{Classical setup}
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 2
+  \frametitle{Classical setup: Linear state space models (SSMs)}
+\begin{itemize}
+  \item<1-> State equation:
+            $$\framebox{$X_t=F_t X_{t-1} + v_t$}$$
+  \item<2-> Observation equation:
+            $$\framebox{$Y_t=Z_t X_{t} + \varepsilon_t$}$$
+  \item<3-> Ideal model assumption:
+  $$X_0\sim {\cal N}_p(a_0,\Sigma_0),\quad v_t\sim {\cal N}_p(0,Q_t),\quad \varepsilon_t\sim {\cal N}_q(0,V_t),$$
+   all independent
+  \item<4> (preliminary ?) simplification: Hyper parameters $F_t,Z_t,V_t,Q_t$ constant in $t$
+\end{itemize}
+\end{frame}
+% ------------------------------------------------------------------------
+\begin{frame}[fragile]%Frame 3
+  \frametitle{Problem and classical solution}
+\begin{itemize}
+ \item<1>Problem: Reconststruction of $X_t$ by means of $Y_s, s\leq t$
+ \item<2>Criterium: MSE
+ \item<2>$\leadsto\quad$ general solution: $\Ew X_t|(Y_s)_{s\leq t}$
+ \item<3>Computational difficulties:\\
+  $\;\Longrightarrow\;$ restriction to {\bf linear\/} procedures \newline \hphantom{$\;\Longrightarrow\;$}/ or: Gaussian assumptions
+  \item<3> $\leadsto\quad$ classical {\bf Kalman Filter}
+\end{itemize}
+\end{frame}
+% ------------------------------------------------------------------------
+\begin{frame}[fragile]%Frame 4
+  \frametitle{Kalman filter}
+ \begin{enumerate}
+   \setcounter{enumi}{-1}
+   \item<1-> Initialization ($t=0$): $$X_{0|0}=a_0, \quad \Sigma_{0|0}=\Sigma_0$$
+   \item<2-> Prediction ($t\ge 1$): $$X_{t|t-1}=F X_{t-1|t-1}, \quad \Cov(X_{t|t-1})=\Sigma_{t|t-1}=F\Sigma_{t-1|t-1}F'+Q$$
+   \item<3> Correction ($t\ge 1$):
+   \uncover<3->{
+   \begin{eqnarray*}
+    X_{t|t}&=&X_{t|t-1}+ K_t (Y_t-Z X_{t|t-1})\\
+   K_{t}&=&\Sigma_{t|t-1}Z'(Z\Sigma_{t|t-1}Z'+V)^-, \qquad \mbox{(Kalman gain)}\\
+   \Cov(X_{t|t})&=&\Sigma_{t|t}=\Sigma_{t|t-1}-K_t Z\Sigma_{t|t-1}
+   \end{eqnarray*}}
+ \end{enumerate}
+\end{frame}
+% ------------------------------------------------------------------------
+\subsection{Robustification}
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 5
+  \frametitle{Types of outliers and robustification}
+\begin{itemize}
+  \item<1> IOs (system intrinsic): state equation is distorted\\ --- not considered here
+  \item<2-> AO/SOs (exogeneous): observations are distorted:
+\begin{itemize}
+  \item<2-> either error $\varepsilon_t$ is affected (AO)
+  \item<2-> or observations  $Y_t$ are modified (SO)
+ \end{itemize}%
+ \item<3-> a robustifications as to AO/SOs is to
+ \begin{itemize}
+    \item<3-> retain recursivity (three-step approach)
+    \item<3-> modify correction step $\leadsto$ bound influence of $Y_t$
+    \item<3-> retain init./pred.step but with modified filter past $X_{t-1|t-1}$
+ \end{itemize}%
+ \end{itemize}%
+\end{frame}
+% ------------------------------------------------------------------------
+\subsection{Approaches}
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 6
+  \frametitle{Considered approaches}
+Approximate conditional mean (ACM): \cite{Mar:79}
+\begin{itemize}
+  \item<1-> $\dim Y_t=1$
+  \item<2-> particular model: $Y_t \sim {\rm AR}(p)$\\
+   \begin{itemize}
+      \item<2-> $\leadsto$ $X_t=(Y_t,\ldots,Y_{t-p+1})$,
+      \item<2-> hyper parameters $Z=(1,0,\ldots,0)$, $V^{\rm \scriptsize id}=0$, $F$, $Q$ unknown
+   \end{itemize}%
+  \item<3-> estimation of $F$, $Q$ by means of {\rm GM}-Estimators
+  \item<4-> modified Corr.step:   for suitable location influence curve $\psi$
+  \uncover<4->{
+\begin{eqnarray*}
+    X_{t|t}&=&X_{t|t-1}+\Sigma_{t|t-1}Z'\psi(Y_t-Z X_{t|t-1})\\
+   \Sigma_{t|t}&=&\Sigma_{t|t-1}-\Sigma_{t|t-1} Z'\psi'(Y_t-Z X_{t|t-1}) Z \Sigma_{t|t-1}
+   \end{eqnarray*}}
+ \end{itemize}%
+\end{frame}
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 7
+  \frametitle{Considered approaches II}
+ rLS filter: \cite{PR01}
+  \begin{itemize}
+  \item<1->$\dim X_t, \dim Y_t $ arbitrary, finite
+  \item<1-> assumes hyper parameters $a_0$, $Z$, $V^{\rm \scriptsize id}$, $F$, $Q$ known
+  \item<2-> modified Corr.step:
+  \uncover<2->{
+  \begin{eqnarray*}
+    X_{t|t}&=&X_{t|t-1}+H_b\big(K_t(Y_t-Z X_{t|t-1})\big)\\
+   H_b(X)&=&X\min\{1,b/|X|\}\qquad\mbox{for $|\,\cdot\,|$ Euclidean norm}
+   \end{eqnarray*}}
+  \item<3-> optimality for SO's in some sense
+   \end{itemize}%
+\end{frame}
+% ------------------------------------------------------------------------
+\section{Implementation proposal}
+% ------------------------------------------------------------------------
+\subsection{Concept / Strategy}
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 8
+  \frametitle{Concept and strategy}
+Goal: package {\tt  robKalman}\\
+Contents
+  \begin{itemize}
+     \item<2-> Kalman filter: filter, Kalman gain, covariances
+     \item<2-> ACM-filter: filter, GM-estimator
+     \item<2-> rLS-filter: filter, calibration of clipping height
+     \item<3-> further recursive filters?\\
+      $\leadsto$ general interface {\tt recursiveFilter}\\
+      with arguments:
+        \begin{itemize}
+           \item state space model (hyper parameters)
+           \item functions for the init./pred./corr.step
+        \end{itemize}%
+  \end{itemize}%
+\end{frame}
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 9
+  \frametitle{Concept and strategy II}
+\begin{itemize}
+  \item<1-> Programming language
+  \begin{itemize}
+    \item completely in {\tt S}
+    \item perhaps some code in {\tt C} (much) later
+  \end{itemize}%
+  \item<2-> Use existing infrastructure
+  \begin{itemize}
+     \item  from where to ``borrow'':
+      \begin{itemize}
+      \item univariate setting: {\tt KalmanLike} (package {\tt stats});\\
+      time series classes: {\tt ts}, {\tt its}, {\tt irts}, {\tt zoo}, {\tt zoo.reg}, {\tt tframe}
+      \item multivariate setting: {\tt dse} bundle by Paul Gilbert; perhaps {\tt zoo}?
+     \end{itemize}
+     \item use for: graphics, diagnostics, management of date/time
+   \end{itemize}
+   \item<3-> Split user interface and ``Kalman code''
+   \begin{itemize}
+     \item internal functions: no {\tt S4}-objects
+     \item user interface: {\tt S4}-objects
+   \end{itemize}%
+\end{itemize}%
+\end{frame}
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 10
+  \frametitle{Concept and strategy III}
+\begin{itemize}
+     \item<1-> Use of {\tt S4}
+   \begin{itemize}
+     \item<1-> Hierarchic Classes:
+   \begin{itemize}
+          \item state space models (SSMs) (Hyper-Parameter, distributional assumptions, outlier types)
+          \item filter results (specific subclass of (multivariate) time series)
+          \item control structures for filters (tuning parameters)
+   \end{itemize}%
+     \item<2-> Methods:
+          \begin{itemize}
+             \item filters (for different types of SSMs)
+             \item accessor/replacement functions
+             \item {\tt simulate} for SSMs
+             \item filter diagnostics: {\tt getClippings}, {\tt conf.intervals} ?
+             \item tests?
+          \end{itemize}%
+     \item<2-> constructors/generating funtions
+   \end{itemize}%
+\end{itemize}%
+\end{frame}
+% ------------------------------------------------------------------------
+\subsection{Implementation so far}
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 11
+  \frametitle{Implementation so far: interfaces}
+\begin{itemize}
+  \item<1-> preliminary, ``{\tt S4}-free'' interfaces
+  \begin{itemize}
+     \item Kalman filter (in our context) {\tt KalmanFilter}
+     \item rLS (P.R.): {\tt rLSFilter} \\
+           --- with routines for
+           calibration at given
+          \begin{itemize}
+                \item efficency in ideal model
+                \item contamination radius
+          \end{itemize}%
+     \item<2-> ACM (B.S.) {\tt ACMfilt}, {\tt ACMfilter}
+     \begin{itemize}
+        \item with function {\tt arGM} for AR-parameters by GM-estimates
+        \item various $\psi$-functions are available:\\
+              Hampel (ACM-filter), Huber,  Tukey (both GM-estimators)\\ ---see {\tt ?.psi}
+     \end{itemize}%
+     \item<3-> all: wrappers to {\tt recursiveFilter}
+  \end{itemize}%
+\end{itemize}%
+\end{frame}
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 12
+  \frametitle{Implementation so far: package {\tt robKalman}}
+\begin{itemize}
+  \item<1-> package {\tt robKalman}
+  \begin{itemize}
+      \item routines gathered in package {\tt robKalman},  version {\tt 0.1}
+      \item documentation
+      \item demos
+  \end{itemize}%
+\item<2-> required packages --- all available from \href{http://cran.r-project.org}{\tt CRAN}:
+{\tt methods}, {\tt graphics}, {\tt startupmsg}, {\tt dse1}, {\tt dse2}, {\tt MASS}, {\tt limma}, {\tt robustbase}
+\item<3-> availability: web-page setup under\bigskip\\
+       \fbox{\parbox{9cm}{\href{http://www.uni-bayreuth.de/departments/math/org/mathe7/robKalman/}%
+       {{\tt http://www.uni-bayreuth.de/departments/}\\%
+       {\hphantom{\tt http:/}{\tt /math/org/mathe7/robKalman/}}}}}
+\end{itemize}%
+\end{frame}
+% ------------------------------------------------------------------------
+\subsection{Next steps}
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 13
+  \frametitle{Next steps}
+\begin{itemize}
+  \item<1-> OOP
+  \begin{itemize}
+      \item definition of {\tt S4} classes \\ $\leadsto$ close contact to
+      \begin{itemize}
+            \item {\tt RCore},
+             \item Paul Gilbert,
+            \item  possibly Gabor Grothendiek and Achim Zeileis ({\tt zoo})
+      \end{itemize}
+      \item casting/conversion functions for various time series classes
+  \end{itemize}%
+  \item<2-> User interface {\tt robfilter} (?)
+  \begin{itemize}
+   \item goal: four arguments: data, SSM, control-structure, filter type
+   \item should cope with various definitions of SSMs, data in various time series classes,
+   \item possibly simpler interfaces for ACM ({\tt Splus}-compatibility) $\leadsto$ {\tt ACMfilt}-like
+  \end{itemize}%
+  \item<3-> Release schedule
+  \begin{itemize}
+      \item wait for results of discussion as to class definition
+      \item guess: end of 2006
+  \end{itemize}%
+ \end{itemize}%
+\end{frame}
+% ------------------------------------------------------------------------
+\section{Demonstration}
+% ------------------------------------------------------------------------
+\subsection[ACMfilt]{{\tt ACMfilt}}
+% ------------------------------------------------------------------------
+\begin{frame}[fragile]%Frame 14
+  \frametitle{Demonstration: {\tt ACMfilt}}
+\begin{lstlisting}
+##  generation of data from AO model:
+set.seed(361)
+Eps <- as.ts(rnorm(100))
+ar2 <- arima.sim(list(ar = c(1, -0.9)),
+       100, innov = Eps)
+Binom <- rbinom(100, 1, 0.1)
+Noise <- rnorm(100,sd = 10)
+y <- ar2 + as.ts(Binom*Noise)
+
+## determination of GM-estimates
+y.arGM <- arGM(y, 3)
+## ACM-filter
+y.ACMfilt <- ACMfilt(y, y.arGM)
+
+plot(y)
+lines(y.ACMfilt$filt, col=2)
+lines(ar2,col="green")
+\end{lstlisting}
+\end{frame}
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 15
+\parbox{13cm}{\hspace{-1cm}\parbox{9cm}{\includegraphics[width=9cm]{ACM}}
+\hspace{-1cm}\parbox{4.5cm}{%
+\begin{tabular}{lp{3cm}}
+green:& ideal time series,\\
+black:& AO contam. time series,\\
+red:& result ACM
+\end{tabular}}%
+}
+\end{frame}
+% ------------------------------------------------------------------------
+\subsection[rLSFilter]{{\tt rLSFilter}}
+% ------------------------------------------------------------------------
+\begin{frame}[fragile]%Frame 16
+  \frametitle{Demonstration: {\tt rLSFilter}}
+
+\begin{lstlisting}
+## specification of SSM: (p=2, q=1)
+a0   <- c(1, 0); S0  <- matrix(0, 2, 2)
+F   <- matrix(c(.7, 0.5, 0.2, 0), 2, 2)
+Q   <- matrix(c(2, 0.5, 0.5, 1), 2, 2)
+Z   <- matrix(c(1, -0.5), 1, 2)
+Vi  <- 1;
+## time horizon:
+TT<-50
+## AO-contamination
+mc  <- -20; Vc  <- 0.1; ract <- 0.1
+## for calibration
+r1<-0.1; eff1<-0.9
+
+#Simulation::
+X  <- simulateState(a, S0, F, Q, TT)
+Yid  <- simulateObs(X, Z, Vi, mc, Vc, r=0)
+Yre  <- simulateObs(X, Z, Vi, mc, Vc, ract)
+\end{lstlisting}
+\end{frame}
+% ------------------------------------------------------------------------
+\begin{frame}[fragile]%Frame 17
+  \frametitle{Demonstration: {\tt rLSfilter} II}
+\begin{lstlisting}
+### calibration b
+#limiting S_{t|t-1}
+SS <- limitS(S, F, Q, Z, Vi)
+# by efficiency in the ideal model
+(B1 <- rLScalibrateB(eff=eff1, S=SS, Z=Z, V=Vi))
+# by contamination radius
+(B2 <- rLScalibrateB(r=r1, S=SS, Z=Z, V=Vi))
+
+### evaluation of rLS
+rerg1.id <- rLSFilter(Yid, a, Ss, F, Q, Z, Vi, B1$b)
+rerg1.re <- rLSFilter(Yre, a, Ss, F, Q, Z, Vi, B1$b)
+rerg2.id <- rLSFilter(Yid, a, Ss, F, Q, Z, Vi, B2$b)
+rerg2.re <- rLSFilter(Yre, a, Ss, F, Q, Z, Vi, B2$b)
+\end{lstlisting}
+\end{frame}
+\begin{frame}%Frame 18
+\parbox{13cm}{\hspace{-0.5cm}\parbox{12cm}{\includegraphics[height=8cm, width=12cm]{rLS}}
+\hspace{-11.2cm}\parbox{3.8cm}{%
+\begin{tabular}{lp{3.5cm}}
+\\[-3.5cm]
+\multicolumn{2}{l}{\normalsize ideal situation}\\[3.1cm]
+\small black:& \small real state,\\
+\small red:& \small class. Kalman filter\\
+\end{tabular}}%
+\hspace{2.2cm}\parbox{3.8cm}{%
+\begin{tabular}{lp{3.5cm}}
+\\[-3.5cm]
+\multicolumn{2}{l}{\normalsize AO-contaminated situation}\\[3.1cm]
+\small green:& \small rLS filter ({\tt B1}),\\
+\small blue:& \small rLS filter ({\tt B2})\normalsize
+\end{tabular}}%
+}
+\end{frame}
+% ------------------------------------------------------------------------
+% Bibliography
+% ------------------------------------------------------------------------
+\begin{frame}%Frame 19
+  \frametitle<presentation>{Bibliography}
+  \begin{thebibliography}{10}
+\begin{footnotesize}
+  \beamertemplatebookbibitems
+  % Start with overview books.
+ \bibitem [Durbin/Koopman(01)]{D:K:01} Durbin, J. and Koopman, S. J.(2001):
+ \newblock \emph{Time Series Analysis by
+   State Space Methods.}
+   \newblock Oxford University Press.
+  \bibitem [P.R.(01)]{PR01} Ruckdeschel, P. (2001):
+  \newblock \emph {Ans{\"a}tze zur Robustifizierung des Kalman Filters.}
+  \newblock Bayreuther Mathematische Schriften, Vol. 64.
+  \bibitem [R Development Core Team (2005)]{RMANUAL} {\sf R} Development Core Team (2006):
+  \newblock \emph {{{\sf R:}{\em  A language and environment for statistical computing\/}.}}
+\newblock  R Foundation for Statistical Computing, Vienna, Austria.\\
+  {\href{http://www.R-project.org}{\tiny\url{http://www.R-project.org}}}
+  \beamertemplatearticlebibitems
+  \bibitem [Gilbert(05)]{Gil:05} Gilbert, P. (2005):
+  \newblock Brief User's Guide: Dynamic Systems Estimation (DSE).
+  \newblock  {\tiny Available in the file {\tt doc/dse-guide.pdf} distributed together with the {\sf R} bundle
+  {\tt dse}, to be downloaded from \href{http://cran.r-project.org}{\url{http://cran.r-project.org}}}
+  \bibitem [Martin(79)]{Mar:79} Martin, D. (1979):
+  \newblock Approximate conditional-mean type smoothers and interpolators.
+  \newblock In \emph {Smoothing techniques for curve estimation.\/}
+  \newblock  Proc. Workshop Heidelberg 1979. Lect. Notes Math.~757, p.~117-143
+\end{footnotesize}
+  \end{thebibliography}
+\end{frame}
+% ------------------------------------------------------------------------
+\end{document}

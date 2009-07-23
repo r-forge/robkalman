@@ -5,8 +5,8 @@ Title: Robust Kalman Filtering
 Description: Routines for Robust Kalman Filtering --- the ACM-, mACM-, and rLS-filter
 Author: Peter Ruckdeschel, Bernhard Spangl, Irina Ursachi, Cezar Chirila
 Maintainer: Peter Ruckdeschel <Peter.Ruckdeschel@itwm.fraunhofer.de>
-Depends: R(>= 2.3.0), methods, graphics, startupmsg, dse1, dse2, MASS, limma, robustbase, numDeriv, timeSeries
-Suggests: zoo, xts 
+Depends: R(>= 2.3.0), methods, graphics, startupmsg, MASS, limma, robustbase, numDeriv, timeSeries
+Suggests: zoo, xts, dse1, dse2 
 Imports: stats, MASS
 LazyLoad: yes
 License: LGPL-3
