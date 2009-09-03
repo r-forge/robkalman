@@ -338,77 +338,83 @@ rLS.IO.Filter <- function(Y, a, S, F, Q, Z, V, b, norm = EuclideanNorm,
                  initSr = .cKinitstep, predSr = .cKpredstep,
                  corrSr = .rLS.IO.corrstep, b = b, norm = norm, dropRuns = dropRuns)}
 
-
-ACMfilter <- function(Y, a, S, F, Q, Z, V, s0, psi, apsi, bpsi, cpsi, flag, dropRuns = TRUE)#
-#arguments:
-# +  Y               :observations
-# +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
-# +  b               :clippingheight
-##  Y=x ... observed time series
-##  a=m0 ... unconditional mean
-##  S=Cx ... covariance matrix
-##  F=Phi ... design matrix of state equation
-##  Q ... covariance matrix of state innovation process
-##  Z=H ... observation matrix
-##  V ... covariance matrix of observation noise
-##  s0 ... scale of nominal Gaussian component of additive noise
-##  psi ... influence function to be used (default: Hampel's psi function,
-##          only that is available at the moment)
-##  apsi, bpsi, cpsi ... tuning constants for Hampel's psi-function
-##              (default: a=b=2.5, c=5.0)
-##  flag ... character, if "weights" (default), use psi(t)/t to calculate
-##           the weights; if "deriv", use psi'(t)
-{ recursiveFilter(Y, a, S, F, Q, Z, V,
-                 initSc = .cKinitstep, predSc = .cKpredstep,
-                 corrSc = .cKcorrstep,
-                 initSr = .cKinitstep, predSr = .ACMpredstep,
-                 corrSr = .ACMcorrstep, s0=s0, psi=psi,
-                 apsi=2.5, bpsi=2.5, cpsi=5.0, flag=flag, dropRuns = dropRuns)}
+ACMfilter <- function (Y, a, S, F, Q, Z, V,
+                      nsim=0, seed=NULL, 
+                      psi=psiHampel, apsi=2.5, bpsi=2.5, cpsi=5.0,
+                      flag="weights", dropRuns = TRUE, 
+                      saveOpt=TRUE, dimsCheck=NULL)
+{
 ###########################################
 ##
 ##  R-function: ACMfilter - approximate conditional-mean filtering
 ##  author: Bernhard Spangl
-##  version: 1.0 (2006-05-21)
+##  version: 1.1 (2009-07-29)
 ##
 ###########################################
 
 ##  Paramters:
-##  Y=x ... observed time series
-##  a=m0 ... unconditional mean
-##  S=Cx ... covariance matrix
-##  F=Phi ... design matrix of state equation
-##  Q ... covariance matrix of state innovation process
-##  Z=H ... observation matrix
-##  V ... covariance matrix of observation noise
-##  s0 ... scale of nominal Gaussian component of additive noise
+##  Y ... observed univariate time series
+##        (array with dimensions qd(=1!) x runs x tt)
+##  a ... unconditional mean vector (formerly: m0)
+##  S ... covariance matrix (formerly: Cx)
+##  F ... design matrix of state equation (formerly: Phi), array, pd x pd x tt
+##  Q ... covariance matrix of state innovation process, array, pd x pd x tt
+##  Z ... observation matrix (formerly: H), array, qd x pd x tt
+##  V ... covariance matrix of observation noise (formerly: R), 
+##        array, qd x qd x tt
+##  nsim ... if >0 we simulate a bunch of nsim paths (acc. to ideal model) to 
+##           get emp. covariances
+##  seed ... seed for the simulations
 ##  psi ... influence function to be used (default: Hampel's psi function,
 ##          only that is available at the moment)
-##  a, b, c ... tuning constants for Hampel's psi-function
-##              (defaul: a=b=2.5, c=5.0)
+##  apsi, bpsi, cpsi ... tuning constants for Hampel's psi-function
+##                       (default: a=b=2.5, c=5.0)
 ##  flag ... character, if "weights" (default), use psi(t)/t to calculate
 ##           the weights; if "deriv", use psi'(t)
+##  dropRuns ... shall run-dimension be collapsed if it is one?
+##  saveOpt ... logical (default: TRUE), should the stuff really be saved?
+##  dimsCheck ... either 'NULL' (default) or vector [pd, qd, runs, tt] with 
+##                correct dimensions
 
-mACMfilter <- function(Y, a, S, F, Q, Z, V,
-                       psi=mvpsiHampel, apsi=2.5, bpsi=2.5, cpsi=5.0,
-                       flag="deriv", dropRuns = TRUE)
+    warning("The algorithm is not completely vectorized! 
+            Please be patient... \n")
+
+    recursiveFilter(Y, a, S, F, Q, Z, V,
+        initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep,
+        initSr=.cKinitstep, predSr=.ACMpredstep, corrSr=.ACMcorrstep,
+        nsim=nsim, seed=seed, 
+        psi=psi, apsi=apsi, bpsi=bpsi, cpsi=cpsi, flag=flag, dropRuns=dropRuns, 
+        CovRunDep=TRUE, saveOpt=saveOpt, dimsCheck=dimsCheck)
+}
+
+mACMfilter <- function (Y, a, S, F, Q, Z, V,
+                        nsim=0, seed=NULL, norm=EuclideanNorm, 
+                        psi=mvpsiHampel, apsi=2.5, bpsi=2.5, cpsi=5.0,
+                        flag="deriv", dropRuns = TRUE, 
+                        saveOpt=TRUE, dimsCheck=NULL)
 {
 ###########################################
 ##
 ##  R-function: mACMfilter - approximate conditional-mean filtering
 ##  author: Bernhard Spangl
-##  version: 0.2 (2008-03-31)
+##  version: 0.3 (2009-07-28)
 ##
 ###########################################
 
 ##  Paramters:
 ##  Y ... observed vector-valued time series
-##        (column-wise, matrix: q rows, number of columns equal to time points)
+##        (array with dimensions qd x runs x tt)
 ##  a ... unconditional mean vector (formerly: m0)
 ##  S ... covariance matrix (formerly: Cx)
-##  F ... design matrix of state equation (formerly: Phi)
-##  Q ... covariance matrix of state innovation process
-##  Z ... observation matrix (formerly: H)
-##  V ... covariance matrix of observation noise (formerly: R)
+##  F ... design matrix of state equation (formerly: Phi), array, pd x pd x tt
+##  Q ... covariance matrix of state innovation process, array, pd x pd x tt
+##  Z ... observation matrix (formerly: H), array, qd x pd x tt
+##  V ... covariance matrix of observation noise (formerly: R), 
+##        array, qd x qd x tt
+##  nsim ... if >0 we simulate a bunch of nsim paths (acc. to ideal model) to 
+##           get emp. covariances
+##  seed ... seed for the simulations
+##  norm ... which norm should be used? (default: EuclideanNorm)
 ##  psi ... influence function to be used (default: Hampel's psi function,
 ##          only that is available at the moment)
 ##  apsi, bpsi, cpsi ... tuning constants for Hampel's psi-function
@@ -417,10 +423,19 @@ mACMfilter <- function(Y, a, S, F, Q, Z, V,
 ##           if "deriv" (default), Jacobian matrix of multivariate analogue
 ##           of Hampel's psi-function is used (only default is available
 ##           at the moment)
+##  dropRuns ... shall run-dimension be collapsed if it is one?
+##  saveOpt ... logical (default: TRUE), should the stuff really be saved?
+##  dimsCheck ... either 'NULL' (default) or vector [pd, qd, runs, tt] with 
+##                correct dimensions
+
+    warning("The algorithm is not completely vectorized! 
+            Please be patient... \n")
 
     recursiveFilter(Y, a, S, F, Q, Z, V,
-                initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep,
-                initSr=.cKinitstep, predSr=.cKpredstep, corrSr=.mACMcorrstep,
-                psi, apsi, bpsi, cpsi, flag, dropRuns = dropRuns)
+        initSc=.cKinitstep, predSc=.cKpredstep, corrSc=.cKcorrstep,
+        initSr=.cKinitstep, predSr=.mACMpredstep, corrSr=.mACMcorrstep,
+        nsim=nsim, seed=seed, norm=norm, 
+        psi=psi, apsi=apsi, bpsi=bpsi, cpsi=cpsi, flag=flag, dropRuns=dropRuns, 
+        CovRunDep=TRUE, saveOpt=saveOpt, dimsCheck=dimsCheck)
 }
 

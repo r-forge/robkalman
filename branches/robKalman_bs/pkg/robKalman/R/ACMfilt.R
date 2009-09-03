@@ -6,7 +6,7 @@ ACMfilt <- function (x, gm, s0=0,
 ##
 ##  R-function: ACMfilt - approximate conditional-mean filtering (wrapper)
 ##  author: Bernhard Spangl
-##  version: 1.1 (2007-08-13 and 2006-08-31)
+##  version: 1.2 (2009-07-30)
 ##  References: 
 ##  [Mart79c] R.D. Martin, Approximate Conditional-mean Type Smoothers 
 ##                and Interpolators (1979)
@@ -17,7 +17,7 @@ ACMfilt <- function (x, gm, s0=0,
 ###########################################
 
 ##  Paramters:
-##  x ... univariate time series (vector)
+##  x ... univariate time series (vector) or runs x tt matrix
 ##  gm ... list as produced by function 'arGM' which includes components 
 ##         'ar' containing the AR(p) coefficient estimates, 'sinnov' containing 
 ##         innovation scale estiamtes from AR(p) fits of orders 1 through p;
@@ -34,48 +34,54 @@ ACMfilt <- function (x, gm, s0=0,
 ##             if FALSE filtering from the top of ^X_t is performed
 
 ##  Variable definitions:
-
-    N <- length(x)
+    if (is.null(dim(x))) {
+        runs <- 1
+        tt <- length(x) 
+    } else {
+        runs <- dim(x)[1]
+        tt <- dim(x)[2]
+    }
+    Y <- array(x, dim=c(1, dim(x)))
     phi <- gm$ar
-    p <- length(phi)
-    si <- gm$sinnov[p]
+    pd <- length(phi)
+    m0 <- rep(0, pd)
     Cx <- gm$Cx
-    Phi <- cbind(rbind(phi[-p], diag(rep(1, (p-1)))), c(phi[p], rep(0, (p-1))))
-    Q <- matrix(0, p, p)
-##  Q <- diag(rep(0, p))
-    Q[1, 1] <- si^2
+    Phi <- cbind(rbind(phi[-pd], diag(rep(1, (pd-1)))), 
+                 c(phi[pd], rep(0, (pd-1))))
+    F <- array(Phi, dim=c(pd, pd, tt))
+    si <- gm$sinnov[pd]
+    Q <- array(0, dim=c(pd, pd, tt))
+    Q[1, 1, ] <- si^2
     
-    m0 <- rep(0, p)
-    H <- matrix(c(1, rep(0, (p-1))), 1, p)
-    V <- matrix(s0^2)
+    Z <- array(0, dim=c(1, pd, tt))
+    Z[1, 1, ] <- 1
+    V <- array(s0^2, dim=c(1, 1, tt))
     psi <- .psi(psi)
-    
+
     ##  Centering: 
     x <- x - gm$mu
-    ACMres <- ACMfilter(Y=array(x,dim=c(1,1,N)), a=m0, S=Cx,
-                        F=Phi, Q=Q, Z=H, V=V, s0=s0,
-                        psi=psi, apsi=a, bpsi=b, cpsi=c,
-                        flag=flag)
+    ACMres <- ACMfilter(Y=Y, a=m0, S=Cx, F=F, Q=Q, Z=Z, V=V, 
+                        psi=psi, apsi=a, bpsi=b, cpsi=c, flag=flag, 
+                        dropRuns=FALSE, 
+                        saveOpt=FALSE, dimsCheck=c(pd, 1, runs, tt))
 
-    X.ck <- ACMres$Xf;  X.ck <- X.ck[,2:(N+1)]
-    X   <- ACMres$Xrf; X <- X[,2:(N+1)]
-    st <- as.numeric(unlist(ACMres$rob1L))
-
+    X.ck <- ACMres$Xf[, , 2:(tt+1)]
+    X <- ACMres$Xrf[, , 2:(tt+1)]
+    st <- matrix(unlist(ACMres$rob0L), runs, tt)
 
     if (!lagsmo) {
-        x.ck <- X.ck[1, ]
-        x <- X[1, ]
+        x.ck <- X.ck[1, , ]
+        x <- X[1, , ]
     } else {
-        x.ck <- c(X.ck[p, p:N], X.ck[(p-1):1, N])
-        x <- c(X[p, p:N], X[(p-1):1, N])
+        if (runs==1) {
+            x.ck <- c(X.ck[pd, , pd:tt], t(X.ck[(pd-1):1, , tt]))
+            x <- c(X[pd, , pd:tt], t(X[(pd-1):1, , tt]))
+        } else {
+            x.ck <- cbind(X.ck[pd, , pd:tt], t(X.ck[(pd-1):1, , tt]))
+            x <- cbind(X[pd, , pd:tt], t(X[(pd-1):1, , tt]))
+        }
     }
 
-##  ARmodel <- .ARmodel(x, p)
-##  y <- ARmodel$y
-##  Z <- ARmodel$Z
-##  r <- resid(lm.fit(Z, y))
-    
-    return(list(filt.ck=x.ck +gm$mu, filt=x + gm$mu, st=st)) #, 
-##              r=c(rep(NA, p), r)))
+    return(list(filt.ck=x.ck +gm$mu, filt=x + gm$mu, st=st))
 
 }

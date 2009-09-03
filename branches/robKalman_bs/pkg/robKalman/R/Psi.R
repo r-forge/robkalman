@@ -128,25 +128,27 @@ psiHampel <- function (t, a=2, b=4, c=8, flag="psi")
         Hampel = get("psiHampel", mode="function")) 
 }
 
-mvpsiHampel <- function (x, a=2, b=4, c=8) 
+mvpsiHampel <- function (x, a=2, b=4, c=8, Norm) 
 {
 ###########################################
 ##
 ##  R-function: mvpsiHampel - multivariate analogue of 
 ##                            Hampel's psi-function
 ##  author: Bernhard Spangl
-##  version: 0.1 (2008-02-23)
+##  version: 0.3 (2009-07-24)
 ##
 ###########################################
 
 ##  Paramters:
-##  x ... vector 
+##  x ... qd x runs matrix
 ##  a, b, c ... tuning constants
-    x.norm <- EuclideanNorm(x)
+##  Norm ... which norm should be used? (default: EuclideanNorm)
+    x.norm <- Norm(x)
     small <- (x.norm <= a)
     dummy <- pmin(a, a/(c-b)*(c-x.norm))
     dummy <- pmax(dummy, 0)/(x.norm+small)*(!small) + small
-    return(x*dummy)
+    ## return(x*dummy)
+    return(t(t(x)*dummy))
 }
 
 jacobian.Hampel <- function (x, ...) 
