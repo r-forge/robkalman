@@ -23,7 +23,7 @@ getSmoothX   <-   function(  t, S1, Xf, R, Delta, DeltaY  )
  XS <-Xf[,,T+1]
  for(  s   in   t+1:T+1)  
 	{
-	  XS <- XS + S[,,t] * t(R[,,s])%*%ginv(Delta[,,s])%*% DeltaY[,,s]
+	  XS <- XS + S[,,t] * t(R[,,s])%*%ginf(Delta[,,s])%*% DeltaY[,,s]  
 	}
 
 return(XS)

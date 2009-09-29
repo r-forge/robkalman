@@ -12,7 +12,7 @@ Currently, the ACM-filter and the rLS-Filter are provided.
 \details{
 \tabular{ll}{
 Package: \tab robKalman\cr
-Version: \tab 0.3 \cr
+Version: \tab 0.2.1 \cr
 Date: \tab 2009-03-18 \cr
 Depends: \tab R(>= 2.3.0), methods, graphics, startupmsg, dse1, dse2, MASS\cr 
 Imports: \tab stats\cr
@@ -46,8 +46,11 @@ yet to be filled}
 general recursive filters
 +recursiveFilter
  -KalmanFilter 
- -rLSFilter
+ -rLSFilter:
+    *rLS.AO.Filter
+    *rLS.IO.Filter
  -ACMfilter
+ -mACMfilter
 
 ACMfilter:
 +ACMfilt

@@ -52,10 +52,10 @@ ACMfilt <- function (x, gm, s0=0,
     
     ##  Centering: 
     x <- x - gm$mu
-    ACMres <- ACMfilter(Y = matrix(x,1,N), a = m0, S = Cx, F = Phi, 
-                        Q = Q, Z = H, V = V, 
-                        s0 = s0, psi = psi, apsi = a, bpsi = b, cpsi = c, 
-                        flag = flag)
+    ACMres <- ACMfilter(Y=array(x,dim=c(1,1,N)), a=m0, S=Cx,
+                        F=Phi, Q=Q, Z=H, V=V, s0=s0,
+                        psi=psi, apsi=a, bpsi=b, cpsi=c,
+                        flag=flag)
 
     ### from version ... the return value $X[r]f is of 
     #         dimension p x runs x (N+1)

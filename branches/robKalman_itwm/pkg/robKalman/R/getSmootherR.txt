@@ -1,0 +1,39 @@
+getSmoother.Shumw.Stoff <- function(y, xf, S0, S1, KG, F, Q, V, Z){
+  ## generates necessary smoother values and covariances for Shumway Stoffer
+  ## i.e., a list of matrices J, smoothers xS, covariances SS, and mixed covs SS1
+  ## arguments: y:  observations                    qd x runs x T
+  ##            xf: filtered states    x_t|t        pd x runs x (T+1)
+  ##            S0: filter covariances Sigma_t|t    pd x pd x (T+1)
+  ##            S1: pred. covariances  Sigma_t|t-1  pd x pd x T
+  ##            KG:  (last) Kalman gain KG_T        pd x qd
+  ##            F:  (time-inv) transition matrix    pd x pd
+  ##            Q:  (time-inv) innovation cov       pd x pd
+  ##            V:  (time-inv) error cov            qd x qd
+  ##            Z:   observation matrix             qd x pd x T
+
+  ## dimensions
+  p    <- dim(xf)[1]
+  q    <- dim(y)[1]
+  runs <- dim(xf)[2]
+  T    <- dim(xf)[3]-1
+
+  ### generation of arrays
+  xS   <- array(0,dim=c(p,runs,T+1))
+  SS   <- array(0,dim=c(p,p,T+1))
+  SS1  <- array(0,dim=c(p,p,T))
+  J    <- array(0,dim=c(p,p,T))
+
+  xS[,,T+1] <- xf[,,T+1]
+  SS[,,T+1] <- S0[,,T+1]
+  KZ <- KG %*% Z[,,T]
+  SS10 <- F%*%S0[,,T-1]
+  SS1[,,T]  <- SS10-KZ%*%SS10   ## (A12)
+  for(t in T:1){
+    J[,,t]   <- S0[,,t] %*% t(F) %*% ginv(S1[,,t]) ## (A8)
+    xS[,,t]  <- xf[,,t] + J[,,t] %*% (xS[,,t+1]-F%*%xf[,,t]) ## (A9)
+    SS[,,t]  <- S0[,,t] + J[,,t] %*% (SS[,,t+1]-S1[,,t]) %*% t(J[,,t]) ## (A10)
+    if(t<T) SS1[,,t] <- S0[,,t] %*% t(J[,,t]) +     ## (A11)
+                        J[,,t+1] %*% (SS1[,,t+1]- F %*% S0[,,t]) %*% t(J[,,t])
+  }
+  return(list(J = J, xS = xS, SS = SS, SS1 = SS1))
+}
