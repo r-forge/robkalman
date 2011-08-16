@@ -1,0 +1,168 @@
+<html><head><title>Calibration of clipping height b</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>calibrateRLS(robKalman)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   rLScalibrateB">
+<param name="keyword" value="R:   calibrateRLS">
+<param name="keyword" value=" Calibration of clipping height b">
+</object>
+
+
+<h2>Calibration of clipping height b</h2>
+
+
+<h3>Description</h3>
+
+<p>
+calibrates the clipping height <code>b</code> of the rLS-filter in a time-invariant, linear, Gaussian state space model
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+rLScalibrateB(Z, S, V, repl = 100000, b = NULL, eff = NULL, r = NULL,
+              rlow = 0, rup = NULL, upto=20, IO = FALSE, seed)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>Z</code></td>
+<td>
+observation matrix in the (ti-l-G-SSM); see below</td></tr>
+<tr valign="top"><td><code>S</code></td>
+<td>
+prediction error covariance matrix (of the classical Kalman filter) in the (ti-l-G-SSM); see below</td></tr>
+<tr valign="top"><td><code>V</code></td>
+<td>
+observation error covariance matrix in the (ti-l-G-SSM); see below</td></tr>
+<tr valign="top"><td><code>r</code></td>
+<td>
+SO/IO-contamination radius</td></tr>
+<tr valign="top"><td><code>b</code></td>
+<td>
+given clipping height</td></tr>
+<tr valign="top"><td><code>eff</code></td>
+<td>
+efficiency w.r.t. classical Kalman filter in the ideal model</td></tr>
+<tr valign="top"><td><code>rlow</code></td>
+<td>
+lower bound for SO/IO-contamination radius</td></tr>
+<tr valign="top"><td><code>rup</code></td>
+<td>
+upper bound for SO/IO-contamination radius</td></tr>
+<tr valign="top"><td><code>repl</code></td>
+<td>
+number of replicates used for a LLN-approximation of the expectations needed in this calibration</td></tr>
+<tr valign="top"><td><code>upto</code></td>
+<td>
+an upper bound to <code>b</code> used in the zero-search of <code>uniroot</code> within <code>rLScalibrateB</code></td></tr>
+<tr valign="top"><td><code>IO</code></td>
+<td>
+logical of length 1: Is it rLS.IO (<code>TRUE</code>) or rLS[.AO] which is to be calibrated?</td></tr>
+<tr valign="top"><td><code>seed</code></td>
+<td>
+if not missing: argument to <code><a onclick="findlink('base', 'Random.html')" style="text-decoration: underline; color: blue; cursor: hand">set.seed</a></code> to set the seed for MC integration</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+We work in the setup of the time-invariant, linear, Gaussian state space model (ti-l-G-SSM)
+with <i>p</i> dimensional states <i>x_t</i> and <i>q</i> dimensional observations <i>y_t</i>,
+with <STRONG>initial condition</STRONG>
+</p><p align="center"><i>x_0 ~ N_p(a,S),</i></p>
+<p>
+<STRONG>state equation</STRONG>
+</p><p align="center"><i>x_t = F x_{t-1} +  v_t,          v_t ~ N_p(0,Q),  t&gt;=1,</i></p>
+<p>
+<STRONG>observation equation</STRONG>
+</p><p align="center"><i>y_t = Z x_t   +  e_t,      e_t ~ N_q(0,V),  t&gt;=1,</i></p><p>
+and where all random variable <i>x_0</i>, <i>v_t</i>, <i>e_t</i> are independent.
+</p>
+<p>
+The clipping height <code>b</code> given <i>Z</i>, <i>V</i>, and prediction error covariance <i>S_{t|t-1}</i>
+(of the classical Kalman filter) is either calibrated to a given efficiency <code>eff</code> in the
+ideal model or to given (SO/IO)-radius <code>r</code> about the ideal model.
+</p>
+<p>
+If this radius is unknown, to a given radius interval [<code>rlow</code>,<code>rup</code>],
+<i>{0 &lt;= <code>rlow</code> &lt; <code>rup</code> &lt;= 1 }</i>
+a least favorable radius <code>r0</code> is distinguished giving a radius minimax procedure.
+</p>
+<p>
+The expectations needed for this calibration are calculated by a LLN
+approximation with <code>repl</code> replicates;
+</p>
+<p>
+The hierarchie is done as follows: when argument <code>eff</code> is present, this is used,
+otherwise, if argument <code>r</code> is given, this is used; and still otherwise,
+the corresponding radius interval is used.
+</p>
+<p>
+If <code>b</code> is given, <code>rLScalibrate</code> only determines the corresponding
+efficiency loss <code>eff</code> and corresponding radius <code>r</code>
+for which <code>b</code> would be SO/IO optimal.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+a list containing components clipping height <code>b</code>,
+efficiency loss <code>eff</code> and least favorable/resp. given radius <code>r</code>
+for the rLS filter</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Peter Ruckdeschel <a href="mailto:Peter.Ruckdeschel@itwm.fraunhofer.de">Peter.Ruckdeschel@itwm.fraunhofer.de</a>,<br>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+require(robKalman)
+
+##Hyper parameter of a lin. time-inv. Gaussian SSM
+SS0  &lt;- matrix(0, 2, 2)
+F0   &lt;- matrix(c(.7, 0.5, 0.2, 0), 2, 2)
+Q0   &lt;- matrix(c(2, 0.5, 0.5, 1), 2, 2)
+Z0   &lt;- matrix(c(1, -0.5), 1, 2)
+V0i  &lt;- 1
+
+### limiting prediction error covariance
+SS &lt;- limitS(S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i)
+
+### calibration b
+# by efficiency in the ideal model
+# efficiency  =  0.9
+(B1 &lt;- rLScalibrateB(eff = 0.9, S = SS, Z = Z0, V = V0i))
+# by contamination radius
+# r  =  0.1
+(B2 &lt;- rLScalibrateB(r = 0.1, S = SS, Z = Z0, V = V0i))
+# by contamination radius interval
+# rlow  =  0.05, rup= 0.5
+(B3 &lt;- rLScalibrateB(rlow = 0.05, rup= 0.5, S = SS, Z = Z0, V = V0i))
+</pre>
+
+<script Language="JScript">
+function findlink(pkg, fn) {
+var Y, link;
+Y = location.href.lastIndexOf("\\") + 1;
+link = location.href.substring(0, Y);
+link = link + "../../" + pkg + "/chtml/" + pkg + ".chm::/" + fn;
+location.href = link;
+}
+</script>
+
+
+<hr><div align="center">[Package <em>robKalman</em> version 0.3 <a href="00Index.html">Index</a>]</div>
+
+</body></html>
