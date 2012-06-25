@@ -2,6 +2,9 @@ import("methods")
 import("stats")
 import("MASS")
 import("startupmsg")
+import("distr")
+import("distrEx")
+import("distrEllipse")
 import("robustbase")
 import("numDeriv")
 import("robust-ts")
@@ -11,3 +14,31 @@ export("ACMfilt", "ACMfilter", "arGM", "EuclideanNorm",
        "rLScalibrateB", "limitS", "rLSFilter", "rLS.IO.Filter",
        "rLS.AO.Filter", "KalmanFilter", 
        "recursiveFilter")
+
+
+
+	   
+exportClasses("OptionalList","OptionalFunctionWithControl",
+              "FunctionWithControl","SSTransform", "SSVar", "SSTransform",
+              "SSExo", "SSstateEq", "SSinitEq", "SSobsEq", "SSM",
+			  "SStimes", "SSObs", "SSFilter", "SSrobFilter", "SSSmoother",
+			  "SSrobSmoother", "SSClassOrRobFilter", "SSClassOrRobSmoother",
+			  "SSClassOrRobSmootherOrFilter","SSDiagnostic","SSDiagnosticFilter",
+			  "SSVariances", "SSStateReconstr", "SSPredOrFilt", "SSPredicted",
+			  "SSFiltered", "SSSmoothed", "OptionalSSPredicted", "OptionalSSFiltered",
+			  "OptionalSSSmoothed","SSInput","SSOutput","SSrecResult", "OptionalDistribution"
+			  "SSISimulation", "SSCSimulation", "SSSimulation", 
+			  "SSSimList", "SSContSimulation", 
+			  "SSretValueF", "SSretValueZ", "SSretValueQ", "SSretValueV")
+
+exportMethods("solve", "name", "fct", "dots", "control", "F", "Z", "Q", "V", "T", "R", "t", "Exo",
+              "distr", "a0", "Sigma0", "times", "inX", "origData", 
+			  "initEq", "statesEq", "obsEq", "initStep", "predStep", "corrStep", 
+			  "classFilter", "robFilter", "filt", "smoothStep", "smoothCov", "lagoneCov",
+			  "classSmoother", "robFilter", "robSmoother", "diagnostics" , "values",
+			  "variances", "KalmanGain", "CovObs", "DeltaY", "steps", "model", "obs", 
+			  "states", "times", "pred.cl", "filt.cl", "smooth.cl", "pred.rob", "filt.rob",
+			  "smooth.rob", "input", "output", "runs", "seed", "radius", "SimList",
+			  "x0", "x1", "v", "u", "eps", "w", "exQ", "exV", "createF", "createZ", "createQ",
+			  "createV", "createExo")
+
