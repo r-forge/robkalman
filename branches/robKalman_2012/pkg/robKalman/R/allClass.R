@@ -25,6 +25,9 @@ setClassUnion("OptionalList",
 setClassUnion("OptionalFunction",
                c("function","NULL")
                )
+setClassUnion("OptionalCall",
+               c("call","NULL")
+               )
 
 
 ## Class: FunctionWithControl
@@ -42,12 +45,14 @@ setClassUnion("OptionalDistribution",
 setClass("SSstateEq",
           representation = representation(Ffct = "FunctionWithControl",
                                           Qfct = "FunctionWithControl",
+                                          muqfct = "OptionalFunction",
                                           Exofct = "OptionalFunctionWithControl",
                                           distrfct = "OptionalFunctionWithControl"))
  )
 setClass("SSobsEq",
           representation = representation(Zfct = "FunctionWithControl",
                                           Vfct = "FunctionWithControl",
+                                          muvfct = "OptionalFunction",
                                           Exofct = "OptionalFunctionWithControl",
                                           distrfct = "OptionalFunctionWithControl"))
  )
@@ -108,6 +113,7 @@ setClass("SSStateReconstr", contains = "matrix")
 
 
 setClass("SSPredOrFilt", representation = representation(values = "matrix",
+                      call = "OptionalCall",
                       variances = "array",
                       dots.propagated = "list",
                       control = "list",
@@ -118,9 +124,6 @@ setClass("SSPredOrFilt", representation = representation(values = "matrix",
 ### correction step (in variant as only 1-dim in time)
 ### and as slot classes (in variant as multi-step in time) for return value
 ### of recFilter
-setClass("SSPrepared", representation = representation(dots.propagated = "list",
-                      control = "list",
-                      diagnostics = "SSDiagnostic"))
 setClass("SSPredicted", contains = "SSPredOrFilt")
 setClass("SSFiltered",  representation = representation(KalmanGain = "array",
                       CovObs = "array", DeltaY = "matrix"),
@@ -165,7 +168,9 @@ setClass("SSCSimulation", representation = representation(radius = "numeric"),
 setClass("SSSimulation", representation = representation(model = "SSM",
                  runs = "numeric", seed = "numeric", times = "SStimes"),
           contains = "SSISimulation")
-setClass("SSSimList", contains = "list")
+setClass("SSSimList", contains = "list") ### Liste von Simulationen Typprüfung nicht
+        ## vorgesehen; Erzeugung in Generating Function, sodass alle Anforderungen
+        ## "passen"
 
 setClass("SSContSimulation", representation = representation(SimList = "SSSimList")
           contains = "SSSimulation")
