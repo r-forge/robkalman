@@ -11,9 +11,9 @@ SSM <- function(F, Q, Exo.state = NULL, R = NULL, distr.state = NULL,
   Qret <- createQ(Q)
   Vret <- createV(V)
   
-  stateEq <- new("SSstateEq", F=Fret, Q=Qret, Exo = Exo.state.ret, distr = distr.state)
-  obsEq <- new("SSobsEq", Z=Zret, V=Vret, Exo = Exo.obs.ret, distr = distr.obs)
-  initEq <- new("SSinitEq", a0=a0, Sigma0=Sigma0, Exo = Exo.ini.ret, distr = distr.ini)
+  stateEq <- new("SSstateEq", Ffct=Fret, Qfct=Qret, Exofct = Exo.state.ret, distrfct = distr.state)
+  obsEq <- new("SSobsEq", Zfct=Zret, Vfct=Vret, Exofct = Exo.obs.ret, distrfct = distr.obs)
+  initEq <- new("SSinitEq", a0=a0, Sigma0=Sigma0, Exofct = Exo.ini.ret, distrfct = distr.ini)
 
   return(new("SSM",initEq  = initEq, statesEq = stateEq, obsEq = obsEq, p = p, q = q)
 }
@@ -34,3 +34,7 @@ setMethod("a0", "SSstateEq", function(object) object@a0)
 setMethod("a0", "SSM", function(object) initEq(object)@a0)
 setMethod("Sigma0", "SSinitEq", function(object) object@Sigma0)
 setMethod("Sigma0", "SSM", function(object) initEq(object)@Sigma0)
+
+setMethod("createF", "matrix", function(object, R, Exo){
+
+})

@@ -67,24 +67,27 @@ setMethod("createF", "function", function (object)    # function case
 ##  R ... selection matrix array (cf. Durbin & Koopman, 2001, p.38)
     F <- object
 
-    ### some F checking possible and needed
-
-    funcF <- function (t, x0, v, u, control, dots)
-    {
-    ##  t ... time index
-    ##  x0 ... filter estimate x_{t-1|t-1}, vector
-    ##  v ... innovations v_t, vector!
-    ##  u ... exogenous variable u_{t-1}, vector!
-    ##  control ... control parameters, list
-    ##  dots ... additional parameters, list
-        call <- match.call()
-
-        ret0 <- F(t, x0, v, u, control, dots)
-
-        retF <- new("SSretValueF", x1 = ret0$x1, F = ret0$F,
-                    R = NULL, t=t, x0=x0, control=control,
-                    dots = dots, call = call, diagnostics = list())
-        return(retF)
-    }
-    return(new("FunctionWithControl",funcF))
+#    ### some F checking possible and needed
+#
+#
+#    funcF <- function (t, x0, v, u, control, dots)
+#    {
+#   ##  t ... time index
+#   ##  x0 ... filter estimate x_{t-1|t-1}, vector
+#   ##  v ... innovations v_t, vector!
+#   ##  u ... exogenous variable u_{t-1}, vector!
+#   ##  control ... control parameters, list
+#   ##  dots ... additional parameters, list
+#       call <- match.call()
+#
+#       ret0 <- F(t, x0, v, u, control, dots)
+#       if(is(ret0,"SSretValueF")) return(ret0)
+#
+#       retF <- new("SSretValueF", x1 = ret0$x1, F = ret0$F,
+#                   R = NULL, t=t, x0=x0, control=control,
+#                   dots = dots, call = call, diagnostics = list())
+#       return(retF)
+#   }
+    return(new("FunctionWithControl",F))
+#    return(new("FunctionWithControl",funcF))
 }

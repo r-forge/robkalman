@@ -19,8 +19,7 @@ export("ACMfilt", "ACMfilter", "arGM", "EuclideanNorm",
 
 	   
 exportClasses("OptionalList","OptionalFunctionWithControl",
-              "FunctionWithControl","SSTransform", "SSVar", "SSTransform",
-              "SSExo", "SSstateEq", "SSinitEq", "SSobsEq", "SSM",
+              "FunctionWithControl", "SSstateEq", "SSinitEq", "SSobsEq", "SSM",
 			  "SStimes", "SSObs", "SSFilter", "SSrobFilter", "SSSmoother",
 			  "SSrobSmoother", "SSClassOrRobFilter", "SSClassOrRobSmoother",
 			  "SSClassOrRobSmootherOrFilter","SSDiagnostic","SSDiagnosticFilter",

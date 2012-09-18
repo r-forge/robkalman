@@ -8,11 +8,11 @@ if(!isGeneric("solve")){
 if(!isGeneric("name")) 
     setGeneric("name", function(object) standardGeneric("name"))
 
-if(!isGeneric("fct"))
-    setGeneric("fct", function(object) standardGeneric("fct"))
+#if(!isGeneric("fct"))
+#    setGeneric("fct", function(object) standardGeneric("fct"))
 
-if(!isGeneric("dots"))
-    setGeneric("dots", function(object) standardGeneric("dots"))
+if(!isGeneric("dots.propagated"))
+    setGeneric("dots.propagated", function(object) standardGeneric("dots.propagated"))
 
 if(!isGeneric("control"))
     setGeneric("control", function(object) standardGeneric("control"))
