@@ -29,7 +29,7 @@ setMethod("createF", "array", function (object, R = NULL)    # time-variant case
         return(retF)
     }
     return(new("FunctionWithControl",funcF))
-}
+})
 
 setMethod("createF", "matrix", function (object, R = NULL)    # time-variant case, linear
 {
@@ -59,7 +59,7 @@ setMethod("createF", "matrix", function (object, R = NULL)    # time-variant cas
         return(retF)
     }
     return(new("FunctionWithControl",funcF))
-}
+})
 
 setMethod("createF", "function", function (object)    # function case
 {
@@ -90,4 +90,4 @@ setMethod("createF", "function", function (object)    # function case
 #   }
     return(new("FunctionWithControl",F))
 #    return(new("FunctionWithControl",funcF))
-}
+})

@@ -14,7 +14,7 @@ setMethod("createExo", "array", function (object)    # time-variant case, linear
     }
 
     return(new("FunctionWithControl",funcExo))
-}
+})
 
 setMethod("createExo", "matrix", function (object)    # time-invariant case, linear
 {
@@ -32,7 +32,7 @@ setMethod("createExo", "matrix", function (object)    # time-invariant case, lin
     }
 
     return(new("FunctionWithControl",funcExo))
-}
+})
 
 setMethod("createExo", "function", function (object)    # function case
 {
@@ -52,4 +52,4 @@ setMethod("createExo", "function", function (object)    # function case
     }
 
     return(new("FunctionWithControl",funcExo))
-}
+})

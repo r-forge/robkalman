@@ -47,27 +47,27 @@ setClass("SSstateEq",
                                           Qfct = "FunctionWithControl",
                                           muqfct = "OptionalFunction",
                                           Exofct = "OptionalFunctionWithControl",
-                                          distrfct = "OptionalFunctionWithControl"))
+                                          distrfct = "OptionalFunctionWithControl")
  )
 setClass("SSobsEq",
           representation = representation(Zfct = "FunctionWithControl",
                                           Vfct = "FunctionWithControl",
                                           muvfct = "OptionalFunction",
                                           Exofct = "OptionalFunctionWithControl",
-                                          distrfct = "OptionalFunctionWithControl"))
+                                          distrfct = "OptionalFunctionWithControl")
  )
 setClass("SSinitEq",
           representation = representation(a0 = "numeric",
                                           Sigma0 = "matrix",
                                           Exofct = "OptionalFunctionWithControl",
-                                          distrfct = "OptionalDistribution"))
+                                          distrfct = "OptionalDistribution")
 
  )
 setClass("SSM",
           representation = representation(initEq  = "SSinitEq",
                                           statesEq = "SSstateEq",
                                           obsEq = "SSobsEq",
-                                          pdim = "numeric", qdim = "numeric"))
+                                          pdim = "numeric", qdim = "numeric")
 )
 setClass("SStimes", representation = representation(times = "numeric",
                                    inX = "logical"))
@@ -144,14 +144,14 @@ setClassUnion("OptionalSSSmoothed",
                c("SSSmoothed","NULL")
                )
 
-setClass("SSInput", representation = representation(steps = "SSClassOrRobFilter"
+setClass("SSInput", representation = representation(steps = "SSClassOrRobFilter",
                                                    model = "SSM",
                                                    obs = "SSObs",
                                                    times = "SStimes"))
 
 setClass("SSOutput", representation = representation(pred.cl = "SSPredicted",
                                                      filt.cl = "SSFiltered",
-                                                     prep.cl = "OptionalSSPrepared"
+                                                     prep.cl = "OptionalSSPrepared",
                                                      smooth.cl = "OptionalSSSmoothed",
                                                      pred.rob = "OptionalSSPredicted",
                                                      filt.rob = "OptionalSSFiltered",
@@ -172,7 +172,7 @@ setClass("SSSimList", contains = "list") ### Liste von Simulationen Typprüfung n
         ## vorgesehen; Erzeugung in Generating Function, sodass alle Anforderungen
         ## "passen"
 
-setClass("SSContSimulation", representation = representation(SimList = "SSSimList")
+setClass("SSContSimulation", representation = representation(SimList = "SSSimList"),
           contains = "SSSimulation")
 
 setClass("SSretValueF", representation = representation(x1 = "numeric",

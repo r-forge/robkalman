@@ -1,13 +1,16 @@
 SSM <- function(F, Q, Exo.state = NULL, R = NULL, distr.state = NULL,
                 Z, V, Exo.obs = NULL, T = NULL, distr.obs = NULL,
                 a0, Sigma0, Exo.ini =NULL, distr.ini = NULL,
-                p, q){
+                p, q) {
   Exo.state.ret <- if(!is.null(Exo.state)) createExo(Exo.state) else NULL
   Exo.obs.ret <- if(!is.null(Exo.obs)) createExo(Exo.obs) else NULL
   Exo.ini.ret <- if(!is.null(Exo.ini)) createExo(Exo.ini)  else NULL
 
-  Fret <- createF(F,R, Exo.state.ret)
-  Zret <- createZ(Z,T, Exo.state.obs)
+  Fret <- createF(F,R)  
+  Zret <- createZ(Z,T)
+  
+#   Fret <- createF(F,R, Exo.state.ret)  
+#   Zret <- createZ(Z,T, Exo.state.obs)
   Qret <- createQ(Q)
   Vret <- createV(V)
   
@@ -15,7 +18,7 @@ SSM <- function(F, Q, Exo.state = NULL, R = NULL, distr.state = NULL,
   obsEq <- new("SSobsEq", Zfct=Zret, Vfct=Vret, Exofct = Exo.obs.ret, distrfct = distr.obs)
   initEq <- new("SSinitEq", a0=a0, Sigma0=Sigma0, Exofct = Exo.ini.ret, distrfct = distr.ini)
 
-  return(new("SSM",initEq  = initEq, statesEq = stateEq, obsEq = obsEq, p = p, q = q)
+  return(new("SSM",initEq  = initEq, statesEq = stateEq, obsEq = obsEq, p = p, q = q))
 }
 
 setMethod("statesEq", "SSM", function(object) object@statesEq)

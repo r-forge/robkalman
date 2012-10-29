@@ -25,7 +25,7 @@ setMethod("createV", "array", function (object)    # time-variant case, linear
 
     return(new("FunctionWithControl",funcV))
 
-}
+})
 
 setMethod("createV", "matrix", function (object)    # time-variant case, linear
 {
@@ -53,7 +53,7 @@ setMethod("createV", "matrix", function (object)    # time-variant case, linear
 
     return(new("FunctionWithControl",funcV))
 
-}
+})
 
 
 setMethod("createV", "function", function (object)    # time-variant case, linear
@@ -83,4 +83,4 @@ setMethod("createV", "function", function (object)    # time-variant case, linea
 
     return(new("FunctionWithControl",funcV))
 
-}
+})
