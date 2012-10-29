@@ -6,11 +6,8 @@ SSM <- function(F, Q, Exo.state = NULL, R = NULL, distr.state = NULL,
   Exo.obs.ret <- if(!is.null(Exo.obs)) createExo(Exo.obs) else NULL
   Exo.ini.ret <- if(!is.null(Exo.ini)) createExo(Exo.ini)  else NULL
 
-  Fret <- createF(F,R)  
-  Zret <- createZ(Z,T)
-  
-#   Fret <- createF(F,R, Exo.state.ret)  
-#   Zret <- createZ(Z,T, Exo.state.obs)
+  Fret <- createF(F,R, Exo.state.ret)  
+  Zret <- createZ(Z,T, Exo.state.obs)
   Qret <- createQ(Q)
   Vret <- createV(V)
   
@@ -39,5 +36,5 @@ setMethod("Sigma0", "SSinitEq", function(object) object@Sigma0)
 setMethod("Sigma0", "SSM", function(object) initEq(object)@Sigma0)
 
 setMethod("createF", "matrix", function(object, R, Exo){
-
+  
 })
