@@ -42,6 +42,8 @@ setClassUnion("OptionalDistribution",
                c("Distribution","NULL")
                )
 
+
+### SSM definitions
 setClass("SSstateEq",
           representation = representation(Ffct = "FunctionWithControl",
                                           Qfct = "FunctionWithControl",
@@ -73,13 +75,15 @@ setClass("SStimes", representation = representation(times = "numeric",
                                    inX = "logical"))
 
 setClass("SSObs",
-          representation = representation(Y = "numeric", ### soll Matrix bleiben?
+          representation = representation(Y = "matrix", ### soll Matrix bleiben?
                                           origData = "ANY"),
-          prototype = prototype(Y = 1,
+          prototype = prototype(Y = as.matrix(1),
                                 origData = 1)
 
  )
 
+
+### SSM procedures
 setClass("SSFilter", representation = representation(initStep = "FunctionWithControl",
                                     prepStep = "OptionalFunctionWithControl",
                                     predStep = "FunctionWithControl",
@@ -144,6 +148,8 @@ setClassUnion("OptionalSSSmoothed",
                c("SSSmoothed","NULL")
                )
 
+
+### User interfaces
 setClass("SSInput", representation = representation(steps = "SSClassOrRobFilter",
                                                    model = "SSM",
                                                    obs = "SSObs",
@@ -160,6 +166,8 @@ setClass("SSOutput", representation = representation(pred.cl = "SSPredicted",
 
 setClass("SSrecResult", representation = representation(input="SSInput", output="SSOutput"))
 
+
+### Simulation
 setClass("SSISimulation", representation = representation(name = "character",
            obs = "array", states = "array"))
 setClass("SSCSimulation", representation = representation(radius = "numeric"),
@@ -175,9 +183,12 @@ setClass("SSSimList", contains = "list") ### Liste von Simulationen Typprüfung n
 setClass("SSContSimulation", representation = representation(SimList = "SSSimList"),
           contains = "SSSimulation")
 
+
+### Itermediate return values
 ## ACHTUNG: entgegen Darstellung am 18.09.12 _nicht_ Rückgabetyp
 ###  von createF createV,... sondern Rückgabetyp der Funktion, die
 ##   in createF etc zurückgegeben wird
+
 setClass("SSretValueF", representation = representation(x1 = "numeric",
                            Fmat = "matrix", Rmat = "matrix", t = "numeric",
                            x0 = "numeric", v = "numeric", u = "numeric",
