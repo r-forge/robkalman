@@ -175,6 +175,9 @@ setClass("SSSimList", contains = "list") ### Liste von Simulationen Typprüfung n
 setClass("SSContSimulation", representation = representation(SimList = "SSSimList"),
           contains = "SSSimulation")
 
+## ACHTUNG: entgegen Darstellung am 18.09.12 _nicht_ Rückgabetyp
+###  von createF createV,... sondern Rückgabetyp der Funktion, die
+##   in createF etc zurückgegeben wird
 setClass("SSretValueF", representation = representation(x1 = "numeric",
                            Fmat = "matrix", Rmat = "matrix", t = "numeric",
                            x0 = "numeric", v = "numeric", u = "numeric",
