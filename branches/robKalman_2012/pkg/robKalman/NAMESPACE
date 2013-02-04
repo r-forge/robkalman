@@ -14,9 +14,6 @@ export("ACMfilt", "ACMfilter", "arGM", "EuclideanNorm",
        "rLScalibrateB", "limitS", "rLSFilter", "rLS.IO.Filter",
        "rLS.AO.Filter", "KalmanFilter", 
        "recursiveFilter")
-
-
-
 	   
 exportClasses("OptionalList","OptionalFunctionWithControl",
               "FunctionWithControl", "SSstateEq", "SSinitEq", "SSobsEq", "SSM",
