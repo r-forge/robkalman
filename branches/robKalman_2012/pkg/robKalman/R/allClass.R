@@ -28,6 +28,11 @@ setClassUnion("OptionalFunction",
 setClassUnion("OptionalCall",
                c("call","NULL")
                )
+setClass("ListOfCalls", contains = "list",
+         validity = function (object) all(sapply(object, function (u) is(u)=="call")))
+setClassUnion("OptionalListofCalls",
+               c("ListofCalls","NULL")
+               )
 
 
 ## Class: FunctionWithControl
@@ -111,30 +116,41 @@ setClassUnion("SSClassOrRobSmootherOrFilter",c("SSClassOrRobFilter",
 
 setClass("SSDiagnostic", contains = c("VIRTUAL"))
 setClass("SSDiagnosticFilter", contains = c("SSDiagnostic","list"))
+setClass("SSDiagnosticretValue", contains = c("SSDiagnostic","list"))
 setClass("SSVariances", contains = "array")
 setClass("SSStateReconstr", contains = "matrix")
 
 
 
 setClass("SSPredOrFilt", representation = representation(values = "matrix",
-                      call = "OptionalCall",
+                      call = "OptionalListOfCalls",
                       variances = "array",
                       dots.propagated = "list",
                       control = "list",
-                      diagnostics = "SSDiagnostic"),
+                      diagnostics = "SSDiagnosticFilter"),
                       contains = "VIRTUAL")
 
 ### serve as class of return values for stepfunction initstep, predstep, @Bern: prepstep?,
 ### correction step (in variant as only 1-dim in time)
 ### and as slot classes (in variant as multi-step in time) for return value
 ### of recFilter
+setClass("SSInitialized", representation = representation(values = "numeric",
+                      call = "OptionalCall",
+                      variance = "matrix",
+                      dots.propagated = "list",
+                      control = "list",
+                      diagnostics = "SSDiagnosticFilter"))
 setClass("SSPredicted", contains = "SSPredOrFilt")
 setClass("SSFiltered",  representation = representation(KalmanGain = "array",
                       CovObs = "array", DeltaY = "matrix"),
                       contains = "SSPredOrFilt")
 setClass("SSSmoothed", representation = representation(lagoneCov = "array"),
                      contains = "SSPredOrFilt")
+setClass("SSPrepared", contains = "SSPredOrFilt")
 
+setClassUnion("OptionalSSInitialized",
+               c("SSInitialized","NULL")
+               )
 setClassUnion("OptionalSSPrepared",
                c("SSPrepared","NULL")
                )
@@ -150,15 +166,17 @@ setClassUnion("OptionalSSSmoothed",
 
 
 ### User interfaces
-setClass("SSInput", representation = representation(steps = "SSClassOrRobFilter",
-                                                   model = "SSM",
-                                                   obs = "SSObs",
-                                                   times = "SStimes"))
+setClass("SSInput", representation = representation(model = "SSM",
+                                                    obs = "SSObs",
+                                                    times = "SStimes",
+                                                    steps = "SSClassOrRobSmootherOrFilter"))
 
-setClass("SSOutput", representation = representation(pred.cl = "SSPredicted",
-                                                     filt.cl = "SSFiltered",
+setClass("SSOutput", representation = representation(init.cl = "SSInitialized",
                                                      prep.cl = "OptionalSSPrepared",
+                                                     pred.cl = "SSPredicted",
+                                                     filt.cl = "SSFiltered",
                                                      smooth.cl = "OptionalSSSmoothed",
+                                                     init.rob = "OptionalSSInitialzed", 
                                                      pred.rob = "OptionalSSPredicted",
                                                      filt.rob = "OptionalSSFiltered",
                                                      smooth.rob = "OptionalSSSmoothed",
@@ -189,23 +207,25 @@ setClass("SSContSimulation", representation = representation(SimList = "SSSimLis
 ###  von createF createV,... sondern Rückgabetyp der Funktion, die
 ##   in createF etc zurückgegeben wird
 
+
+
 setClass("SSretValueF", representation = representation(x1 = "numeric",
                            Fmat = "matrix", Rmat = "matrix", t = "numeric",
                            x0 = "numeric", v = "numeric", u = "numeric",
                            control = "OptionalList", dots.propagated = "OptionalList",
-                           call = "call", diagnostics = "SSDiagnostic"))
+                           call = "call", diagnostics = "SSDiagnosticretValue"))
 
 setClass("SSretValueZ", representation = representation(y = "numeric",
                            Zmat = "matrix", Tmat = "matrix", t = "numeric",
                            x1 = "numeric", eps = "numeric", w = "numeric",
                            control = "OptionalList", dots.propagated = "OptionalList",
-                           call = "call", diagnostics = "SSDiagnostic"))
+                           call = "call", diagnostics = "SSDiagnosticretValue"))
 setClass("SSretValueQ", representation = representation( Q = "matrix",
                     t = "numeric", x0 = "numeric", exQ = "ANY",
                     control = "OptionalList", dots.propagated = "OptionalList",
-                    call = "call", diagnostics = "SSDiagnostic"))
+                    call = "call", diagnostics = "SSDiagnosticretValue"))
 
 setClass("SSretValueV", representation = representation( V = "matrix",
                     t = "numeric", x1 = "numeric", exV = "ANY",
                     control = "OptionalList", dots.propagated = "OptionalList",
-                    call = "call", diagnostics = "SSDiagnostic"))
+                    call = "call", diagnostics = "SSDiagnosticretValue"))
