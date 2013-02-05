@@ -91,7 +91,7 @@ setClass("SSFilter", representation = representation(initStep = "FunctionWithCon
 setClass("SSrobFilter", representation = representation(classFilter = "SSFilter",
                                        robFilter = "SSFilter"))
 
-setClass("SSSmoother", representation = representation(filt = "SSfilter",
+setClass("SSSmoother", representation = representation(filt = "SSFilter",
                                     smoothStep = "FunctionWithControl",
                                     smoothCov = "FunctionWithControl",
                                     lagoneCov = "FunctionWithControl"))
