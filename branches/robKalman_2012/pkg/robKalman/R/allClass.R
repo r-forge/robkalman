@@ -23,9 +23,9 @@ VIGNETTE = gettext("Package \"robKalman\" provides a vignette to this package; t
 setClassUnion("OptionalList",
               c("list","NULL")
               )
-setClassUnion("OptionalFunction",
-              c("function","NULL")
-              )
+## setClassUnion("OptionalFunction",    # existiert bereits!
+##               c("function","NULL")
+##               )
 setClassUnion("OptionalCall",
               c("call","NULL")
               )
@@ -34,8 +34,8 @@ setClass("ListOfCalls", contains = "list",
              all(sapply(object, function (u) is(u)=="call"))
          }
          )
-setClassUnion("OptionalListofCalls",
-              c("ListofCalls","NULL")
+setClassUnion("OptionalListOfCalls",
+              c("ListOfCalls","NULL")
               )
 
 
@@ -48,7 +48,8 @@ setClassUnion("OptionalFunctionWithControl",
               )
 
 setClassUnion("OptionalDistribution",
-              c("Distribution","NULL")
+##               c("Distribution","NULL")    # S4 class 'Distribution' missing!
+              c("NULL")
               )
 
 
@@ -155,7 +156,7 @@ setClass("SSPredOrFilt",
                                          diagnostics = "SSDiagnosticFilter"),
          contains = "VIRTUAL"
          )
-setClass("SSInizialized",
+setClass("SSInitialized",
          contains = "SSPredOrFilt"
          )
 setClass("SSPrepared",
@@ -237,7 +238,7 @@ setClass("SSInput",
          representation = representation(model = "SSM",
                                          obs = "SSObs",
                                          times = "SStimes",
-                                         steps = "SSClassOrRobSmootherOrFilter")
+                                         steps = "SSClassOrRobFilterOrSmoother")
          )
 setClass("SSOutput",
          representation = representation(init.cl = "SSInitialized",
@@ -245,7 +246,7 @@ setClass("SSOutput",
                                          pred.cl = "SSPredictedRet",
                                          filt.cl = "SSFilteredRet",
                                          smooth.cl = "OptionalSSSmoothedRet",
-                                         init.rob = "OptionalSSInitialzed", 
+                                         init.rob = "OptionalSSInitialized", 
                                          pred.rob = "OptionalSSPredictedRet",
                                          filt.rob = "OptionalSSFilteredRet",
                                          smooth.rob = "OptionalSSSmoothedRet",
@@ -278,7 +279,7 @@ setClass("SSSimulation",
 setClass("SSSimList",
          contains = "list"
          )
-    # Liste von Simulationen Typprüfung nicht
+    # Liste von Simulationen Typpruefung nicht
     # vorgesehen; Erzeugung in Generating Function, sodass alle Anforderungen
     # "passen"
 setClass("SSContSimulation",
@@ -288,9 +289,9 @@ setClass("SSContSimulation",
 
 
 ### Itermediate return values
-    # ACHTUNG: entgegen Darstellung am 18.09.12 _nicht_ Rückgabetyp
-    # von createF createV,... sondern Rückgabetyp der Funktion, die
-    # in createF etc zurückgegeben wird
+    # ACHTUNG: entgegen Darstellung am 18.09.12 _nicht_ Rueckgabetyp
+    # von createF createV,... sondern Rueckgabetyp der Funktion, die
+    # in createF etc zurueckgegeben wird
 setClass("SSretValueF",
          representation = representation(x1 = "numeric",
                                          Fmat = "matrix",
