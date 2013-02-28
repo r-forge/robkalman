@@ -54,7 +54,8 @@ CreatePred <- function (predS, control=list())
     ##            returns:    x1, S1, controlPred
     ##  control ... control argument of step function
 
-    predS <- function (i, PredOrFilt, statesEq, controlPred=control, ...)
+    predS.fct <- function (i, PredOrFilt, statesEq, controlPred=control,
+                           whenEvalExo =c("pre"=TRUE,post="TRUE"), ...)
     {
         ##  i ... time index
         ##  PredOrFilt ... object of S4 class 'SSPredOrFilt'
@@ -73,10 +74,14 @@ CreatePred <- function (predS, control=list())
         exQ <-     # ???
         controlQ <-     # ???
         
+        if(whenEvalExo["pre"]) u <- exofun(...)
+        
         retPredS <- predS(x0=x0, S0=S0, F=F, Q=Q, i=i,
                           v=v, u=u, controlF=controlF,
                           exQ=exQ, controlQ=controlQ,
                           controlPred=controlPred, ...)
+
+        if(whenEvalExo["post"]) u <- exofun(...)
 
         SSPredicted <- new("SSPredicted",
                            values = retPredS$x1,
@@ -87,7 +92,7 @@ CreatePred <- function (predS, control=list())
                            diagnostics = list())
         return(SSPredicted)
     }
-    return(new("FunctionWithControl", predS))
+    return(new("FunctionWithControl", predS.fct))
 }
 
 CreateCorr <- function (corrS, control=list())
