@@ -41,19 +41,20 @@ setMethod("statesEq", "SSM", function(object) object@statesEq)
 setMethod("obsEq", "SSM", function(object) object@obsEq)
 setMethod("initEq", "SSM", function(object) object@initEq)
 
-setMethod("F", "SSstateEq", function(object) object@F)
-setMethod("F", "SSM", function(object) statesEq(object)@F)
-setMethod("Q", "SSstateEq", function(object) object@Q)
-setMethod("Q", "SSM", function(object) statesEq(object)@Q)
-setMethod("Z", "SSstateEq", function(object) object@Z)
-setMethod("Z", "SSM", function(object) obsEq(object)@Z)
-setMethod("V", "SSstateEq", function(object) object@V)
-setMethod("V", "SSM", function(object) obsEq(object)@V)
+setMethod("F", "SSstateEq", function(object) object@Ffct)
+setMethod("F", "SSM", function(object) statesEq(object)@Ffct)
+setMethod("Q", "SSstateEq", function(object) object@Qfct)
+setMethod("Q", "SSM", function(object) statesEq(object)@Qfct)
+setMethod("Z", "SSstateEq", function(object) object@Zfct)
+setMethod("Z", "SSM", function(object) obsEq(object)@Zfct)
+setMethod("V", "SSstateEq", function(object) object@Vfct)
+setMethod("V", "SSM", function(object) obsEq(object)@Vfct)
 setMethod("a0", "SSstateEq", function(object) object@a0)
 setMethod("a0", "SSM", function(object) initEq(object)@a0)
 setMethod("Sigma0", "SSinitEq", function(object) object@Sigma0)
 setMethod("Sigma0", "SSM", function(object) initEq(object)@Sigma0)
 
+if(FALSE){
 setMethod("createF", "matrix", function(object, R, Exo){
   
-})
+})}
