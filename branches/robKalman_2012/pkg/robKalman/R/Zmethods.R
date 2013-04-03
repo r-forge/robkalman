@@ -39,10 +39,13 @@ setMethod("createZ", "array", function (object, T = NULL)
 ##  T ... selection matrix array (observation noise)
     Z <- object
 
-    if(length(dim(Z))==2) return(getMethod("Z", "matrix")(as.matrix(object),T))
+    if (length(dim(Z))==2) {
+        return(getMethod("Z", "matrix")(as.matrix(object), T))
+    }
 
     if (is.null(T)) {
-        T <- array(diag((dim(Z))[1]), dim=dim(Z))
+        nrowZ <- dim(Z)[1]
+        T <- array(diag(nrowZ), dim=c(nrowZ, nrowZ, dim(Z)[3]))
     }
 
     funcZ <- function (t, x1, eps, w, control, dots)
@@ -57,13 +60,13 @@ setMethod("createZ", "array", function (object, T = NULL)
 
         y <- Z[, , t]%*%x1 + w + T[, , t]%*%eps
 
-        retZ <- new("SSretValueZ", y = y, Z = Z[,,t,drop=TRUE],
-                    T = T[,,t,drop=TRUE], t=t, x1 = x1, eps = eps, w = w,
-                    control=control, dots = dots, call = call,
-                    diagnostics = list())
+        retZ <- new("SSretValueZ", y = y, Zmat = Z[, , t, drop=TRUE],
+                    Tmat = T[, , t, drop=TRUE], t = t, x1 = x1,
+                    eps = eps, w = w, control = control, 
+                    dots.propagated = dots, call = call,
+                    diagnostics = new("SSDiagnosticRetValue"))
         return(retZ)
     }
-
     return(new("FunctionWithControl",funcZ))
 })
 

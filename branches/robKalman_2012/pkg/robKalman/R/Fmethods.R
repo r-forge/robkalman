@@ -44,7 +44,8 @@ setMethod("createF", "array", function (object, R = NULL)
     }
 
     if (is.null(R)) {
-        R <- array(diag((dim(F))[1]), dim=dim(F))
+        nrowF <- dim(F)[1]
+        R <- array(diag(nrowF), dim=c(nrowF, nrowF, dim(F)[3]))
     }
 
     funcF <- function (t, x0, v, u, control, dots)
@@ -74,31 +75,29 @@ setMethod("createF", "array", function (object, R = NULL)
 ### function case
 setMethod("createF", "function", function (object)    
 {
-##  F ... array of state equation, F[, , t]
-##  R ... selection matrix array (cf. Durbin & Koopman, 2001, p.38)
+##  F ... function, F(t, x0, v, u, control, dots)
     F <- object
 
-#    ### some F checking possible and needed
-#
-#
-#    funcF <- function (t, x0, v, u, control, dots)
-#    {
-#   ##  t ... time index
-#   ##  x0 ... filter estimate x_{t-1|t-1}, vector
-#   ##  v ... innovations v_t, vector!
-#   ##  u ... exogenous variable u_{t-1}, vector!
-#   ##  control ... control parameters, list
-#   ##  dots ... additional parameters, list
-#       call <- match.call()
-#
-#       ret0 <- F(t, x0, v, u, control, dots)
-#       if(is(ret0,"SSretValueF")) return(ret0)
-#
-#       retF <- new("SSretValueF", x1 = ret0$x1, F = ret0$F,
-#                   R = NULL, t=t, x0=x0, control=control,
-#                   dots = dots, call = call, diagnostics = list())
-#       return(retF)
-#   }
-    return(new("FunctionWithControl",F))
-#    return(new("FunctionWithControl",funcF))
+    funcF <- function (t, x0, v, u, control, dots)
+    {
+    ##  t ... time index
+    ##  x0 ... filter estimate x_{t-1|t-1}, vector
+    ##  v ... innovations v_t, vector!
+    ##  u ... exogenous variable u_{t-1}, vector!
+    ##  control ... control parameters, list
+    ##  dots ... additional parameters, list
+        call <- match.call()
+ 
+        ret0 <- F(t, x0, v, u, control, dots)
+        if (is(ret0, "SSretValueF")) return(ret0)
+ 
+        retF <- new("SSretValueF",
+                    x1 = ret0$x1, Fmat = ret0$A,
+                    Rmat = ret0$B, t = t, x0 = x0,
+                    v = v, u = u, control = control,
+                    dots.propagated = dots, call = call,
+                    diagnostics = new("SSDiagnosticRetValue"))
+        return(retF)
+    }
+    return(new("FunctionWithControl",funcF))
 })

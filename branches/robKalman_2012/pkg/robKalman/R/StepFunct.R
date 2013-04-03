@@ -19,7 +19,7 @@ CreateInit <- function (initS, control=list())
     ##            returns:    x0, S0, controlInit
     ##  control ... control argument of step function
 
-    initS <- function (initEq, controlInit=control, ...)
+    fctInitS <- function (initEq, controlInit=control, ...)
     {
         ##  initEq ... object of S4 class 'SSinitEq'
         ##  controlInit ... control parameters, list
@@ -40,7 +40,7 @@ CreateInit <- function (initS, control=list())
                              diagnostics = list())
         return(SSInitialized)
     }
-    return(new("FunctionWithControl", initS))
+    return(new("FunctionWithControl", fctInitS))
 }
 
 ##  CreatePrep <- still TBD!
@@ -51,11 +51,16 @@ CreatePred <- function (predS, control=list())
     ##            arguments:  x0, S0, F, Q, i, v, u,
     ##                        controlF, exQ, controlQ, 
     ##                        controlPred, dots-arg
+    ##                        uOld (unveraendert vom Input 'Corr-Step'),
+    ##                        wNew (Auswertung von 'wExofct' im 'Corr-Step') 
+    ##  Aktion: in 'F' Aufruf von 'uExofct' u.a. mit 'uOld' und 'wNew'!!! 
     ##            returns:    x1, S1, controlPred
+    ##                        uNew (Auswertung von 'uExofct' im 'Pred-Step'),
+    ##                        wOld (unveraendert vom Input 'Pred-Step')
     ##  control ... control argument of step function
 
-    predS.fct <- function (i, PredOrFilt, statesEq, controlPred=control,
-                           whenEvalExo =c("pre"=TRUE,post="TRUE"), ...)
+    fctPredS <- function (i, PredOrFilt, statesEq, controlPred=control,
+                          whenEvalExo =c("pre"=TRUE, "post"=FALSE), ...)
     {
         ##  i ... time index
         ##  PredOrFilt ... object of S4 class 'SSPredOrFilt'
@@ -68,11 +73,16 @@ CreatePred <- function (predS, control=list())
         S0 <- PredOrFilt@variance
         F <- statesEq@Ffct
         Q <- statesEq@Qfct
-        v <-     # ???
-        u <-     # ???
-        controlF <-     # ???
-        exQ <-     # ???
-        controlQ <-     # ???
+        v <-     # ??? -> wird hart kodiert als default in 'F'!
+        u <-     # ??? -> 'uExofct'
+        controlF <-     # ??? -> Fall (b)
+          ##  Stand 2013-02-14: 'control*' kommt in zwei Varianten:
+          ##  (a) rekursiv uebergebene Variante -> Rueckgabewerte der
+          ##      Step-Funktionen
+          ##  (b) globale Kontrolle fuer Afgorithmus und von aussen
+          ##      gegeben -> 'SSClassOrRobFilterOrSmoother' 
+        exQ <-     # ??? -> gestrichten!
+        controlQ <-     # ??? -> Fall (b)
         
         if(whenEvalExo["pre"]) u <- exofun(...)
         
@@ -92,7 +102,7 @@ CreatePred <- function (predS, control=list())
                            diagnostics = list())
         return(SSPredicted)
     }
-    return(new("FunctionWithControl", predS.fct))
+    return(new("FunctionWithControl", fctPredS))
 }
 
 CreateCorr <- function (corrS, control=list())
@@ -100,11 +110,16 @@ CreateCorr <- function (corrS, control=list())
     ##  corrS ... original correction step function handling S3 objects
     ##            arguments:  y, x1, S1, Z, V, i, eps, w,
     ##                        controlZ, exV, controlV, 
-    ##                        controlCorr, dots-arg
-    ##            returns:    x0, K, S0, Delta, DeltaY, controlCorr
+    ##                        controlCorr, dots-arg,
+    ##                        uNew (Auswertung von 'uExofct' im 'Pred-Step'),
+    ##                        wOld (unveraendert vom Input 'Pred-Step')
+    ##  Aktion: in 'Z' Aufruf von 'wExofct' u.a. mit 'uNew' und 'wOld'!!! 
+    ##            returns:    x0, K, S0, Delta, DeltaY, controlCorr,
+    ##                        uOld (unveraendert vom Input 'Corr-Step'),
+    ##                        wNew (Auswertung von 'wExofct' im 'Corr-Step') 
     ##  control ... control argument of step function
 
-    corrS <- function (i, PredOrFilt, obsEq, controlCorr=control, ...)
+    fctCorrS <- function (i, PredOrFilt, obsEq, controlCorr=control, ...)
     {
         ##  i ... time index
         ##  Obs ... object of S4 class 'SSObs'
@@ -142,5 +157,5 @@ CreateCorr <- function (corrS, control=list())
                           DeltaY = retCorrS$DeltaY)
         return(SSFiltered)
     }
-    return(new("FunctionWithControl", PredS))
+    return(new("FunctionWithControl", fctCorrS))
 }

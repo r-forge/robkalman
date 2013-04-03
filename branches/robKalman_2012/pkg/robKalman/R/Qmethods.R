@@ -29,7 +29,6 @@ setMethod("createQ", "matrix", function (object)
 setMethod("createQ", "array", function (object)    
 {
 ##  Q ... array of covariance matrices of innovations, Q[, , t]
-
     Q <- object
 
     funcQ <- function (t, x0, exQ, control, dots)
@@ -41,18 +40,14 @@ setMethod("createQ", "array", function (object)
     ##  dots ... additional parameters, list
         call <- match.call()
 
-
-        retQ <- new("SSretValueQ", Q = Q[,,t,drop=TRUE], t=t,
-                    x0 = x0, exQ = exQ,
-                    control=control, dots = dots, call = call,
-                    diagnostics = list())
-
-
+        retQ <- new("SSretValueQ",
+                    Q = Q[, , t, drop=TRUE], t = t,
+                    x0 = x0, exQ = exQ, control = control, 
+                    dots.propagated = dots, call = call,
+                    diagnostics = new("SSDiagnosticRetValue"))
       	return(retQ)
     }
-
     return(new("FunctionWithControl",funcQ))
-
 })
 
 
