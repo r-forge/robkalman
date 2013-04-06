@@ -59,12 +59,12 @@ CreatePred <- function (predS, control=list())
     ##                        wOld (unveraendert vom Input 'Pred-Step')
     ##  control ... control argument of step function
 
-    fctPredS <- function (i, PredOrFilt, statesEq, controlPred=control,
+    fctPredS <- function (i, PredOrFilt, stateEq, controlPred=control,
                           whenEvalExo =c("pre"=TRUE, "post"=FALSE), ...)
     {
         ##  i ... time index
         ##  PredOrFilt ... object of S4 class 'SSPredOrFilt'
-        ##  statesEq ... object of S4 class 'SSstatesEq'
+        ##  stateEq ... object of S4 class 'SSstateEq'
         ##  controlPred ... control parameters, list
         call <- match.call()
         dots.propagated <- list(...)
