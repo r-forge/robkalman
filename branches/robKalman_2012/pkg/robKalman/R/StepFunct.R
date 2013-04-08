@@ -8,7 +8,7 @@
 ##        handle S4 oblects and will return the corresponding
 ##        S4 objects
 ##  author: Bernhard Spangl
-##  version: 0.1 (changed: 2013-02-09, created: 2013-02-09)
+##  version: 0.2 (changed: 2013-04-07, created: 2013-02-09)
 ##
 #######################################################
 

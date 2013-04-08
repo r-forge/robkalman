@@ -20,6 +20,12 @@ VIGNETTE = gettext("Package \"robKalman\" provides a vignette to this package; t
 
 
 ### ClassUnion: 
+setClassUnion("OptionalNumeric",
+              c("NULL", "numeric")
+              )
+setClassUnion("OptionalMatrix",
+              c("NULL", "matrix")
+              )
 setClassUnion("OptionalList",
               c("list","NULL")
               )
@@ -128,10 +134,10 @@ setClass("SSDiagnostic",
          contains = c("VIRTUAL")
          )
 setClass("SSDiagnosticFilter",
-         contains = c("SSDiagnostic","list")
+         contains = c("SSDiagnostic","OptionalList")
          )
 setClass("SSDiagnosticRetValue",
-         contains = c("SSDiagnostic","list")
+         contains = c("SSDiagnostic","OptionalList")
          )
 setClass("SSVariances",
          contains = "array"
@@ -151,8 +157,10 @@ setClass("SSPredOrFilt",
          representation = representation(values = "numeric",
                                          call = "OptionalCall",
                                          variance = "matrix",
-                                         dots.propagated = "list",
-                                         control = "list",
+                                         uExo = "OptionalNumeric",
+                                         wExo = "OptionalNumeric",
+                                         dots.propagated = "OptionalList",
+                                         control = "OptionalList",
                                          diagnostics = "SSDiagnosticFilter"),
          contains = "VIRTUAL"
          )
@@ -196,8 +204,10 @@ setClass("SSPredOrFiltRet",
          representation = representation(values = "matrix",
                                          call = "OptionalListOfCalls",
                                          variances = "array",
-                                         dots.propagated = "list",
-                                         control = "list",
+                                         uExo = "OptionalMatrix",
+                                         wExo = "OptionalMatrix",
+                                         dots.propagated = "OptionalList",
+                                         control = "OptionalList",
                                          diagnostics = "SSDiagnosticFilter"),
          contains = "VIRTUAL"
          )
