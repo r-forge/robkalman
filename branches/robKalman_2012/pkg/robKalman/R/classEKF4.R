@@ -32,7 +32,28 @@
     A %*% S0 %*% t(A) + B %*% Q %*% t(B)
 }
 
+cEKFinitS <- function (initEq,
+                       controlInit = NULL, ...)
+{
+    ##  initEq ... object of S4 class 'SSinitEq'
+    ##  controlInit ... control parameters, list
+    call <- match.call()
+    dots.propagated <- list(...)
 
+    x0 <- initEq@a0
+    S0 <- initEq@Sigma0
+    
+    SSInitialized <- new("SSInitialized",
+                         values = x0,
+                         call = call,
+                         variance = S0,
+                         uExo = NULL,
+                         wExo = NULL,
+                         dots.propagated = dots.propagated,
+                         control = controlInit,
+                         diagnostics = new("SSDiagnosticFilter"))
+    return(SSInitialized)
+}
 
 cEKFpredS <- function (t,
                        PredOrFilt,
@@ -46,16 +67,93 @@ cEKFpredS <- function (t,
     call <- match.call()
     dots.propagated <- list(...)
 
-    
+    x0 <- PredOrFilt@values
+    S0 <- PredOrFilt@variance
+    uExo <- PredOrFilt@uExo
+    wExo <- PredOrFilt@wExo
+    Ffct <- stateEq@Ffct
+    Qfct <- stateEq@Qfct
+    uExofct <- stateEq@uExofct
+    if (is.null(uExofct)) uExofct <- createuExo(0)
+
+    Freturn <- Ffct(t=t, x0=x0,
+                    uFct=uExofct, uOld=uExo, wNew=wExo)
+    x1 <- Freturn@x1
+    A <- Freturn@FJcb
+    B <- Freturn@RJcb
+    uNew <- Freturn@uNew
+
+    Qreturn <- Qfct(t=t, x0=x0)
+    Q <- Qreturn@Q
+
+    S1 <- .getpredCov(S0=S0, A=A, B=B, Q=Q)
 
     SSPredicted <- new("SSPredicted",
                        values = x1,
                        call = call,
                        variance = S1,
-                       uExo = ,
-                       wExo = wOld,
+                       uExo = uNew,
+                       wExo = wExo,
                        dots.propagated = dots.propagated,
                        control = controlPred,
                        diagnostics = new("SSDiagnosticFilter"))
     return(SSPredicted)
 }
+
+cEKFcorrS <- function (i, t,
+                       Obs,
+                       PredOrFilt,
+                       obsEq,
+                       controlCorr = NULL, ...)
+{
+    ##  i ... loop index
+    ##  t ... time, t[i]
+    ##  Obs ... object of S4 class 'SSObs'
+    ##  PredOrFilt ... object of S4 class 'SSPredOrFilt'
+    ##  obsEq ... object of S4 class 'SSobsEq'
+    ##  controlCorr ... control parameters, list
+    call <- match.call()
+    dots.propagated <- list(...)
+
+    y <- Obs@Y[, i]
+    x1 <- PredOrFilt@values
+    S1 <- PredOrFilt@variance
+    uExo <- PredOrFilt@uExo
+    wExo <- PredOrFilt@wExo
+    Zfct <- obsEq@Zfct
+    Vfct <- obsEq@Vfct
+    wExofct <- obsEq@wExofct
+    if (is.null(wExofct)) wExofct <- createwExo(0)
+
+    Zreturn <- Zfct(t=t, x1=x1,
+                    wFct=wExofct, uNew=uExo, wOld=wExo)
+    yhat <- Zreturn@y
+    C <- Zreturn@ZJcb
+    D <- Zreturn@TJcb
+    wNew <- Zreturn@wNew
+
+    Vreturn <- Vfct(t=t, x1=x1)
+    V <- Vreturn@V
+
+    Delta <- .getDelta(S1=S1, C=C, D=D, V=V)
+    K <- .getKG(S1=S1, Z=C, Delta=Delta)
+    DeltaY <- y - yhat 
+
+    x0 <- x1 + K %*% DeltaY
+    S0 <- .getcorrCov(S1=S1, K=K, Z=C)
+
+    SSFiltered <- new("SSFiltered",
+                      values = x0,
+                      call = call,
+                      variance = S0,
+                      uExo = uExo,
+                      wExo = wNew,
+                      KalmanGain = K,
+                      CovObs = Delta,
+                      DeltaY = DeltaY,
+                      dots.propagated = dots.propagated,
+                      control = controlCorr,
+                      diagnostics = new("SSDiagnosticFilter"))
+    return(SSFiltered)
+}
+
