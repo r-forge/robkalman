@@ -10,7 +10,15 @@ function (object, R = NULL,
     if (is.null(R)) {
         R <- diag(nrow(F))
     }
-
+    #
+    #############################################
+    ## delayed evaluation? zB
+    ## funcF(.....,Hallo=rnorm(10))
+    ### evtl. andere Mglkeit:
+    ## mc <- match.call(expand.dots=FALSE)
+    ## dots.p <- as.list(mc)$"..."
+    #############################################
+    #
     dots.propagated <- list(...)
     
     funcF <- function (i, t, x0, v=rep(0, ncol(R)),

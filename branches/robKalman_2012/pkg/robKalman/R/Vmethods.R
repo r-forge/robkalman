@@ -8,7 +8,7 @@ function (object,
 
     dots.propagated <- list(...)
 
-    funcV <- function(i, t, x1,
+    funcV <- function(i, t, x1, y,
                       control=controlV,
                       dots=dots.propagated)
     {
@@ -21,7 +21,7 @@ function (object,
 
         retV <- new("SSretValueV",
                     V = V, t = t,
-                    x1 = x1, 
+                    x1 = x1, y = y,
                     control = control,
                     dots.propagated = dots, call = call,
                     diagnostics = new("SSDiagnosticRetValue"))
@@ -41,7 +41,7 @@ function (object,
 
     dots.propagated <- list(...)
 
-    funcV <- function(i, t, x1,
+    funcV <- function(i, t, x1, y,
                       control=controlV,
                       dots=dots.propagated)
     {
@@ -54,7 +54,7 @@ function (object,
 
         retV <- new("SSretValueV",
                     V = V[, , i, drop=TRUE], t = t,
-                    x1 = x1, 
+                    x1 = x1, y = y,
                     control = control, 
                     dots.propagated = dots, call = call,
                     diagnostics = new("SSDiagnosticRetValue"))
@@ -70,7 +70,7 @@ setMethod("createV", "function", function (object)
 ##  V ... function, V(t, ...)
     V <- object
 
-    funcV <- function(i=NULL, t, x1=0, control=NULL, dots=NULL)
+    funcV <- function(i=NULL, t, x1=0, y = 0, control=NULL, dots=NULL)
     {
     ##  i ... loop index
     ##  t ... time, t[i]
@@ -79,13 +79,13 @@ setMethod("createV", "function", function (object)
     ##  dots ... additional parameters, list
         call <- match.call()
 
-        ret0 <- V(i=i, t=t, x1=x1,
+        ret0 <- V(i=i, t=t, x1=x1, y = y,
                   control=control, dots=dots)
         if (is(ret0, "SSretValueV")) return(ret0)
 
         retV <- new("SSretValueV",
                     V = ret0$V, t = t,
-                    x1 = x1, 
+                    x1 = x1, y = y,
                     control=control,
                     dots.propagated = dots, call = call,
                     diagnostics = new("SSDiagnosticRetValue"))
