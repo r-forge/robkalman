@@ -1,12 +1,19 @@
 ### time-invariant case, linear
-setMethod("createQ", "matrix", function (object)
+setMethod("createQ", "matrix",
+function (object,
+          controlQ = NULL, ...) 
 {
 ##  Q ... covariance matrix of innovations
     Q <- object
 
-    funcQ <- function (t, x0, control=NULL, dots=NULL)
+    dots.propagated <- list(...)
+
+    funcQ <- function (i, t, x0,
+                       control=controlQ,
+                       dots=dots.propagated)
     {
-    ##  t ... time index
+    ##  i ... loop index
+    ##  t ... time, t[i]
     ##  x0 ... filter estimate x_{t-1|t-1}, vector
     ##  control ... control parameters, list
     ##  dots ... additional parameters, list
@@ -25,21 +32,28 @@ setMethod("createQ", "matrix", function (object)
 
 
 ### time-variant case, linear
-setMethod("createQ", "array", function (object)    
+setMethod("createQ", "array",
+function (object,
+          controlQ = NULL, ...)    
 {
 ##  Q ... array of covariance matrices of innovations, Q[, , t]
     Q <- object
 
-    funcQ <- function (t, x0, control=NULL, dots=NULL)
+    dots.propagated <- list(...)
+
+    funcQ <- function (i, t, x0,
+                       control=controlQ,
+                       dots=dots.propagated)
     {
-    ##  t ... time index
+    ##  i ... loop index
+    ##  t ... time, t[i]
     ##  x0 ... filter estimate x_{t-1|t-1}, vector
     ##  control ... control parameters, list
     ##  dots ... additional parameters, list
         call <- match.call()
 
         retQ <- new("SSretValueQ",
-                    Q = Q[, , t, drop=TRUE], t = t,
+                    Q = Q[, , i, drop=TRUE], t = t,
                     x0 = x0, 
                     control = control, 
                     dots.propagated = dots, call = call,
@@ -56,15 +70,17 @@ setMethod("createQ", "function", function (object)
 ##  Q ... function, Q(t, ...)
     Q <- object
 
-    funcQ <- function (t, x0=0, control=NULL, dots=NULL)
+    funcQ <- function (i=NULL, t, x0=0, control=NULL, dots=NULL)
     {
-    ##  t ... time index
+    ##  i ... loop index
+    ##  t ... time, t[i]
     ##  x0 ... filter estimate x_{t-1|t-1}, vector
     ##  control ... control parameters, list
     ##  dots ... additional parameters, list
         call <- match.call()
 
-        ret0 <- Q(t, x0, control, dots)
+        ret0 <- Q(i=i, t=t, x0=x0,
+                  control=control, dots=dots)
         if (is(ret0, "SSretValueQ")) return(ret0)
 
         retQ <- new("SSretValueQ",

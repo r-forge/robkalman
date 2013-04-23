@@ -1,5 +1,7 @@
 ### time-invariant case, linear
-setMethod("createF", "matrix", function (object, R = NULL)    
+setMethod("createF", "matrix",
+function (object, R = NULL,
+          controlF = list(whenEvaluExo=c("pre"=TRUE, "post"=FALSE)), ...)
 {
 ##  F ... matrix of state equation
 ##  R ... selection matrix (cf. Durbin & Koopman, 2001, p.38)
@@ -9,12 +11,15 @@ setMethod("createF", "matrix", function (object, R = NULL)
         R <- diag(nrow(F))
     }
 
-    funcF <- function (t, x0, v=rep(0, ncol(R)),
-                       uFct, uOld=NULL, wNew=NULL,
-                       control=list(whenEvaluExo=c("pre"=TRUE, "post"=FALSE)),
-                       dots=NULL)
+    dots.propagated <- list(...)
+    
+    funcF <- function (i, t, x0, v=rep(0, ncol(R)),
+                       uFct=NULL, uOld=NULL, wNew=NULL,
+                       control=controlF,
+                       dots=dots.propagated)
     {
-    ##  t ... time index
+    ##  i ... loop index
+    ##  t ... time, t[i]
     ##  x0 ... filter estimate x_{t-1|t-1}, vector
     ##  v ... innovations v_t, vector!
     ##  uFct ... function of exogenous variable u, yields vector u_t
@@ -24,8 +29,10 @@ setMethod("createF", "matrix", function (object, R = NULL)
     ##  dots ... additional parameters, list
         call <- match.call()
 
+        if (is.null(uFct)) uFct <- createuExo(0)
+
         if (control$whenEvaluExo["pre"]) {
-            u <- uFct(t=t, x0=x0, uOld=uOld, wNew=wNew)
+            u <- uFct(i=i, t=t, x0=x0, uOld=uOld, wNew=wNew)
         } else {
             u <- uOld
         }
@@ -33,7 +40,7 @@ setMethod("createF", "matrix", function (object, R = NULL)
         x1 <- F%*%x0 + u + R%*%v
 
         if (control$whenEvaluExo["post"]) {
-            u <- uFct(t=t, x0=as.vector(x1), uOld=uOld, wNew=wNew)
+            u <- uFct(i=i, t=t, x0=as.vector(x1), uOld=uOld, wNew=wNew)
         }
 
         retF <- new("SSretValueF",
@@ -48,7 +55,9 @@ setMethod("createF", "matrix", function (object, R = NULL)
 
 
 ### time-variant case, linear
-setMethod("createF", "array", function (object, R = NULL)    
+setMethod("createF", "array",
+function (object, R = NULL,
+          controlF = list(whenEvaluExo=c("pre"=TRUE, "post"=FALSE)), ...)
 {
 ##  F ... array of state equation, F[, , t]
 ##  R ... selection matrix array (cf. Durbin & Koopman, 2001, p.38)
@@ -63,12 +72,15 @@ setMethod("createF", "array", function (object, R = NULL)
         R <- array(diag(nrowF), dim=c(nrowF, nrowF, dim(F)[3]))
     }
 
-    funcF <- function (t, x0, v=rep(0, ncol(R[, , t])),
-                       uFct, uOld=NULL, wNew=NULL,
-                       control=list(whenEvaluExo=c("pre"=TRUE, "post"=FALSE)),
-                       dots=NULL)
+    dots.propagated <- list(...)
+    
+    funcF <- function (i, t, x0, v=rep(0, ncol(R[, , t])),
+                       uFct=NULL, uOld=NULL, wNew=NULL,
+                       control=controlF,
+                       dots=dots.propagated)
     {
-    ##  t ... time index
+    ##  i ... loop index
+    ##  t ... time, t[i]
     ##  x0 ... filter estimate x_{t-1|t-1}, vector
     ##  v ... innovations v_t, vector!
     ##  uFct ... function of exogenous variable u, yields vector u_t
@@ -78,21 +90,23 @@ setMethod("createF", "array", function (object, R = NULL)
     ##  dots ... additional parameters, list
         call <- match.call()
 
+        if (is.null(uFct)) uFct <- createuExo(0)
+
         if (control$whenEvaluExo["pre"]) {
-            u <- uFct(t=t, x0=x0, uOld=uOld, wNew=wNew)
+            u <- uFct(i=i, t=t, x0=x0, uOld=uOld, wNew=wNew)
         } else {
             u <- uOld
         }
 
-        x1 <- F[, , t]%*%x0 + u + R[, , t]%*%v
+        x1 <- F[, , i]%*%x0 + u + R[, , i]%*%v
 
         if (control$whenEvaluExo["post"]) {
-            u <- uFct(t=t, x0=as.vector(x1), uOld=uOld, wNew=wNew)
+            u <- uFct(i=i, t=t, x0=as.vector(x1), uOld=uOld, wNew=wNew)
         }
 
         retF <- new("SSretValueF",
-                    x1 = as.vector(x1), FJcb = F[, , t, drop=TRUE],
-                    RJcb = R[, , t, drop=TRUE], t = t, x0 = x0,
+                    x1 = as.vector(x1), FJcb = F[, , i, drop=TRUE],
+                    RJcb = R[, , i, drop=TRUE], t = t, x0 = x0,
                     v = v, uNew = u, control = control,
                     dots.propagated = dots, call = call,
                     diagnostics = new("SSDiagnosticRetValue"))
@@ -108,12 +122,13 @@ setMethod("createF", "function", function (object)
 ##  F ... function, F(t, x0, ...)
     F <- object
 
-    funcF <- function (t, x0, v=0,
+    funcF <- function (i=NULL, t, x0, v=0,
                        uFct=NULL, uOld=NULL, wNew=NULL,
                        control=NULL,
                        dots=NULL)
     {
-    ##  t ... time index
+    ##  i ... loop index
+    ##  t ... time, t[i]
     ##  x0 ... filter estimate x_{t-1|t-1}, vector
     ##  v ... innovations v_t, vector!
     ##  uFct ... function of exogenous variable u, yields vector u_t
@@ -123,7 +138,9 @@ setMethod("createF", "function", function (object)
     ##  dots ... additional parameters, list
         call <- match.call()
  
-        ret0 <- F(t, x0, v, uFct, uOld, wNew, control, dots)
+        ret0 <- F(i=i, t=t, x0=x0, v=v,
+                  uFct=uFct, uOld=uOld, wNew=wNew,
+                  control=control, dots=dots)
         if (is(ret0, "SSretValueF")) return(ret0)
  
         retF <- new("SSretValueF",

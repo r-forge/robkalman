@@ -1,13 +1,20 @@
 ### time-invariant case, linear
-setMethod("createV", "matrix", function (object)    
+setMethod("createV", "matrix",
+function (object,
+          controlV = NULL, ...)    
 {
 ##  V ... covariance matrix of innovations
     V <- object
 
-    funcV <- function(t, x1, control=NULL, dots=NULL)
+    dots.propagated <- list(...)
+
+    funcV <- function(i, t, x1,
+                      control=controlV,
+                      dots=dots.propagated)
     {
-    ##  t ... time index
-    ##  x0 ... filter estimate x_{t-1|t-1}, vector
+    ##  i ... loop index
+    ##  t ... time, t[i]
+    ##  x1 ... one-step ahead predictor x_{t|t-1}, vector
     ##  control ... control parameters, list
     ##  dots ... additional parameters, list
         call <- match.call()
@@ -15,7 +22,7 @@ setMethod("createV", "matrix", function (object)
         retV <- new("SSretValueV",
                     V = V, t = t,
                     x1 = x1, 
-                    control=control,
+                    control = control,
                     dots.propagated = dots, call = call,
                     diagnostics = new("SSDiagnosticRetValue"))
       	return(retV)
@@ -25,21 +32,28 @@ setMethod("createV", "matrix", function (object)
 
 
 ### time-variant case, linear
-setMethod("createV", "array", function (object)    
+setMethod("createV", "array",
+function (object,
+          controlV = NULL, ...)    
 {
 ##  V ... array of covariance matrices of innovations, V[, , t]
     V <- object
 
-    funcV <- function(t, x1, control=NULL, dots=NULL)
+    dots.propagated <- list(...)
+
+    funcV <- function(i, t, x1,
+                      control=controlV,
+                      dots=dots.propagated)
     {
-    ##  t ... time index
-    ##  x0 ... filter estimate x_{t-1|t-1}, vector
+    ##  i ... loop index
+    ##  t ... time, t[i]
+    ##  x1 ... one-step ahead predictor x_{t|t-1}, vector
     ##  control ... control parameters, list
     ##  dots ... additional parameters, list
         call <- match.call()
 
         retV <- new("SSretValueV",
-                    V = V[, , t, drop=TRUE], t = t,
+                    V = V[, , i, drop=TRUE], t = t,
                     x1 = x1, 
                     control = control, 
                     dots.propagated = dots, call = call,
@@ -56,15 +70,17 @@ setMethod("createV", "function", function (object)
 ##  V ... function, V(t, ...)
     V <- object
 
-    funcV <- function(t, x1=0, control=NULL, dots=NULL)
+    funcV <- function(i=NULL, t, x1=0, control=NULL, dots=NULL)
     {
-    ##  t ... time index
-    ##  x0 ... filter estimate x_{t-1|t-1}, vector
+    ##  i ... loop index
+    ##  t ... time, t[i]
+    ##  x1 ... one-step ahead predictor x_{t|t-1}, vector
     ##  control ... control parameters, list
     ##  dots ... additional parameters, list
         call <- match.call()
 
-        ret0 <- V(t, x1, control, dots)
+        ret0 <- V(i=i, t=t, x1=x1,
+                  control=control, dots=dots)
         if (is(ret0, "SSretValueV")) return(ret0)
 
         retV <- new("SSretValueV",

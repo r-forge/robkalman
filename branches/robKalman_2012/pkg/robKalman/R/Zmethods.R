@@ -1,5 +1,7 @@
 ### time-invariant case, linear
-setMethod("createZ", "matrix", function (object, T = NULL)    
+setMethod("createZ", "matrix",
+function (object, T = NULL,
+          controlZ = list(whenEvalwExo=c("pre"=TRUE, "post"=FALSE)), ...)
 {
 ##  Z ... observation matrix
 ##  T ... selection matrix (observation noise)
@@ -9,13 +11,17 @@ setMethod("createZ", "matrix", function (object, T = NULL)
         T <- diag(nrow(Z))
     }
 
-    funcZ <- function (t, x1, eps=rep(0, ncol(T)),
-                       wFct, uNew=NULL, wOld=NULL,
-                       control=list(whenEvalwExo=c("pre"=TRUE, "post"=FALSE)),
-                       dots=NULL)
+    dots.propagated <- list(...)
+    
+    funcZ <- function (i, t, x1, y, eps=rep(0, ncol(T)),
+                       wFct=NULL, uNew=NULL, wOld=NULL,
+                       control=controlZ,
+                       dots=dots.propagated)
     {
-    ##  t ... time index
+    ##  i ... loop index
+    ##  t ... time, t[i]
     ##  x1 ... one-step ahead predictor x_{t|t-1}, vector
+    ##  y ... observations y_t
     ##  eps ... observation noise \eps_t, vector!
     ##  wFct ... function of exogenous variable w, yields vector w_t
     ##  uNew ... exogenous variable u_t, vector!
@@ -24,20 +30,22 @@ setMethod("createZ", "matrix", function (object, T = NULL)
     ##  dots ... additional parameters, list
         call <- match.call()
 
+        if (is.null(wFct)) wFct <- createwExo(0)
+
         if (control$whenEvalwExo["pre"]) {
-            w <- wFct(t=t, x1=x1, uNew=uNew, wOld=wOld)
+            w <- wFct(i=i, t=t, x1=x1, y=y, uNew=uNew, wOld=wOld)
         } else {
             w <- wOld
         }
 
-        y <- as.vector(Z%*%x1 + w + T%*%eps)
+        yhat <- as.vector(Z%*%x1 + w + T%*%eps)
 
         if (control$whenEvalwExo["post"]) {
-            w <- wFct(t=t, x1=x1, uNew=uNew, wOld=wOld)
+            w <- wFct(i=i, t=t, x1=x1, y=yhat, uNew=uNew, wOld=wOld)
         }
 
         retZ <- new("SSretValueZ",
-                    y = y, ZJcb = Z, TJcb = T,
+                    y = yhat, ZJcb = Z, TJcb = T,
                     t = t, x1 = x1, eps = eps, wNew = w, control=control,
                     dots.propagated = dots, call = call,
                     diagnostics = new("SSDiagnosticRetValue"))
@@ -48,7 +56,9 @@ setMethod("createZ", "matrix", function (object, T = NULL)
 
 
 ### time-variant case, linear
-setMethod("createZ", "array", function (object, T = NULL)    
+setMethod("createZ", "array",
+function (object, T = NULL,
+          controlZ = list(whenEvalwExo=c("pre"=TRUE, "post"=FALSE)), ...)
 {
 ##  Z ... array of observation matrices, Z[, , t]
 ##  T ... selection matrix array (observation noise)
@@ -63,13 +73,17 @@ setMethod("createZ", "array", function (object, T = NULL)
         T <- array(diag(nrowZ), dim=c(nrowZ, nrowZ, dim(Z)[3]))
     }
 
-    funcZ <- function (t, x1, eps=rep(0, ncol(T[, , t])),
-                       wFct, uNew=NULL, wOld=NULL,
-                       control=list(whenEvalwExo=c("pre"=TRUE, "post"=FALSE)),
-                       dots=NULL)
+    dots.propagated <- list(...)
+    
+    funcZ <- function (i, t, x1, y, eps=rep(0, ncol(T[, , t])),
+                       wFct=NULL, uNew=NULL, wOld=NULL,
+                       control=controlZ,
+                       dots=dots.propagated)
     {
-    ##  t ... time index
+    ##  i ... loop index
+    ##  t ... time, t[i]
     ##  x1 ... one-step ahead predictor x_{t|t-1}, vector
+    ##  y ... observations, y_t
     ##  eps ... observation noise \eps_t, vector!
     ##  wFct ... function of exogenous variable w, yields vector w_t
     ##  uNew ... exogenous variable u_t, vector!
@@ -78,21 +92,23 @@ setMethod("createZ", "array", function (object, T = NULL)
     ##  dots ... additional parameters, list
         call <- match.call()
 
+        if (is.null(wFct)) wFct <- createwExo(0)
+        
         if (control$whenEvalwExo["pre"]) {
-            w <- wFct(t=t, x1=x1, uNew=uNew, wOld=wOld)
+            w <- wFct(i=i, t=t, x1=x1, y=y, uNew=uNew, wOld=wOld)
         } else {
             w <- wOld
         }
 
-        y <- as.vector(Z[, , t]%*%x1 + w + T[, , t]%*%eps)
+        yhat <- as.vector(Z[, , i]%*%x1 + w + T[, , i]%*%eps)
 
         if (control$whenEvalwExo["post"]) {
-            w <- wFct(t=t, x1=x1, uNew=uNew, wOld=wOld)
+            w <- wFct(i=i, t=t, x1=x1, y=yhat, uNew=uNew, wOld=wOld)
         }
 
         retZ <- new("SSretValueZ",
-                    y = y, ZJcb = Z[, , t, drop=TRUE],
-                    TJcb = T[, , t, drop=TRUE], t = t, x1 = x1,
+                    y = yhat, ZJcb = Z[, , i, drop=TRUE],
+                    TJcb = T[, , i, drop=TRUE], t = t, x1 = x1,
                     eps = eps, wNew = w, control = control, 
                     dots.propagated = dots, call = call,
                     diagnostics = new("SSDiagnosticRetValue"))
@@ -108,13 +124,15 @@ setMethod("createZ", "function", function (object)
 ##  Z ... function , Z(t, x1, ...)
     Z <- object
 
-    funcZ <- function (t, x1, eps=0,
+    funcZ <- function (i=NULL, t, x1, y=NULL, eps=0,
                        wFct=NULL, uNew=NULL, wOld=NULL,
                        control=NULL, 
                        dots=NULL)
     {
-    ##  t ... time index
+    ##  i ... loop index
+    ##  t ... time, t[i]
     ##  x1 ... one-step ahead predictor x_{t|t-1}, vector
+    ##  y ... observations, y_t
     ##  eps ... observation noise \eps_t, vector!
     ##  wFct ... function of exogenous variable w, yields vector w_t
     ##  uNew ... exogenous variable u_t, vector!
@@ -123,7 +141,9 @@ setMethod("createZ", "function", function (object)
     ##  dots ... additional parameters, list
         call <- match.call()
 
-        ret0 <- Z(t, x1, eps, wFct, uNew, wOld, control, dots)
+        ret0 <- Z(i=i, t=t, x1=x1, y=y, eps=eps,
+                  wFct=wFct, uNew=uNew, wOld=wOld,
+                  control=control, dots=dots)
         if (is(ret0, "SSretValueZ")) return(ret0)
 
         retZ <- new("SSretValueZ",
@@ -134,6 +154,5 @@ setMethod("createZ", "function", function (object)
                     diagnostics = new("SSDiagnosticRetValue"))
         return(retZ)
     }
-
     return(new("FunctionWithControl",funcZ))
 })
