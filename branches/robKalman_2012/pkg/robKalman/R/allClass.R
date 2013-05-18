@@ -105,29 +105,35 @@ setClass("SSFilter",
                                          predStep = "FunctionWithControl",
                                          corrStep = "FunctionWithControl")
          )
-setClass("SSrobFilter",
+setClassUnion("OptionalSSFilter",
+              c("SSFilter","NULL")
+              )
+setClass("SSRobFilter",
          representation = representation(classFilter = "SSFilter",
-                                         robFilter = "SSFilter")
+                                         robFilter = "OptionalSSFilter")
          )
 setClass("SSSmoother",
-         representation = representation(filt = "SSFilter",
-                                         smoothStep = "FunctionWithControl",
+         representation = representation(smoothStep = "FunctionWithControl",
                                          smoothCov = "FunctionWithControl",
-                                         lagoneCov = "FunctionWithControl")
+                                         lagoneCov = "FunctionWithControl"),
+         contains = "SSFilter"
          )
-setClass("SSrobSmoother",
+setClassUnion("OptionalSSSmoother",
+              c("SSSmoother","NULL")
+              )
+setClass("SSRobSmoother",
          representation = representation(classSmoother = "SSSmoother",
-                                         robSmoother = "SSSmoother")
+                                         robSmoother = "OptionalSSSmoother")
          )
 
-setClassUnion("SSClassOrRobFilter",
-              c("SSFilter", "SSrobFilter")
-              )
-setClassUnion("SSClassOrRobSmoother",
-              c("SSSmoother", "SSrobSmoother")
-              )
-setClassUnion("SSClassOrRobFilterOrSmoother",
-              c("SSClassOrRobFilter", "SSClassOrRobSmoother")
+## setClassUnion("SSClassOrRobFilter",
+##               c("SSFilter", "SSrobFilter")
+##               )
+## setClassUnion("SSClassOrRobSmoother",
+##               c("SSSmoother", "SSrobSmoother")
+##               )
+setClassUnion("SSFilterOrSmoother",
+              c("SSRobFilter", "SSRobSmoother")
               )
 
 setClass("SSDiagnostic",
@@ -248,7 +254,7 @@ setClass("SSInput",
          representation = representation(model = "SSM",
                                          obs = "SSObs",
                                          times = "SStimes",
-                                         steps = "SSClassOrRobFilterOrSmoother")
+                                         steps = "SSFilterOrSmoother")
          )
 setClass("SSOutput",
          representation = representation(init.cl = "SSInitialized",

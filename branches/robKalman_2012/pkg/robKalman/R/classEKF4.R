@@ -2,7 +2,7 @@
 ## 
 ##  classical extended Kalman filter routines, S4
 ##  author: Bernhard Spangl
-##  version: 0.1 (changed: 2013-04-07, created: 2013-04-07)
+##  version: 0.3 (changed: 2013-05-08, created: 2013-04-07)
 ##
 #######################################################
 
@@ -32,6 +32,7 @@
     A %*% S0 %*% t(A) + B %*% Q %*% t(B)
 }
 
+new("FunctionWithControl", 
 cEKFinitS <- function (initEq,
                        controlInit = NULL, ...)
 {
@@ -54,13 +55,16 @@ cEKFinitS <- function (initEq,
                          diagnostics = new("SSDiagnosticFilter"))
     return(SSInitialized)
 }
+)
 
-cEKFpredS <- function (t,
+new("FunctionWithControl", 
+cEKFpredS <- function (i, t,
                        PredOrFilt,
                        stateEq,
                        controlPred = NULL, ...)
 {
-    ##  t ... time index
+    ##  i ... loop index
+    ##  t ... time, t[i]
     ##  PredOrFilt ... object of S4 class 'SSPredOrFilt'
     ##  stateEq ... object of S4 class 'SSstateEq'
     ##  controlPred ... control parameters, list
@@ -76,14 +80,14 @@ cEKFpredS <- function (t,
     uExofct <- stateEq@uExofct
     if (is.null(uExofct)) uExofct <- createuExo(0)
 
-    Freturn <- Ffct(t=t, x0=x0,
+    Freturn <- Ffct(i=i, t=t, x0=x0,
                     uFct=uExofct, uOld=uExo, wNew=wExo)
     x1 <- Freturn@x1
     A <- Freturn@FJcb
     B <- Freturn@RJcb
     uNew <- Freturn@uNew
 
-    Qreturn <- Qfct(t=t, x0=x0)
+    Qreturn <- Qfct(i=i, t=t, x0=x0)
     Q <- Qreturn@Q
 
     S1 <- .getpredCov(S0=S0, A=A, B=B, Q=Q)
@@ -99,7 +103,9 @@ cEKFpredS <- function (t,
                        diagnostics = new("SSDiagnosticFilter"))
     return(SSPredicted)
 }
+)
 
+new("FunctionWithControl", 
 cEKFcorrS <- function (i, t,
                        Obs,
                        PredOrFilt,
@@ -125,14 +131,14 @@ cEKFcorrS <- function (i, t,
     wExofct <- obsEq@wExofct
     if (is.null(wExofct)) wExofct <- createwExo(0)
 
-    Zreturn <- Zfct(t=t, x1=x1,
+    Zreturn <- Zfct(i=i, t=t, x1=x1, y=y, 
                     wFct=wExofct, uNew=uExo, wOld=wExo)
     yhat <- Zreturn@y
     C <- Zreturn@ZJcb
     D <- Zreturn@TJcb
     wNew <- Zreturn@wNew
 
-    Vreturn <- Vfct(t=t, x1=x1)
+    Vreturn <- Vfct(i=i, t=t, x1=x1)
     V <- Vreturn@V
 
     Delta <- .getDelta(S1=S1, C=C, D=D, V=V)
@@ -156,4 +162,5 @@ cEKFcorrS <- function (i, t,
                       diagnostics = new("SSDiagnosticFilter"))
     return(SSFiltered)
 }
+)
 
