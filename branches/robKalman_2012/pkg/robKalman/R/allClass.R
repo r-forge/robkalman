@@ -105,26 +105,36 @@ setClass("SSFilter",
                                          predStep = "FunctionWithControl",
                                          corrStep = "FunctionWithControl")
          )
-setClassUnion("OptionalSSFilter",
-              c("SSFilter","NULL")
-              )
-setClass("SSRobFilter",
-         representation = representation(classFilter = "SSFilter",
-                                         robFilter = "OptionalSSFilter")
-         )
 setClass("SSSmoother",
          representation = representation(smoothStep = "FunctionWithControl",
                                          smoothCov = "FunctionWithControl",
                                          lagoneCov = "FunctionWithControl"),
          contains = "SSFilter"
          )
-setClassUnion("OptionalSSSmoother",
-              c("SSSmoother","NULL")
-              )
-setClass("SSRobSmoother",
-         representation = representation(classSmoother = "SSSmoother",
-                                         robSmoother = "OptionalSSSmoother")
-         )
+
+### ---- List of Filters/Smoothers similar to DistrList ---- ###
+
+setClass(Class = "SSFilterList",
+            prototype = prototype(list(new("SSFilter"))),
+            contains = "list",
+            validity = function(object){
+                nrvalues <- length(object)
+                for(i in 1:nrvalues)
+                    if(!is(object[[i]], "SSFilter"))
+                        stop("element ", i, " is no 'SSFilter'")
+                return(TRUE)
+            })
+
+setClass(Class = "SSSmootherList",
+            prototype = prototype(list(new("SSSmoother"))),
+            contains = "list",
+            validity = function(object){
+                nrvalues <- length(object)
+                for(i in 1:nrvalues)
+                    if(!is(object[[i]], "SSSmoother"))
+                        stop("element ", i, " is no 'SSSmoother'")
+                return(TRUE)
+            })
 
 ## setClassUnion("SSClassOrRobFilter",
 ##               c("SSFilter", "SSrobFilter")
