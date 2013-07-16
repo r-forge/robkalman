@@ -51,6 +51,7 @@ cEKFinitS <- function (initEq,
                          uExo = NULL,
                          wExo = NULL,
                          dots.propagated = dots.propagated,
+                         crtl.prpgtd = NULL, 
                          control = controlInit,
                          diagnostics = new("SSDiagnosticFilter"))
     return(SSInitialized)
@@ -75,6 +76,7 @@ cEKFpredS <- function (i, t,
     S0 <- PredOrFilt@variance
     uExo <- PredOrFilt@uExo
     wExo <- PredOrFilt@wExo
+    ctrl.prpgtd <- PredOrFilt@ctrl.prpgtd
     Ffct <- stateEq@Ffct
     Qfct <- stateEq@Qfct
     uExofct <- stateEq@uExofct
@@ -99,6 +101,7 @@ cEKFpredS <- function (i, t,
                        uExo = uNew,
                        wExo = wExo,
                        dots.propagated = dots.propagated,
+                       crtl.prpgtd = crtl.prpgtd, 
                        control = controlPred,
                        diagnostics = new("SSDiagnosticFilter"))
     return(SSPredicted)
@@ -126,6 +129,7 @@ cEKFcorrS <- function (i, t,
     S1 <- PredOrFilt@variance
     uExo <- PredOrFilt@uExo
     wExo <- PredOrFilt@wExo
+    ctrl.prpgtd <- PredOrFilt@ctrl.prpgtd
     Zfct <- obsEq@Zfct
     Vfct <- obsEq@Vfct
     wExofct <- obsEq@wExofct
@@ -158,6 +162,7 @@ cEKFcorrS <- function (i, t,
                       CovObs = Delta,
                       DeltaY = DeltaY,
                       dots.propagated = dots.propagated,
+                      crtl.prpgtd = crtl.prpgtd, 
                       control = controlCorr,
                       diagnostics = new("SSDiagnosticFilter"))
     return(SSFiltered)

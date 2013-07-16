@@ -176,6 +176,7 @@ setClass("SSPredOrFilt",
                                          uExo = "OptionalNumeric",
                                          wExo = "OptionalNumeric",
                                          dots.propagated = "OptionalList",
+                                         ctrl.prpgtd = "OptionalList",
                                          control = "OptionalList",
                                          diagnostics = "SSDiagnosticFilter"),
          contains = "VIRTUAL"
