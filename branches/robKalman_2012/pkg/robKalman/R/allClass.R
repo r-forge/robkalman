@@ -143,7 +143,7 @@ setClass(Class = "SSSmootherList",
 ##               c("SSSmoother", "SSrobSmoother")
 ##               )
 setClassUnion("SSFilterOrSmoother",
-              c("SSRobFilter", "SSRobSmoother")
+              c("SSFilterList", "SSSmootherList")
               )
 
 setClass("SSDiagnostic",
