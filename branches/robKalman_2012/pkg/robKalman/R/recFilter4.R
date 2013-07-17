@@ -32,32 +32,74 @@ recFilter <- function (Model,
      nrSteps <- length(Steps)
 
      ##  initialization of resulting objects:
-     ini <- vector("list", nrSteps)
      ps <- vector("list", nrSteps)
      cs <- vector("list", nrSteps)
-     iniRet <- vector("list", nrSteps)
      psRet <- vector("list", nrSteps)
      csRet <- vector("list", nrSteps)
+     for(iStep in 1:nrStep){
+         psRet[[iStep]] <- initSSPredOrFiltRet(pdim = Model@pdim,
+                                   qdim = Model@qdim,
+                                   tfdim = sum(inX), tpdim = length(tt),
+                                   withuExo=!is.null(Model@SSstateEq@uExofct,
+                                   withwExo=!is.null(Model@SSobsEq@wExofct,
+                                   withdots.prop=(length(dots.propagated)>0),
+                                   withcontrol=(length(control)>0), ##?
+                                   withDiagnosticFilter=TRUE  ##?
+                                   )
+         csRet[[iStep]] <- initSSPredOrFiltRet(pdim = Model@pdim,
+                                   qdim = Model@qdim,
+                                   tfdim = sum(inX), tpdim = length(tt),
+                                   withuExo=!is.null(Model@SSstateEq@uExofct,
+                                   withwExo=!is.null(Model@SSobsEq@wExofct,
+                                   withdots.prop=(length(dots.propagated)>0),
+                                   withcontrol=(length(control)>0), ##?
+                                   withDiagnosticFilter=TRUE  ##?
+                                   )
 
-     ##  initialization:
-     for (iStep in 1:nrStep) {
-         ini[[iStep]] <- Steps[[iStep]]@initStep(initEq=initEq, ...)
      }
+     ##  initialization:     iStep = index within different procedures
+     for (iStep in 1:nrStep) {
+          cs[[iStep]] <- Steps[[iStep]]@initStep(initEq=initEq, ...)
+     }
+     iniRet <- cs
      ### ab hier weiter wie oben!, 2013-07-16 ###
      ### Schleife über Zeitpunkte t mit entsprechendem Time-Management ###
 
+     iy <- 0
+     for(ix in loopIndex){
          ##  preparation: TBD!
-         if (prep) {
+         for (iStep in 1:nrStep) {
+              if (!is.null(Steps[[iStep]]@prepStep) {
+                  ### to be filled
+                  ##preps[[iStep]] <- Steps[[iStep]]@prepStep(i=ix, t=tt[ix],
+                  #                                   PredOrFilt=cs[[iStep]],
+                  #                                   stateEq=stateEq, ...)
+                  #prepsRet[[iStep]] <- updateSSPredOrFilt(prepsRet[[iStep]], preps[[iStep]],
+                  #                                 ix)
+                  #cs[[iStep]] <- preps[[iStep]]
+              }
          }
      
          ##  prediction:
-         ps <- predSc(i=i, t=t,
-                      PredOrFilt=ini,
-                      stateEq=stateEq, ...)
+         for (iStep in 1:nrStep) {
+              ps[[iStep]] <- Steps[[iStep]]@predStep(i=ix, t=tt[ix],
+                                                     PredOrFilt=cs[[iStep]],
+                                                     stateEq=stateEq, ...)
+              psRet[[iStep]] <- updateSSPredOrFilt(psRet[[iStep]], ps[[iStep]],
+                                                   ix)
+         }
 
          ##  correction:
-         cs <- corrSc(i=i, t=t,
-                      Obs=Obs,
-                      PredOrFilt=ps,
-                      obsEq=obsEq, ...)
-     
+         if(inX[ix]){ ## have an observation available
+            iy <- iy + 1
+            for (iStep in 1:nrStep) {
+                 cs[[iStep]] <- Steps[[iStep]]@corrStep(i=iy, t=tt[ix], Obs=Obs,
+                                                        PredOrFilt=ps[[iStep]],
+                                                        obsEq=obsEq, ...)
+                 csRet[[iStep]] <- updateSSPredOrFilt(csRet[[iStep]],
+                                                         cs[[iStep]], iy)
+            }
+         }else{
+            cs <- ps
+         }
+    }
