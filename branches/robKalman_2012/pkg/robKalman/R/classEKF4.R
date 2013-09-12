@@ -142,7 +142,7 @@ cEKFcorrS <- function (i, t,
     D <- Zreturn@TJcb
     wNew <- Zreturn@wNew
 
-    Vreturn <- Vfct(i=i, t=t, x1=x1)
+    Vreturn <- Vfct(i=i, t=t, x1=x1) ### nicht auch von y abhängig??
     V <- Vreturn@V
 
     Delta <- .getDelta(S1=S1, C=C, D=D, V=V)

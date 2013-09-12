@@ -55,7 +55,8 @@ setClassUnion("OptionalFunctionWithControl",
 
 setClassUnion("OptionalDistribution",
 ##               c("Distribution","NULL")    # S4 class 'Distribution' missing!
-              c("NULL")
+               "ANY"
+#              c("NULL", "function")
               )
 
 
@@ -169,6 +170,7 @@ setClass("SSStateReconstr",
 ### and as slot classes (in variant as multi-step in time) for return value
 ### of recFilter
 
+
 setClass("SSPredOrFilt",
          representation = representation(values = "numeric",
                                          call = "OptionalCall",
@@ -179,8 +181,16 @@ setClass("SSPredOrFilt",
                                          ctrl.prpgtd = "OptionalList",
                                          control = "OptionalList",
                                          diagnostics = "SSDiagnosticFilter"),
-         contains = "VIRTUAL"
+         contains = c("VIRTUAL")
          )
+
+setClass("SSStateSimulated",
+         contains = "SSPredOrFilt"
+         )
+setClass("SSObsSimulated",
+         contains = "SSPredOrFilt"
+         )
+
 setClass("SSInitialized",
          contains = "SSPredOrFilt"
          )
