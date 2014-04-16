@@ -1,7 +1,5 @@
-new("FunctionWithControl",
-initSim <- function (initEq,
-                       controlInit = NULL, ...)
-{
+initSim <- new("FunctionWithControl", function (initEq,
+                       controlInit = NULL, ...){
     ##  initEq ... object of S4 class 'SSinitEq'
     ##  controlInit ... control parameters, list
     call <- match.call()
@@ -22,15 +20,12 @@ initSim <- function (initEq,
                          control = controlInit,
                          diagnostics = new("SSDiagnosticFilter"))
     return(SSInitialized)
-}
-)
+})
 
-new("FunctionWithControl",
-stateSim <- function (i, t,
+stateSim <- new("FunctionWithControl", function (i, t,
                        StateSimulated,
                        stateEq,
-                       controlPred = NULL, ...)
-{
+                       controlPred = NULL, ...){
     ##  i ... loop index
     ##  t ... time, t[i]
     ##  PredOrFilt ... object of S4 class 'SSPredOrFilt'
@@ -47,6 +42,7 @@ stateSim <- function (i, t,
     Ffct <- stateEq@Ffct
     Qfct <- stateEq@Qfct
     uExofct <- stateEq@uExofct
+
     if (is.null(uExofct)) uExofct <- createuExo(0)
 
     Freturn <- Ffct(i=i, t=t, x0=x0,
@@ -60,7 +56,7 @@ stateSim <- function (i, t,
     innov <- generateRV(stateEq@distrfct, 0*x0, Q)
     x1 <- x1 + innov
     
-    SSPredicted <- new("SSStateSimulated",
+    StateSim <- new("SSStateSimulated",
                        values = x1,
                        call = call,
                        variance = Q,
@@ -70,16 +66,13 @@ stateSim <- function (i, t,
                        crtl.prpgtd = crtl.prpgtd,
                        control = controlPred,
                        diagnostics = new("SSDiagnosticFilter"))
-    return(SSPredicted)
-}
-)
+    return(StateSim)
+})
 
-new("FunctionWithControl",
-Ysim <- function (i, t, ydim,
+Ysim <- new("FunctionWithControl", function (i, t, ydim,
                      StateSimulated,
                      obsEq,
-                     controlCorr = NULL, ...)
-{
+                     controlCorr = NULL, ...){
     ##  i ... loop index
     ##  t ... time, t[i]
     ##  Obs ... object of S4 class 'SSObs'
@@ -113,7 +106,7 @@ Ysim <- function (i, t, ydim,
 
     y <- y + eps
 
-    SSFiltered <- new("SSObsSimulated",
+    ObsSim <- new("SSObsSimulated",
                       values = y,
                       call = call,
                       variance = V,
@@ -123,7 +116,6 @@ Ysim <- function (i, t, ydim,
                       crtl.prpgtd = crtl.prpgtd,
                       control = controlCorr,
                       diagnostics = new("SSDiagnosticFilter"))
-    return(SSFiltered)
-}
-)
+    return(ObsSim)
+})
 

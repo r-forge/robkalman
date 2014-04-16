@@ -11,15 +11,15 @@ updateSSPredOrFiltRet <- function(old, new, i){
 
 }
 
-initSSPredOrFiltRet <- function(pdim, qdim, tdim, withuExo, withwExo, withdots.prop,
+initSSPredOrFiltRet <- function(rdim, trdim,  pdim, tdim, qdim, tydim, withuExo, withwExo, withdots.prop,
                                   withcontrol, withDiagnosticFilter){
-  v <- matrix(NA,pdim,tdim)
-  vm <- array(NA,dim=c(pdim,pdim,tdim))
+  v <- matrix(NA,rdim,trdim)
+  vm <- array(NA,dim=c(rdim,rdim,trdim))
   uExo <- if(withuExo) matrix(NA,pdim,tdim) else NULL
-  wExo <- if(withwExo) matrix(NA,qdim,tdim) else NULL
-  dots.prop <- if(withdots.prop) vector("list", tdim) else NULL
-  control <- if(withcontrol) vector("list", tdim) else NULL
-  DiagnosticFilter <- if(DiagnosticFilter) vector("list",tdim) else NULL
+  wExo <- if(withwExo) matrix(NA,qdim,tydim) else NULL
+  dots.prop <- if(withdots.prop) vector("list", trdim) else NULL
+  control <- if(withcontrol) vector("list", trdim) else NULL
+  DiagnosticFilter <- if(DiagnosticFilter) vector("list",trdim) else NULL
   new("SSPredOrFiltRet", value = v, variance = vm, uExo = uExo, wExo = wExo,
               dot.propagated = dot.prop, control = control,
               DiagnosticFilter = DiagnosticFilter)

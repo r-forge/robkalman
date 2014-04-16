@@ -6,20 +6,20 @@
 ##
 #######################################################
 
-
-     initPsRet <- function(SSM,tt, exosDim ){
-        ###exosDim ist die Dimensionierung der Rueckgabewerte der exoFct
-
-        if modell has uexo uexos = matrix(...) else uexos = NULL
-        psret0 <- new("SSPredictedRet",
-                              values=matrix(0,Model@pdim,length(tt)+1),
-                              call = vector("list",length(tt)+1 ),
-                              variance = array(0,dim=c(Model@pdim,Model@pdim,length(tt)+1)),
-                              uexo = uexos,...)
-        return(psret0)
-      }
-
-## analog initPrepRet initCsRet
+# _<
+## ist erledigt durch initSSPredOrFiltRet() in updateinitSSPredOrFiltRet.R
+# _>
+#     initPsRet <- function(SSM,tt, exosDim ){
+#        ###exosDim ist die Dimensionierung der Rueckgabewerte der exoFct
+#
+#        if modell has uexo uexos = matrix(...) else uexos = NULL
+#        psret0 <- new("SSPredictedRet",
+#                              values=matrix(0,Model@pdim,length(tt)+1),
+#                              call = vector("list",length(tt)+1 ),
+#                              variance = array(0,dim=c(Model@pdim,Model@pdim,length(tt)+1)),
+ #                             uexo = uexos,...)
+#        return(psret0)
+#      }
 
 
 recFilter <- function (Model,
@@ -43,6 +43,8 @@ recFilter <- function (Model,
      ##  time management:
      tt <- times@times
      inX <- times@inX
+     tT <- length(tt)+1
+     tY <- sum(inX)
      loopIndex <- 1:length(tt)
 
      nrSteps <- length(Steps)
@@ -53,39 +55,39 @@ recFilter <- function (Model,
      psRet <- vector("list", nrSteps)
      csRet <- vector("list", nrSteps)
 
-     if (prep) prepret0 <- initPrepRet(SSM,tt,exox...)
-     psret0 <- initPsRet(SSM,tt,exox...)
-     csret0 <- initCsRet(SSM,tt,exox...)
+     withuExo <- !is.null(stateEq@uExofct)
+     withwExo <- !is.null(obsEq@wExofct)
+     withdots.prop <- (length(dots.propagated)>0)
 
-     for(i in nrSteps){
-           # if exists prepRet ..
-           #     prepRet0 <- new("SSPreparedRet",values=matrix)
+     ### noch herauszufinden: woher findet man raus,
+     ##       ob der prepstep/predstep/corrstep control/Diagnostic hat..
 
-          ### aus diesem Code eine Funktion machen
-          if (prep) prepRet[[i]] <- prepret0
-          psRet[[i]] <- psret0
-          csRet[[i]] <- csret0
-     }
+     withcontrol.prep <- ##!is.null(stateEq@uExofct)
+     withDiagnostic.prep <- ##!!is.null(stateEq@uExofct)
+
+     withcontrol.pred <- ##!!is.null(stateEq@uExofct)
+     withDiagnostic.pred <- ##!!is.null(stateEq@uExofct)
+
+     withcontrol.corr <- ##!!is.null(stateEq@uExofct)
+     withDiagnostic.corr <- ##!!is.null(stateEq@uExofct)
+
+     if (prep) prepret0 <- initSSPredOrFiltRet(Model@pdim, tT,
+                              Model@pdim, tT, Model@qdim, tY,
+                              withuExo, withwExo, withdots.prop,
+                              withcontrol.prep, withDiagnostic.prep)
+     psret0 <- <- initSSPredOrFiltRet(Model@pdim, tT,
+                              Model@pdim, tT, Model@qdim, tY,
+                              withuExo, withwExo, withdots.prop,
+                              withcontrol.pred, withDiagnostic.pred)
+     csret0 <- <- initSSPredOrFiltRet(Model@pdim, tY,
+                              Model@pdim, tT, Model@qdim, tY,
+                              withuExo, withwExo, withdots.prop,
+                              withcontrol.corr, withDiagnostic.corr)
+
      for(iStep in 1:nrStep){
-         psRet[[iStep]] <- initSSPredOrFiltRet(pdim = Model@pdim,
-                                   qdim = Model@qdim,
-                                   tfdim = sum(inX), tpdim = length(tt),
-                                   withuExo=!is.null(Model@SSstateEq@uExofct,
-                                   withwExo=!is.null(Model@SSobsEq@wExofct,
-                                   withdots.prop=(length(dots.propagated)>0),
-                                   withcontrol=(length(control)>0), ##?
-                                   withDiagnosticFilter=TRUE  ##?
-                                   )
-         csRet[[iStep]] <- initSSPredOrFiltRet(pdim = Model@pdim,
-                                   qdim = Model@qdim,
-                                   tfdim = sum(inX), tpdim = length(tt),
-                                   withuExo=!is.null(Model@SSstateEq@uExofct,
-                                   withwExo=!is.null(Model@SSobsEq@wExofct,
-                                   withdots.prop=(length(dots.propagated)>0),
-                                   withcontrol=(length(control)>0), ##?
-                                   withDiagnosticFilter=TRUE  ##?
-                                   )
-
+         if (prep) prepRet[[iStep]] <- prepret0
+         psRet[[iStep]] <- psret0
+         csRet[[iStep]] <- csret0
      }
      ##  initialization:     iStep = index within different procedures
      for (iStep in 1:nrStep) {

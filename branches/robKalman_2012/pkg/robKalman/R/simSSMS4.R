@@ -23,7 +23,6 @@ setMethod("generateRV", "NULL", function(distrib,mu,Sigma){
    rmvnorm(1, mean=mu,sigma=Sigma)
 })
 
-generateRV <- function(distrib)
 
 simSSM <- function (Model, times, seed = NULL, ...)
 {
@@ -48,19 +47,34 @@ simSSM <- function (Model, times, seed = NULL, ...)
      tY <- tt[inX]
      loopIndex <- 1:length(tt)
 
+     withuExo <- !is.null(stateEq@uExofct)
+     withwExo <- !is.null(obsEq@wExofct)
+     withdots.prop <- (length(dots.propagated)>0)
+
+     ### noch herauszufinden: woher findet man raus,
+     ##       ob der prepstep/predstep/corrstep control/Diagnostic hat..
+
+     withcontrol <- withDiagnostic <- FALSE
+
+
      ##  initialization of resulting objects:
-     Y <- matrix(NA,Model@qdim,length(tY))
-     X <- matrix(NA,Model@pdim,length(tt)+1)
+     X <- initSSPredOrFiltRet(Model@pdim, length(tt)+1,  Model@pdim, length(tt)+1,
+                              Model@qdim, length(tY),
+                              withuExo, withwExo, withdots.prop,
+                              withcontrol, withDiagnostic)
+     Y <- initSSPredOrFiltRet(Model@qdim, length(tY)+1,  Model@pdim, length(tt)+1,
+                              Model@qdim, length(tY),
+                              withuExo, withwExo, withdots.prop,
+                              withcontrol, withDiagnostic)
 
 
      StateSimulated <- initSim(initEq, controlInit = NULL, ...)
-     X[,1] <- StateSimulated@values
      for(ix in loopIndex+1){
          ##  state simulation
-              StateSimulated <- stateSim(i=ix, t=tt[ix],
+             StateSimulated <- stateSim(i=ix, t=tt[ix],
                                          StateSimulated=StateSimulated,
                                          stateEq=stateEq, ...)
-              X[,ix] < StateSimulated@values
+             X <- updateSSPredOrFilt(X, StateSimulated, ix)
 
          ##  correction:
          if(inX[ix]){ ## have an observation available
@@ -68,8 +82,9 @@ simSSM <- function (Model, times, seed = NULL, ...)
             ObsSimulated <- obsSim(i=iy, t=tt[ix], ydim = Model@qdim,
                                    StateSimulated = StateSimulated,
                                    obsEq=obsEq, ...)
-            Y[,iy] <- ObSimulated@values
+            Y <- updateSSPredOrFilt(Y, ObsSimulated, iy)
          }
     }
+    Simulated <- new("SSSimulated", stateSimulated=X, obsSimulated=Y)
     ### fehlt noch: zusammenführen der Daten....
 }
