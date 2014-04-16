@@ -32,9 +32,9 @@
     A %*% S0 %*% t(A) + B %*% Q %*% t(B)
 }
 
-new("FunctionWithControl", 
-cEKFinitS <- function (initEq,
-                       controlInit = NULL, ...)
+cEKFinitS <- new("FunctionWithControl", 
+                 function (initEq,
+                           controlInit = NULL, ...)
 {
     ##  initEq ... object of S4 class 'SSinitEq'
     ##  controlInit ... control parameters, list
@@ -58,11 +58,11 @@ cEKFinitS <- function (initEq,
 }
 )
 
-new("FunctionWithControl", 
-cEKFpredS <- function (i, t,
-                       PredOrFilt,
-                       stateEq,
-                       controlPred = NULL, ...)
+cEKFpredS <- new("FunctionWithControl", 
+                 function (i, t,
+                           PredOrFilt,
+                           stateEq,
+                           controlPred = NULL, ...)
 {
     ##  i ... loop index
     ##  t ... time, t[i]
@@ -108,12 +108,12 @@ cEKFpredS <- function (i, t,
 }
 )
 
-new("FunctionWithControl", 
-cEKFcorrS <- function (i, t,
-                       Obs,
-                       PredOrFilt,
-                       obsEq,
-                       controlCorr = NULL, ...)
+cEKFcorrS <- new("FunctionWithControl", 
+                 function (i, t,
+                           Obs,
+                           PredOrFilt,
+                           obsEq,
+                           controlCorr = NULL, ...)
 {
     ##  i ... loop index
     ##  t ... time, t[i]
