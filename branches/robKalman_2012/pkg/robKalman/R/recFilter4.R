@@ -7,7 +7,8 @@
 #######################################################
 
 
-     initPsRet <- function(SSM,tt, exos){
+     initPsRet <- function(SSM,tt, exosDim ){
+        ###exosDim ist die Dimensionierung der Rueckgabewerte der exoFct
 
         if modell has uexo uexos = matrix(...) else uexos = NULL
         psret0 <- new("SSPredictedRet",

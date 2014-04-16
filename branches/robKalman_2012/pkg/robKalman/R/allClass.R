@@ -185,10 +185,14 @@ setClass("SSPredOrFilt",
          )
 
 setClass("SSStateSimulated",
-         contains = "SSPredOrFilt"
+         contains = "SSPredOrFiltRet"
          )
 setClass("SSObsSimulated",
-         contains = "SSPredOrFilt"
+         contains = "SSPredOrFiltRet"
+         )
+setClass("SSSimulated",
+         representation = representation(stateSimulated = "SSStateSimulated",
+                                         obsSimulated = "SSObsSimulated")
          )
 
 setClass("SSInitialized",
