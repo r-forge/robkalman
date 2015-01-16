@@ -26,6 +26,9 @@ setClassUnion("OptionalNumeric",
 setClassUnion("OptionalMatrix",
               c("NULL", "matrix")
               )
+setClassUnion("OptionalArray",
+              c("NULL", "array")
+              )
 setClassUnion("OptionalList",
               c("list","NULL")
               )
@@ -235,6 +238,7 @@ setClass("SSPredOrFiltRet",
          representation = representation(values = "matrix",
                                          call = "OptionalListOfCalls",
                                          variances = "array",
+                                         lag1variances = "OptionalArray",
                                          uExo = "OptionalMatrix",
                                          wExo = "OptionalMatrix",
                                          dots.propagated = "OptionalList",
@@ -282,16 +286,11 @@ setClass("SSInput",
                                          steps = "SSFilterOrSmoother")
          )
 setClass("SSOutput",
-         representation = representation(init.cl = "SSInitialized",
-                                         prep.cl = "OptionalSSPreparedRet",
-                                         pred.cl = "SSPredictedRet",
-                                         filt.cl = "SSFilteredRet",
-                                         smooth.cl = "OptionalSSSmoothedRet",
-                                         init.rob = "OptionalSSInitialized", 
-                                         pred.rob = "OptionalSSPredictedRet",
-                                         filt.rob = "OptionalSSFilteredRet",
-                                         smooth.rob = "OptionalSSSmoothedRet",
-                                         prep.rob = "OptionalSSPreparedRet")
+         representation = representation(init = "list",
+                                         prep = "OptionalList",
+                                         pred = "list",
+                                         filt = "list",
+                                         smooth = "OptionalList")
          )
 
 setClass("SSrecResult",

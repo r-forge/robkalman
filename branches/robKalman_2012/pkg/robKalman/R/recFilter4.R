@@ -1,4 +1,4 @@
-#######################################################
+ï»¿#######################################################
 ## 
 ##  recursive filter algorithm for Kalman filter routines, S4
 ##  author: Bernhard Spangl
@@ -75,11 +75,11 @@ recFilter <- function (Model,
                               Model@pdim, tT, Model@qdim, tY,
                               withuExo, withwExo, withdots.prop,
                               withcontrol.prep, withDiagnostic.prep)
-     psret0 <- <- initSSPredOrFiltRet(Model@pdim, tT,
+     psret0 <- initSSPredOrFiltRet(Model@pdim, tT,
                               Model@pdim, tT, Model@qdim, tY,
                               withuExo, withwExo, withdots.prop,
                               withcontrol.pred, withDiagnostic.pred)
-     csret0 <- <- initSSPredOrFiltRet(Model@pdim, tY,
+     csret0 <- initSSPredOrFiltRet(Model@pdim, tY,
                               Model@pdim, tT, Model@qdim, tY,
                               withuExo, withwExo, withdots.prop,
                               withcontrol.corr, withDiagnostic.corr)
@@ -135,8 +135,9 @@ recFilter <- function (Model,
             cs <- ps
          }
     }
-    zusammenhängen von list(initRet, prepRet, psRet, csRet) ## SSOutput ist jetzt
-       eine Liste mit 4 Elementen; jedes einzelne der 4 ist wieder Liste
-       und enthält zB ideal robust -> unterschied zu Output.dia
+### to do
+#    zusammenhaengen von list(initRet, prepRet, psRet, csRet) ## SSOutput ist jetzt
+#       eine Liste mit 4 Elementen; jedes einzelne der 4 ist wieder Liste
+#       und enthaelt zB ideal robust -> unterschied zu Output.dia
     
  }
