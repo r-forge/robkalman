@@ -1,0 +1,141 @@
+<html><head><title>Internal functions of package robKalman &mdash; psi functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>internalarGM(robKalman)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   internalarGM">
+<param name="keyword" value="R:   .ARmodel">
+<param name="keyword" value="R:   .invCp">
+<param name="keyword" value="R:   .Weights">
+<param name="keyword" value="R:   .startval">
+<param name="keyword" value="R:   .BH">
+<param name="keyword" value="R:   .BB">
+<param name="keyword" value="R:   .weights">
+<param name="keyword" value="R:   .IWLS">
+<param name="keyword" value=" Internal functions of package robKalman &mdash; psi functions">
+</object>
+
+
+<h2>Internal functions of package robKalman &mdash; psi functions</h2>
+
+
+<h3>Description</h3>
+
+<p>
+These functions are used internally by package robKalman for the ACM filter &mdash; <i>psi</i>-functions
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+.ARmodel(x, p)
+.invCp(p, s, Phi)
+.Weights(p, Z, invCp, type, psi2, c)
+.startval(y, Z, tol)
+.BH(k=1.345) 
+.BB(c=4.685)
+.weights(r, s, u, v, psi1, ...)
+.IWLS(y, Z, phi.ini, s.ini, u, v, psi1, niter, tol, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+univarite time series (vector)</td></tr>
+<tr valign="top"><td><code>p</code></td>
+<td>
+order of AR(p) process</td></tr>
+<tr valign="top"><td><code>s</code></td>
+<td>
+vector of <code>sx</code> and innovation scale estimates for AR(p-1) models of order <i>1</i> to <i>(p-1)</i></td></tr>
+<tr valign="top"><td><code>Phi</code></td>
+<td>
+<i>(p-1)x(p-1)</i> matrix of AR(p-1) model parameters</td></tr>
+<tr valign="top"><td><code>Z</code></td>
+<td>
+AR(p) model matrix</td></tr>
+<tr valign="top"><td><code>invCp</code></td>
+<td>
+matrix from function <code>.invCp</code> to compute metric</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+type of GM-estimates &mdash; character: currently:  "Mallows" or "Schweppe"</td></tr>
+<tr valign="top"><td><code>psi1, psi2</code></td>
+<td>
+type of <i>psi</i> function; current possibilities: "Huber", "Tukey", "Hampel", "Ident"</td></tr>
+<tr valign="top"><td><code>c, k</code></td>
+<td>
+tuning constants</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+response vector of AR(p) model</td></tr>
+<tr valign="top"><td><code>tol</code></td>
+<td>
+tolerance level</td></tr>
+<tr valign="top"><td><code>r</code></td>
+<td>
+residuals</td></tr>
+<tr valign="top"><td><code>s</code></td>
+<td>
+innovations scale parameter</td></tr>
+<tr valign="top"><td><code>u, v</code></td>
+<td>
+weights</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+additional arguments (tuning constants) for influence functions</td></tr>
+<tr valign="top"><td><code>phi.ini</code></td>
+<td>
+initial AR(p) model parameters</td></tr>
+<tr valign="top"><td><code>s.ini</code></td>
+<td>
+initial innovations scale parameter</td></tr>
+<tr valign="top"><td><code>niter</code></td>
+<td>
+maximal number of iterations</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+to be filled
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+<code>.ARmodel(x, p)</code> returns design matrix <code>Z</code> and response vector <code>y</code> of an AR(p) model (as list with corresponding elements).<br>
+<code>.invCp(p, s, Phi)</code> computes the inverse <i>p x p</i> covariance matrix.<br>
+<code>.Weights</code> computes weights for  Mallows- or Schweppe-type GM-estimates; returns a list with elements <code>u</code>, <code>v</code>.<br>
+<code>.startval</code> computes appropriate starting values; returns a list with elements <code>phi</code>, <code>s</code>.<br>
+<code>.BH</code> computes appropriate constant to obtain a consistent estimate for <i>&sigma;</i> when using Huber's <i>psi</i> function.<br>
+<code>.BB</code> computes appropriate constant to obtain a consistent estimate for <i>&sigma;</i> when using Tukey's <i>psi</i> function.<br>
+<code>.weights</code> computes appropriate weights for reweighting &mdash; returns a vector.<br>
+<code>.IWLS</code>  iteratively reweighted least squares algorithm; returns a list with elements 
+<code>phi</code>, <code>s</code>,  <code>w</code>, <code>B</code>, <code>niter</code>.<br></p>
+
+<h3>Author(s)</h3>
+
+<p>
+Bernhard Spangl <a href="mailto:bernhard.spangl@boku.ac.at">bernhard.spangl@boku.ac.at</a>,<br>
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="internalpsi.html">internalpsi</a></code>
+</p>
+
+
+
+<hr><div align="center">[Package <em>robKalman</em> version 0.2.1 <a href="00Index.html">Index</a>]</div>
+
+</body></html>
