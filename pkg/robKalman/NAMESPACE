@@ -1,10 +1,9 @@
 import("methods")
 import("stats")
-import("MASS")
+importFrom("MASS", "ginv", "mvrnorm")
 import("startupmsg")
-import("limma")
 import("robustbase")
-import("numDeriv")
+import("robust-ts")
 
 export("ACMfilt", "ACMfilter", "arGM", "EuclideanNorm",  
        "simulateState", "simulateObs", "rcvmvnorm", "Huberize",
