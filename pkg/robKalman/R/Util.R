@@ -6,8 +6,8 @@ EuclideanNorm <- function(x) {sqrt(colSums(x^2))}
 
 ### huberizing a vector to length b
 
-Huberize <- function(x, b, norm=EuclideanNorm, ...)
-   x*ifelse(norm(x) < b, 1, b/norm(x, ...))
+Huberize <- function(x, b, norm = EuclideanNorm, ...)
+   x * ifelse(norm(x) < b, 1, b/norm(x, ...))
     
 
 limitS <- function(S, F, Z, Q, V, tol = 10^-4, itmax = 1000)#
@@ -15,12 +15,14 @@ limitS <- function(S, F, Z, Q, V, tol = 10^-4, itmax = 1000)#
      {SO0 <- S + 1
       S0  <- S
       i   <- 0
+#      print(S0)
       while( (sum( (SO0 - S0)^2 ) > tol^2) && (i < itmax) )
         {i   <- i + 1
          S1  <- .getpredCov(S0, F, Q)
          SO0 <- S0
-         K   <- .getKG(S1, Z, V)
+         K   <- .getKG(S1, Z, .getDelta(S1, Z, V))
          S0  <- .getcorrCov(S1, K, Z)
+#         print(list(S0,i))
         }
      S1
      }
