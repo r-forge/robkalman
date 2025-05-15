@@ -1,0 +1,189 @@
+<html><head><title>robKalman &ndash; routines for robust Kalman filtering</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>robKalman-package(robKalman)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   robKalman-package">
+<param name="keyword" value="R:   robKalman">
+<param name="keyword" value=" robKalman &ndash; routines for robust Kalman filtering">
+</object>
+
+
+<h2>robKalman &ndash; routines for robust Kalman filtering</h2>
+
+
+<h3>Description</h3>
+
+<p>
+<span class="pkg">robKalman </span> provides routines for robust Kalman filtering. 
+Currently, the ACM-filter and the rLS-Filter are provided.
+</p>
+
+
+<h3>Details</h3>
+
+<p>
+<table summary="Rd table">
+<tr>
+  <td align="left">Package: </td>  <td align="left"> robKalman</td>
+</tr>
+<tr>
+  <td align="left"> Version: </td>  <td align="left"> 0.2.1 </td>
+</tr>
+<tr>
+  <td align="left"> Date: </td>  <td align="left"> 2009-03-18 </td>
+</tr>
+<tr>
+  <td align="left"> Depends: </td>  <td align="left"> R(&gt;= 2.3.0), methods, graphics, startupmsg, dse1, dse2, MASS</td>
+</tr>
+<tr>
+  <td align="left">  Imports: </td>  <td align="left"> stats</td>
+</tr>
+<tr>
+  <td align="left"> LazyLoad: </td>  <td align="left"> yes</td>
+</tr>
+<tr>
+  <td align="left"> License: </td>  <td align="left"> LGPL-3</td>
+</tr>
+<tr>
+  <td align="left"> URL: </td>  <td align="left"> http://distr.r-forge.r-project.org/</td>
+</tr>
+</table>
+
+
+<h3>Setup</h3>
+
+<p>
+We work in the setup of the time-invariant, linear, Gaussian state space model (ti-l-G-SSM)
+with <i>p</i> dimensional states <i>x_t</i> and <i>q</i> dimensional observations <i>y_t</i>,
+with <STRONG>initial condition</STRONG>
+</p><p align="center"><i>x_0 ~ N_p(a,S),</i></p>
+<p>
+<STRONG>state equation</STRONG>
+</p><p align="center"><i>x_t = F x_{t-1} +  v_t,          v_t ~ N_p(0,Q),  t&gt;=1,</i></p>
+<p>
+<STRONG>observation equation</STRONG>
+</p><p align="center"><i>y_t = Z x_t   +  e_t,      e_t ~ N_q(0,V),  t&gt;=1,</i></p><p>
+and where all random variable <i>x_0</i>, <i>v_t</i>, <i>e_t</i> are independent.
+</p>
+
+
+<h3>Classes</h3>
+
+<p>
+yet to be filled
+</p>
+
+
+<h3>Methods</h3>
+
+<p>
+yet to be filled
+</p>
+
+
+<h3>Functions</h3>
+
+<p>
+<pre>
+
+general recursive filters
++recursiveFilter
+ -KalmanFilter 
+ -rLSFilter:
+    *rLS.AO.Filter
+    *rLS.IO.Filter
+ -ACMfilter
+ -mACMfilter
+
+ACMfilter:
++ACMfilt
+
+GM-estimators for AR models
++arGM
+
+utilities:
++Euclidnorm,  
++rcvmvnorm,      
++Huberize,       
++limitS
+
+simulation of AO contaminated state space models       
++simulateState,
++simulateObs,
+</pre>
+</p>
+
+
+<h3>Acknowledgement</h3>
+
+<p>
+We thank Paul Gilbert for their help
+in preparing this package.
+</p>
+
+
+<h3>Start-up-Banner</h3>
+
+<p>
+You may suppress the start-up banner/message completely by setting <code>options("StartupBanner"="off")</code>
+somewhere before loading this package by <code>library</code> or <code>require</code> in your R-code / R-session.
+</p>
+<p>
+If option <code>"StartupBanner"</code> is not defined (default) or setting    
+<code>options("StartupBanner"=NULL)</code> or  <code>options("StartupBanner"="complete")</code> 
+the complete start-up banner is displayed.
+</p>
+<p>
+For any other value of option <code>"StartupBanner"</code> (i.e., not in <code>c(NULL,"off","complete")</code>)
+only the version information is displayed.
+</p>
+<p>
+The same can be achieved by wrapping the <code>library</code> or <code>require</code>  call into
+either <code>suppressStartupMessages()</code> or <code>onlytypeStartupMessages(.,atypes="version")</code>. 
+</p>
+<p>
+As for general <code>packageStartupMessage</code>'s, you may also suppress all
+the start-up banner by wrapping the <code>library</code> or <code>require</code> 
+call into <code>suppressPackageStartupMessages()</code> from 
+<span class="pkg">startupmsg</span>-version 0.5 on.
+</p>
+
+
+<h3>Demos</h3>
+
+<p>
+Demos are available &mdash; see <code>demo(package="robKalman")</code>
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>
+Peter Ruckdeschel (Maintainer) <a href="mailto:peter.ruckdeschel@uni-oldenburg.de">peter.ruckdeschel@uni-oldenburg.de</a>,<br> 
+Bernhard Spangl <a href="mailto:bernhard.spangl@boku.ac.at">bernhard.spangl@boku.ac.at</a>,<br>
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Martin, R.D. and Zeh, J.E. (1978): Generalized M-estimates for  Autoregression Including Small-sample Efficiency Robustness <br>
+Martin, R.D. (1979): Approximate Conditional-mean Type Smoothers and Interpolators.<br>
+Martin, R.D. (1980): Robust Estimation of Autoregressive Models.  <br>
+Martin, R.D. (1981): Robust Methods for Time Series<br>
+Martin, R.D. and Thomson, D.J. (1982): Robust-resistent Spectrum Estimation. <br>
+Ruckdeschel, P. (2001) <EM>Ans"atze zur Robustifizierung des
+Kalman Filters.</EM> Bayreuther Mathematische Schriften, Vol. 64. <br>
+Spangl, B. (2008): On Robust Spectral Density
+Estimation. PhD Thesis at Technical University, Vienna. <br>
+Stockinger, N. and Dutter, R. (1987): Robust Time Series Analysis: A Survey.  <br>
+</p>
+
+
+
+<hr><div align="center">[Package <em>robKalman</em> version 0.3 <a href="00Index.html">Index</a>]</div>
+
+</body></html>
