@@ -1,4 +1,4 @@
-recursiveFilter <- function(Y, a, S, F, Q, Z, V,
+recursiveFilter.old <- function(Y, a, S, F, Q, Z, V,
                    initSc = .cKinitstep, predSc = .cKpredstep,
                    corrSc = .cKcorrstep,
                    initSr = NULL, predSr = NULL, corrSr = NULL,

@@ -161,7 +161,7 @@ simKalmanIdRe()
 ## p=2, q=3
 
 a0   <- c(1, 0)
-SS0  <- matrix(0, 2, 2)
+SS0  <- matrix(c(1,0,0,1), 2, 2)
 F0   <- matrix(c(.7, 0.5, 0.2, 0), 2, 2)
 Q0   <- matrix(c(3, 0.5, 0.5, 1), 2, 2)
 TT   <- 40
