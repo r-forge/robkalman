@@ -370,14 +370,16 @@ createObsInput <- function(y, timestamps.y = NULL, timestamps.x = NULL){
                           timestamps.x = timestamps.x))
 }
 
-createFctCtrl <- function(fct, control) return(list(fct = fct, control = control))
+createFctCtrlPrepPost <- function(fct, control, prep, prep.ctl, post, post.ctl) 
+                          return(list(fct = fct, control = control, 
+                                            prep = prep, prep.ctl = prep.ctl, post = post, post.ctl = post.ctl))
 
-createFilterProc <-  function(init.fct, init.ctrl = NULL, 
-                              pred.fct, pred.ctrl = NULL,               
-                              corr.fct, corr.ctrl = NULL){
-                     return(list(init = createFctCtrl(init.fct, init.ctrl),
-                                 pred = createFctCtrl(corr.fct, corr.ctrl)
-                                 corr = createFctCtrl(pred.fct, pred.ctrl)))         
+createFilterProc <-  function(init.fct, init.ctrl = NULL, init.prep.fct = NULL, init.prep.ctl = NULL, init.post.fct = NULL, init.post.ctl = NULL, 
+                              pred.fct, pred.ctrl = NULL, pred.prep.fct = NULL, prep.prep.ctl = NULL, prep.post.fct = NULL, prep.post.ctl = NULL,                
+                              corr.fct, corr.ctrl = NULL, corr.prep.fct = NULL, corr.prep.ctl = NULL, corr.post.fct = NULL, corr.post.ctl = NULL ){
+                     return(list(init = createFctCtrlPrepPost(init.fct, init.ctrl, init.prep.fct, init.prep.ctl, init.post.fct, init.post.ctl),
+                                 pred = createFctCtrlPrepPost(pred.fct, pred.ctrl, pred.prep.fct, prep.prep.ctl, prep.post.fct, prep.post.ctl),
+                                 corr = createFctCtrlPrepPost(corr.fct, corr.ctrl, corr.prep.fct, corr.prep.ctl, corr.post.fct, corr.post.ctl)))         
                               }
 
 createRobFilterProc <-  function(init.fct.cla, init.ctrl.cla = NULL, 

@@ -80,7 +80,7 @@ The return value is a list with components
 
 
 \author{
-  Peter Ruckdeschel \email{Peter.Ruckdeschel@itwm.fraunhofer.de},\cr 
+  Peter Ruckdeschel \email{peter.ruckdeschel@uni-oldenburg.de},\cr 
   }
 
 \seealso{

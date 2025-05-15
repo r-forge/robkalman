@@ -89,7 +89,7 @@ For notation, let us formulate the classical Kalman filter in this context:
 }
 
 \author{
-  Peter Ruckdeschel \email{Peter.Ruckdeschel@itwm.fraunhofer.de},\cr 
+  Peter Ruckdeschel \email{peter.ruckdeschel@uni-oldenburg.de},\cr 
   }
 
 \seealso{

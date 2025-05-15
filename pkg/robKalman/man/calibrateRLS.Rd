@@ -61,7 +61,7 @@ for which \code{b} would be SO/IO optimal.
 efficiency loss \code{eff} and least favorable/resp. given radius \code{r}
 for the rLS filter}
 \author{
-  Peter Ruckdeschel \email{Peter.Ruckdeschel@itwm.fraunhofer.de},\cr
+  Peter Ruckdeschel \email{peter.ruckdeschel@uni-oldenburg.de},\cr
   }
 
 

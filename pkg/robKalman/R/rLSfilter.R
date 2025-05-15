@@ -3,6 +3,7 @@
 ################################################################
 
 # P. Ruckdeschel 10.06.06
+#    revised 15.08.11
 #
 
 ## we assume a time-invariant SSM of the following form

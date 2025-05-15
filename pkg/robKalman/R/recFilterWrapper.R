@@ -307,7 +307,7 @@ KalmanFilter <- function(Y, a, S, F, Q, Z, V, dropRuns = TRUE)#
 #arguments:
 # +  Y               :observations
 # +  a, S, F, Q, Z, V:Hyper-parameters of the ssm
-{recursiveFilter(Y, a, S, F, Q, Z, V, dropRuns = dropRuns)}
+{recEFilter(Y = Y, a = a, S = S, F = F, Q = Q, Z = Z, V = V)}
 
 rLSFilter <- function(Y, a, S, F, Q, Z, V, b, norm = EuclideanNorm, dropRuns = TRUE)#
 #arguments:

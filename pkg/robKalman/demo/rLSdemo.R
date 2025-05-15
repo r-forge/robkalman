@@ -70,14 +70,17 @@ Yre  <- simulateObs(X = X, Z = Z, Vi = Vi, mc = mc, Vc = Vc, r = ract)
 pd <- dim(X)[1]
 qd <- dim(Yid)[1]
 
-SS <- limitS(S = Ss, F = F, Q = Q, Z = Z, V = Vi)
+SS <- try(limitS(S = Ss, F = F, Q = Q, Z = Z, V = Vi), silent = TRUE)
+if(is(SS, "try-error")) SS <- Ss
 ### calibration b
 # by efficiency in the ideal model
 # efficiency  =  0.9
-(B1 <- rLScalibrateB(eff = eff1, S = SS, Z = Z, V = Vi))
+(B1 <- try(rLScalibrateB(eff = eff1, S = SS, Z = Z, V = Vi),silent=TRUE))
+if(is(B1, "try-error")) B1 <- list(b=max(abs(Q)),eff=0.9,r=NA)
 # by contamination radius
 # r  =  0.1
-(B2 <- rLScalibrateB(r = r1, S = SS, Z = Z, V = Vi))
+(B2 <- try(rLScalibrateB(r = r1, S = SS, Z = Z, V = Vi),silent=TRUE))
+if(is(B2, "try-error")) B2 <- list(b=max(abs(Q)),eff=NA,r=r1)
 ### evaluation of rLS
 rerg1.id <- rLSFilter(Yid, a = a, S = Ss, F = F, Q = Q, Z = Z, V = Vi, b = B1$b)
 rerg1.re <- rLSFilter(Yre, a = a, S = Ss, F = F, Q = Q, Z = Z, V = Vi, b = B1$b)
@@ -177,3 +180,5 @@ eff1<-0.4
 
 set.seed(361)
 simKalmanIdRe()
+
+

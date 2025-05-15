@@ -88,7 +88,7 @@ FURTHER DETAILS TO BE FILLED
 
 
 \author{
-  Peter Ruckdeschel \email{Peter.Ruckdeschel@itwm.fraunhofer.de},\cr 
+  Peter Ruckdeschel \email{peter.ruckdeschel@uni-oldenburg.de},\cr 
   Bernhard Spangl \email{bernhard.spangl@boku.ac.at},\cr 
 }
 

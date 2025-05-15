@@ -188,7 +188,7 @@ Cov(x_t-x_{t|t}) = S_{t|t-1} - K_t Z_t S_{t|t-1}}
 }
 
 \author{
-  Peter Ruckdeschel \email{Peter.Ruckdeschel@itwm.fraunhofer.de},\cr 
+  Peter Ruckdeschel \email{peter.ruckdeschel@uni-oldenburg.de},\cr 
   Bernhard Spangl \email{bernhard.spangl@boku.ac.at},\cr 
   }
 
@@ -228,8 +228,8 @@ SS <- limitS(S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i)
 
 # IO-filter
 # by efficiency in the ideal model
-# efficiency  =  0.9
-(B1.IO <- rLScalibrateB(eff = 0.9, S = SS, Z = Z0, V = V0i, IO = TRUE))
+# efficiency  =  0.95
+### to be fixed ! (B1.IO <- rLScalibrateB(eff = 0.95, S = SS, Z = Z0, V = V0i, IO = TRUE))
 # by contamination radius
 # r  =  0.1
 (B2.IO <- rLScalibrateB(r = 0.1, S = SS, Z = Z0, V = V0i, IO = TRUE))
@@ -239,14 +239,14 @@ erg <- KalmanFilter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i)
 rerg1 <- rLSFilter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i, b = B1$b)
 rerg2 <- rLSFilter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i, b = B2$b)
 
-rerg1.IO <- rLS.IO.Filter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i, b = B1.IO$b)
+## to be fixed rerg1.IO <- rLS.IO.Filter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i, b = B1.IO$b)
 rerg2.IO <- rLS.IO.Filter(Y, a = a0, S = SS0, F = F0, Q = Q0, Z = Z0, V = V0i, b = B2.IO$b)
 
 mean((X[,1,] - rerg1$Xf)^2) ### empirical MSE of the filters considered
 mean((X[,1,] - rerg1$Xrf)^2)
 mean((X[,1,] - rerg2$Xrf)^2)
 ### not surprisingly IO-rob filter is not a good idea for AO - situation
-mean((X[,1,] - rerg1.IO$Xrf)^2)
+## to be fixed ! mean((X[,1,] - rerg1.IO$Xrf)^2)
 mean((X[,1,] - rerg2.IO$Xrf)^2)
 
 }
