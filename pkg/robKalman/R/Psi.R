@@ -149,21 +149,52 @@ mvpsiHampel <- function (x, a=2, b=4, c=8)
     return(x*dummy)
 }
 
-jacobian.Hampel <- function (x, ...) 
+
+## jacobian.Hampel <- function (x, ...) 
+## {
+## ###########################################
+## ##
+## ##  R-function: jacobian.Hampel - Jacobian matrix of multivariate 
+## ##                                analogue of Hampel's psi-function
+## ##              using R-function 'jacobian' of package 'numDeriv'
+## ##  author: Bernhard Spangl, based on work of Paul Gilbert
+## ##  version: 0.1 (2008-02-23)
+## ##
+## ###########################################
+## 
+## ##  Paramters:
+## ##  x ... vector 
+## 
+##     jacobian(mvpsiHampel, x, ...)
+## }
+
+
+jacobian.Hampel <- function (x,  a=2, b=4, c=8) 
 {
 ###########################################
 ##
 ##  R-function: jacobian.Hampel - Jacobian matrix of multivariate 
 ##                                analogue of Hampel's psi-function
-##              using R-function 'jacobian' of package 'numDeriv'
-##  author: Bernhard Spangl, based on work of Paul Gilbert
-##  version: 0.1 (2008-02-23)
+##  author: Bernhard Spangl
+##  version: 0.1 (2025-05-17)
 ##
 ###########################################
 
 ##  Paramters:
 ##  x ... vector 
-
-    jacobian(mvpsiHampel, x, ...)
+##  a, b, c ... tuning constants
+    x.norm2 <- drop(x%*%x)
+    x.norm <- sqrt(x.norm2)
+    I <- diag(rep(1, length(x)))
+    x.outer <- outer(x, x)/x.norm2
+    if (x.norm < a) {
+        I
+    } else if (x.norm < b) {
+        (I - x.outer)*a/x.norm
+    } else if (x.norm < c) {
+        ((I - x.outer)*c/x.norm - I)*a/(c-b)
+    } else {
+        diag(rep(0, length(x)))
+    }
 }
 
